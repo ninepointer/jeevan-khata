@@ -59,10 +59,10 @@ function Footer({ light }) {
             by
             <Link href="https://www.creative-tim.com/" target="_blank">
               <MDTypography variant="button" fontWeight="medium" color={light ? "white" : "dark"}>
-                &nbsp;ninepointer&nbsp;
+                &nbsp;Jeevan Khata&nbsp;
               </MDTypography>
             </Link>
-            for a better web.
+            for a better health.
           </MDBox>
           <MDBox
             component="ul"

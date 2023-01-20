@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect, useMemo, useContext } from "react";
 import axios from "axios"
 
@@ -30,8 +15,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import MDBox from "./components/MDBox";
 
 // Material Dashboard 2 React example components
-import Sidenav from "./layoutComponents/Sidenav";
-import Configurator from "./layoutComponents/Configurator";
+import Sidenav from "./examples/Sidenav";
+import Configurator from "./examples/Configurator";
 
 // Material Dashboard 2 React themes
 import theme from "./assets/theme";
@@ -49,6 +34,7 @@ import createCache from "@emotion/cache";
 // Material Dashboard 2 React routes
 import routes from "./routes";
 // import adminRoutes from "./routes";
+import userRoutes from "./routesUser";
 
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./context";
@@ -57,6 +43,8 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./
 import brandWhite from "./assets/images/logo-ct.png";
 import brandDark from "./assets/images/logo-ct-dark.png";
 import SignIn from "./layouts/authentication/sign-in"
+import User from "./layouts/users/index"
+import NewMain from "./NewMain"
 import { userContext } from "./AuthContext";
 import BioMarkerLayout from "./layouts/Bio Markers/bioMarkerLayout";
 
@@ -81,38 +69,6 @@ export default function App() {
   //get userdetail who is loggedin
   const setDetails = useContext(userContext);
   const getDetails = useContext(userContext);
-
-  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
-  
-  useEffect(()=>{
-        axios.get(`${baseUrl}api/v1/loginDetail`, {
-            withCredentials: true,
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Credentials": true
-            },
-        })
-        .then((res)=>{
-          setDetails.setUserDetail(res.data);
-          setDetailUser((res.data));
-  
-        }).catch((err)=>{
-          console.log("Fail to fetch data of user");
-          console.log(err);
-        })
-                
-  }, [])
-
-  // Cache for the rtl
-  useMemo(() => {
-    const cacheRtl = createCache({
-      key: "rtl",
-      stylisPlugins: [rtlPlugin],
-    });
-
-    setRtlCache(cacheRtl);
-  }, []);
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -193,7 +149,7 @@ export default function App() {
               <Sidenav
                 color={sidenavColor}
                 brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-                brandName="ninepointer"
+                brandName="Jeevan Khata"
                 routes={routes}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
@@ -204,7 +160,6 @@ export default function App() {
           )}
           {layout === "vr" && <Configurator />}
           <Routes>
-          {/* {(detailUser.role === "admin" || getDetails.userDetails.role === "admin") ? getRoutes(routes) : (detailUser.role === "user" || getDetails.userDetails.role === "user") && getRoutes(userRoutes)}  */}
           {getRoutes(routes)}
             <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
           </Routes>
@@ -212,7 +167,6 @@ export default function App() {
       </CacheProvider>
     
   ) : (
-    // (detailUser.role === "user" || getDetails.userDetails.role === "user") && 
       <ThemeProvider theme={darkMode ? themeDark : theme}>
         <CssBaseline />
         {layout === "dashboard" && (
@@ -220,7 +174,7 @@ export default function App() {
             <Sidenav
               color={sidenavColor}
               brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-              brandName="ninepointer"
+              brandName="Jeevan Khata"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
@@ -231,12 +185,11 @@ export default function App() {
         )}
         {layout === "companyposition" && <Configurator />}
         <Routes>
-        {/* {(detailUser.role === "" || getDetails.userDetails.role === "") ? getRoutes(routes) : (detailUser.role === "" || getDetails.userDetails.role === "") && getRoutes(userRoutes)}           <Route path="*" element={<Navigate to="/traderdashboard" />} /> */}
         {getRoutes(routes)}
           <Route path="*" element={<BioMarkerLayout />} />
         </Routes>
       </ThemeProvider>
     
   );
-} // 
+} 
 

@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
 
 // prop-types is a library for typechecking of props.
@@ -25,7 +10,7 @@ import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Icon from "@mui/material/Icon";
-import CandlestickChartIcon from '@mui/icons-material/CandlestickChart';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 // Material Dashboard 2 React components
 import MDBox from "../../../components/MDBox";
@@ -39,16 +24,18 @@ import Footer from "../../../layoutComponents/Footer";
 import breakpoints from "../../../assets/theme/base/breakpoints";
 
 // Images
+import PersonIcon from '@mui/icons-material/Person';
 import burceMars from "../../../assets/images/bruce-mars.jpg";
 import backgroundImage from "../../../assets/images/bg-profile.jpeg";
-import BioMarkerTable from "../BioMarkerTable";
-import CreateBioMarker from "../CreateBioMarker";
+import ActiveUsers from "../activeUsers";
+import DeletedUsers from "../deletedUsers";
+import Roles from "../roles";
 
 
-function Header({ children }) {
+
+function UserHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
-  const [isCreate, setIsCreate] = useState(false);
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -58,6 +45,7 @@ function Header({ children }) {
         : setTabsOrientation("horizontal");
     }
 
+    
     /** 
      The event listener that's calling the handleTabsOrientation function when resizing the window.
     */
@@ -111,26 +99,31 @@ function Header({ children }) {
               {/* <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}> */}
               <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}>
                 <Tab
-                  label="Bio Markers"
+                  label="Active Users"
                   icon={
-                    <CandlestickChartIcon fontSize="small" sx={{ mt: -0.25 }}/>
+                    <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
                   }
                 />
-                {/* <Tab
-                  label="Inactive Instruments"
+                <Tab
+                  label="Deleted Users"
                   icon={
-                    <CandlestickChartIcon fontSize="small" sx={{ mt: -0.25 }}/>
-                    
+                    <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
                   }
-                /> */}
+                />
+
+                <Tab
+                  label="Roles"
+                  icon={
+                    <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
+                     }
+                />
+             
               </Tabs>
             </AppBar>
-            {console.log("isCreate",isCreate)}
-            {isCreate ?
-            <TabPanel value={tabValue} index={0}><CreateBioMarker checkIsCreate={setIsCreate}/> </TabPanel>
-            :
-            <TabPanel value={tabValue} index={0}><BioMarkerTable checkIsCreate={setIsCreate}/> </TabPanel>}
-            {/* <TabPaneltwo/> */}
+            <TabPanel value={tabValue} index={0}><ActiveUsers/> </TabPanel>
+            <TabPanel value={tabValue} index={1}><DeletedUsers/> </TabPanel>
+            <TabPanel value={tabValue} index={2}><Roles/> </TabPanel>
+
           </Grid>
         </Grid>
         </Card>
@@ -143,12 +136,12 @@ function Header({ children }) {
 }
 
 // Setting default props for the Header
-Header.defaultProps = {
+UserHeader.defaultProps = {
   children: "",
 };
 
 // Typechecking props for the Header
-Header.propTypes = {
+UserHeader.propTypes = {
   children: PropTypes.node,
 };
 
@@ -166,4 +159,4 @@ function TabPanel(props){
   )
 }
 
-export default Header;
+export default UserHeader;
