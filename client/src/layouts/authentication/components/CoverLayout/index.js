@@ -24,9 +24,9 @@ import MDBox from "../../../../components/MDBox";
 // import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
-import DefaultNavbar from "../../../../examples/Navbars/DefaultNavbar";
+import DefaultNavbar from "../../../../layoutComponents/Navbars/DefaultNavbar";
 
-import PageLayout from "../../../../examples/LayoutContainers/PageLayout";
+import PageLayout from "../../../../layoutComponents/LayoutContainers/PageLayout";
 
 // Authentication layout components
 import Footer from "../Footer";

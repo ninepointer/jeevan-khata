@@ -23,8 +23,8 @@ import Grid from "@mui/material/Grid";
 import MDBox from "../../../../components/MDBox";
 
 // Material Dashboard 2 React example components
-import DefaultNavbar from "../../../../examples/Navbars/DashboardNavbar";
-import PageLayout from "../../../../examples/LayoutContainers/PageLayout";
+import DefaultNavbar from "../../../../layoutComponents/Navbars/DashboardNavbar";
+import PageLayout from "../../../../layoutComponents/LayoutContainers/PageLayout";
 
 // Authentication pages components
 import Footer from "../Footer";

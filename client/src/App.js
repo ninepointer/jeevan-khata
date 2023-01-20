@@ -30,8 +30,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import MDBox from "./components/MDBox";
 
 // Material Dashboard 2 React example components
-import Sidenav from "./examples/Sidenav";
-import Configurator from "./examples/Configurator";
+import Sidenav from "./layoutComponents/Sidenav";
+import Configurator from "./layoutComponents/Configurator";
 
 // Material Dashboard 2 React themes
 import theme from "./assets/theme";
@@ -49,7 +49,6 @@ import createCache from "@emotion/cache";
 // Material Dashboard 2 React routes
 import routes from "./routes";
 // import adminRoutes from "./routes";
-import userRoutes from "./routesUser";
 
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./context";
@@ -58,9 +57,8 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./
 import brandWhite from "./assets/images/logo-ct.png";
 import brandDark from "./assets/images/logo-ct-dark.png";
 import SignIn from "./layouts/authentication/sign-in"
-import User from "./layouts/users/index"
-import NewMain from "./NewMain"
 import { userContext } from "./AuthContext";
+import BioMarkerLayout from "./layouts/Bio Markers/bioMarkerLayout";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -235,7 +233,7 @@ export default function App() {
         <Routes>
         {/* {(detailUser.role === "" || getDetails.userDetails.role === "") ? getRoutes(routes) : (detailUser.role === "" || getDetails.userDetails.role === "") && getRoutes(userRoutes)}           <Route path="*" element={<Navigate to="/traderdashboard" />} /> */}
         {getRoutes(routes)}
-          <Route path="*" element={<User />} />
+          <Route path="*" element={<BioMarkerLayout />} />
         </Routes>
       </ThemeProvider>
     
