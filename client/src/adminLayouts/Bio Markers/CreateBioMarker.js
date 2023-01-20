@@ -10,7 +10,7 @@ import uniqid from "uniqid";
 
 
 // const CreateBioMarker = ({Render}) => {
-  const CreateBioMarker = ({checkIsCreate}) => {
+  const CreateBioMarker = ({setCreateBio}) => {
     // const {reRender, setReRender} = Render
     let uId = uniqid();
     let date = new Date();
@@ -40,7 +40,7 @@ import uniqid from "uniqid";
 
   
     const handleClose = () => {
-      checkIsCreate(false);
+      setCreateBio(false);
     };
 
     // data sent to backend function
@@ -50,28 +50,28 @@ import uniqid from "uniqid";
       console.log(formData)
       const { name, unit, gender, ageGroupStartRange, ageGroupEndRange, ageGroupUnit, range, bodyCondition, status } = formData;
 
-      const res = await fetch(`${baseUrl}api/v1/instrument`, {
-          method: "POST",
-          credentials:"include",
-          headers: {
-              "content-type" : "application/json",
-              "Access-Control-Allow-Credentials": true
-          },
-          body: JSON.stringify({
-            name, unit, gender, ageGroupStartRange, ageGroupEndRange, ageGroupUnit, range, bodyCondition, status, uId, lastModifiedOn, lastModifiedBy, isDeleted, createdBy, createdOn
-          })
-      });
+      // const res = await fetch(`${baseUrl}api/v1/instrument`, {
+      //     method: "POST",
+      //     credentials:"include",
+      //     headers: {
+      //         "content-type" : "application/json",
+      //         "Access-Control-Allow-Credentials": true
+      //     },
+      //     body: JSON.stringify({
+      //       name, unit, gender, ageGroupStartRange, ageGroupEndRange, ageGroupUnit, range, bodyCondition, status, uId, lastModifiedOn, lastModifiedBy, isDeleted, createdBy, createdOn
+      //     })
+      // });
 
-      const data = await res.json();
-      console.log(data);
-      if (data.status === 422 || data.error || !data) {
-          window.alert(data.error);
-      } else {
-          // window.alert("Bio Marker Created Succesfully");
-          console.log("entry succesfull");
-      }
+      // const data = await res.json();
+      // console.log(data);
+      // if (data.status === 422 || data.error || !data) {
+      //     window.alert(data.error);
+      // } else {
+      //     // window.alert("Bio Marker Created Succesfully");
+      //     console.log("entry succesfull");
+      // }
       // reRender ? setReRender(false) : setReRender(true)
-      checkIsCreate(false);
+      setCreateBio(false);
     }
   
     return (

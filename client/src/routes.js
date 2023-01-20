@@ -1,6 +1,7 @@
 
 // Material Dashboard 2 React layouts
 import Users from "./adminLayouts/users";
+import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
 
 // @mui icons
 import PersonIcon from '@mui/icons-material/Person';
@@ -27,6 +28,7 @@ const routes = [
  
   {
     type: "collapse",
+    name: "Bio Markers",
     key: "biomarkers",
     // icon: <Icon fontSize="small">person</Icon>,
     icon: <AccountBoxIcon/>,
@@ -35,6 +37,7 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Users",
     key: "users",
     // icon: <Icon fontSize="small">table_view</Icon>,
     icon: <PersonIcon/>,
