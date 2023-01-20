@@ -26,16 +26,16 @@ import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 
 // @mui icons
-import TwitterIcon from "@mui/icons-material/Twitter";
-import FacebookIcon from "@mui/icons-material/Facebook";
+// import TwitterIcon from "@mui/icons-material/Twitter";
+// import FacebookIcon from "@mui/icons-material/Facebook";
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
+import MDBox from "../../components/MDBox";
+import MDTypography from "../../components/MDTypography";
+import MDButton from "../../components/MDButton";
 
 // Custom styles for the Configurator
-import ConfiguratorRoot from "examples/Configurator/ConfiguratorRoot";
+import ConfiguratorRoot from "./ConfiguratorRoot";
 
 // Material Dashboard 2 React context
 import {
@@ -46,7 +46,7 @@ import {
   setFixedNavbar,
   setSidenavColor,
   setDarkMode,
-} from "context";
+} from "../../context";
 
 function Configurator() {
   const [controller, dispatch] = useMaterialUIController();
@@ -314,7 +314,7 @@ function Configurator() {
             <MDTypography variant="h6">Thank you for sharing!</MDTypography>
           </MDBox>
 
-          <MDBox display="flex" justifyContent="center">
+          {/* <MDBox display="flex" justifyContent="center">
             <MDBox mr={1.5}>
               <MDButton
                 component={Link}
@@ -326,8 +326,8 @@ function Configurator() {
                 <TwitterIcon />
                 &nbsp; Tweet
               </MDButton>
-            </MDBox>
-            <MDButton
+            </MDBox> */}
+            {/* <MDButton
               component={Link}
               href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/material-dashboard-react"
               target="_blank"
@@ -336,8 +336,8 @@ function Configurator() {
             >
               <FacebookIcon />
               &nbsp; Share
-            </MDButton>
-          </MDBox>
+            </MDButton> */}
+          {/* </MDBox> */}
         </MDBox>
       </MDBox>
     </ConfiguratorRoot>

@@ -13,7 +13,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
+import axios from "axios"
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -22,21 +23,23 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
+import SettingsIcon from '@mui/icons-material/Settings';
+
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
+import MDBox from "./components/MDBox";
 
 // Material Dashboard 2 React example components
-import Sidenav from "examples/Sidenav";
-import Configurator from "examples/Configurator";
+import Sidenav from "./examples/Sidenav";
+import Configurator from "./examples/Configurator";
 
 // Material Dashboard 2 React themes
-import theme from "assets/theme";
-import themeRTL from "assets/theme/theme-rtl";
+import theme from "./assets/theme";
+import themeRTL from "./assets/theme/theme-rtl";
 
 // Material Dashboard 2 React Dark Mode themes
-import themeDark from "assets/theme-dark";
-import themeDarkRTL from "assets/theme-dark/theme-rtl";
+import themeDark from "./assets/theme-dark";
+import themeDarkRTL from "./assets/theme-dark/theme-rtl";
 
 // RTL plugins
 import rtlPlugin from "stylis-plugin-rtl";
@@ -44,14 +47,20 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 // Material Dashboard 2 React routes
-import routes from "routes";
+import routes from "./routes";
+// import adminRoutes from "./routes";
+import userRoutes from "./routesUser";
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./context";
 
 // Images
-import brandWhite from "assets/images/logo-ct.png";
-import brandDark from "assets/images/logo-ct-dark.png";
+import brandWhite from "./assets/images/logo-ct.png";
+import brandDark from "./assets/images/logo-ct-dark.png";
+import SignIn from "./layouts/authentication/sign-in"
+import User from "./layouts/users/index"
+import NewMain from "./NewMain"
+import { userContext } from "./AuthContext";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -67,7 +76,35 @@ export default function App() {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
+  // const [routes1, setRoutes] = useState();
+  const [detailUser, setDetailUser] = useState({});
   const { pathname } = useLocation();
+
+  //get userdetail who is loggedin
+  const setDetails = useContext(userContext);
+  const getDetails = useContext(userContext);
+
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
+  
+  useEffect(()=>{
+        axios.get(`${baseUrl}api/v1/loginDetail`, {
+            withCredentials: true,
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Credentials": true
+            },
+        })
+        .then((res)=>{
+          setDetails.setUserDetail(res.data);
+          setDetailUser((res.data));
+  
+        }).catch((err)=>{
+          console.log("Fail to fetch data of user");
+          console.log(err);
+        })
+                
+  }, [])
 
   // Cache for the rtl
   useMemo(() => {
@@ -101,13 +138,14 @@ export default function App() {
   // Setting the dir attribute for the body element
   useEffect(() => {
     document.body.setAttribute("dir", direction);
-  }, [direction]);
+  }, [direction, getDetails]);
 
   // Setting page scroll to 0 when changing the route
   useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
-  }, [pathname]);
+  }, [pathname, getDetails]);
+
 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
@@ -140,22 +178,51 @@ export default function App() {
       sx={{ cursor: "pointer" }}
       onClick={handleConfiguratorOpen}
     >
-      <Icon fontSize="small" color="inherit">
+      {/* <Icon fontSize="small" color="inherit">
         settings
-      </Icon>
+      </Icon> */}
+      <SettingsIcon/>
     </MDBox>
   );
 
   return direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
+    
+      <CacheProvider value={rtlCache}>
+        <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
+          <CssBaseline />
+          {layout === "companyposition" && (
+            <>
+              <Sidenav
+                color={sidenavColor}
+                brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                brandName="ninepointer"
+                routes={routes}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}
+              />
+              <Configurator />
+              {configsButton}
+            </>
+          )}
+          {layout === "vr" && <Configurator />}
+          <Routes>
+          {/* {(detailUser.role === "admin" || getDetails.userDetails.role === "admin") ? getRoutes(routes) : (detailUser.role === "user" || getDetails.userDetails.role === "user") && getRoutes(userRoutes)}  */}
+          {getRoutes(routes)}
+            <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
+          </Routes>
+        </ThemeProvider>
+      </CacheProvider>
+    
+  ) : (
+    // (detailUser.role === "user" || getDetails.userDetails.role === "user") && 
+      <ThemeProvider theme={darkMode ? themeDark : theme}>
         <CssBaseline />
         {layout === "dashboard" && (
           <>
             <Sidenav
               color={sidenavColor}
               brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-              brandName="Material Dashboard 2"
+              brandName="ninepointer"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
@@ -164,35 +231,14 @@ export default function App() {
             {configsButton}
           </>
         )}
-        {layout === "vr" && <Configurator />}
+        {layout === "companyposition" && <Configurator />}
         <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
+        {/* {(detailUser.role === "" || getDetails.userDetails.role === "") ? getRoutes(routes) : (detailUser.role === "" || getDetails.userDetails.role === "") && getRoutes(userRoutes)}           <Route path="*" element={<Navigate to="/traderdashboard" />} /> */}
+        {getRoutes(routes)}
+          <Route path="*" element={<User />} />
         </Routes>
       </ThemeProvider>
-    </CacheProvider>
-  ) : (
-    <ThemeProvider theme={darkMode ? themeDark : theme}>
-      <CssBaseline />
-      {layout === "dashboard" && (
-        <>
-          <Sidenav
-            color={sidenavColor}
-            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="Material Dashboard 2"
-            routes={routes}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-          />
-          <Configurator />
-          {configsButton}
-        </>
-      )}
-      {layout === "vr" && <Configurator />}
-      <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
-      </Routes>
-    </ThemeProvider>
+    
   );
-}
+} // 
+

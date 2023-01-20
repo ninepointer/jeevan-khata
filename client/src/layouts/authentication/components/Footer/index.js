@@ -22,11 +22,11 @@ import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+import MDBox from "../../../../components/MDBox";
+import MDTypography from "../../../../components/MDTypography";
 
 // Material Dashboard 2 React base styles
-import typography from "assets/theme/base/typography";
+import typography from "../../../../assets/theme/base/typography";
 
 function Footer({ light }) {
   const { size } = typography;
@@ -59,7 +59,7 @@ function Footer({ light }) {
             by
             <Link href="https://www.creative-tim.com/" target="_blank">
               <MDTypography variant="button" fontWeight="medium" color={light ? "white" : "dark"}>
-                &nbsp;Creative Tim&nbsp;
+                &nbsp;ninepointer&nbsp;
               </MDTypography>
             </Link>
             for a better web.
@@ -88,7 +88,7 @@ function Footer({ light }) {
                   fontWeight="regular"
                   color={light ? "white" : "dark"}
                 >
-                  Creative Tim
+                  
                 </MDTypography>
               </Link>
             </MDBox>

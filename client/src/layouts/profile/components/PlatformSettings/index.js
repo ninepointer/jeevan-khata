@@ -20,8 +20,8 @@ import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+import MDBox from "../../../../components/MDBox";
+import MDTypography from "../../../../components/MDTypography";
 
 function PlatformSettings() {
   const [followsMe, setFollowsMe] = useState(true);
@@ -40,15 +40,15 @@ function PlatformSettings() {
       </MDBox>
       <MDBox pt={1} pb={2} px={2} lineHeight={1.25}>
         <MDTypography variant="caption" fontWeight="bold" color="text" textTransform="uppercase">
-          account
+          Email Settings
         </MDTypography>
         <MDBox display="flex" alignItems="center" mb={0.5} ml={-1.5}>
           <MDBox mt={0.5}>
-            <Switch checked={followsMe} onChange={() => setFollowsMe(!followsMe)} />
+            <Switch checked={!followsMe} onChange={() => setFollowsMe(followsMe)} />
           </MDBox>
           <MDBox width="80%" ml={0.5}>
             <MDTypography variant="button" fontWeight="regular" color="text">
-              Email me when someone follows me
+              Email me my daily P&L report
             </MDTypography>
           </MDBox>
         </MDBox>
@@ -58,21 +58,21 @@ function PlatformSettings() {
           </MDBox>
           <MDBox width="80%" ml={0.5}>
             <MDTypography variant="button" fontWeight="regular" color="text">
-              Email me when someone answers on my post
+              Email me my weekly P&L report
             </MDTypography>
           </MDBox>
         </MDBox>
         <MDBox display="flex" alignItems="center" mb={0.5} ml={-1.5}>
           <MDBox mt={0.5}>
-            <Switch checked={mentionsMe} onChange={() => setMentionsMe(!mentionsMe)} />
+            <Switch checked={!mentionsMe} onChange={() => setMentionsMe(mentionsMe)} />
           </MDBox>
           <MDBox width="80%" ml={0.5}>
             <MDTypography variant="button" fontWeight="regular" color="text">
-              Email me when someone mentions me
+              Email me my monthly P&L report
             </MDTypography>
           </MDBox>
         </MDBox>
-        <MDBox mt={3}>
+        {/* <MDBox mt={3}>
           <MDTypography variant="caption" fontWeight="bold" color="text" textTransform="uppercase">
             application
           </MDTypography>
@@ -106,7 +106,7 @@ function PlatformSettings() {
               Subscribe to newsletter
             </MDTypography>
           </MDBox>
-        </MDBox>
+        </MDBox> */}
       </MDBox>
     </Card>
   );
