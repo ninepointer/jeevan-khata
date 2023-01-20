@@ -1,81 +1,50 @@
+
 // Material Dashboard 2 React layouts
-import Dashboard from "layouts/dashboard";
-import Users from "layouts/users";
-import Billing from "layouts/billing";
-import RTL from "layouts/rtl";
-import Notifications from "layouts/notifications";
-import Profile from "layouts/profile";
-import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
+import Users from "./adminLayouts/users";
+import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
 
 // @mui icons
+import PersonIcon from '@mui/icons-material/Person';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import TableViewIcon from '@mui/icons-material/TableView';
+import BusinessIcon from '@mui/icons-material/Business';
+import CandlestickChartIcon from '@mui/icons-material/CandlestickChart';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Icon from "@mui/material/Icon";
 
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import InventoryIcon from '@mui/icons-material/Inventory'; 
+import SettingsIcon from '@mui/icons-material/Settings';
+// import SettingIcon from '@mui/icons-material/Setting'; 
+
+
 const routes = [
+ 
   {
     type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
-    icon: <Icon fontSize="small">dashboard</Icon>,
-    route: "/dashboard",
-    component: <Dashboard />,
+    name: "Bio Markers",
+    key: "biomarkers",
+    // icon: <Icon fontSize="small">person</Icon>,
+    icon: <AccountBoxIcon/>,
+    route: "/biomarkers",
+    component: <BioMarkerLayout />,
   },
   {
     type: "collapse",
     name: "Users",
     key: "users",
-    icon: <Icon fontSize="small">table_view</Icon>,
+    // icon: <Icon fontSize="small">table_view</Icon>,
+    icon: <PersonIcon/>,
     route: "/users",
     component: <Users />,
   },
-  {
-    type: "collapse",
-    name: "Billing",
-    key: "billing",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
-    component: <Billing />,
-  },
-  {
-    type: "collapse",
-    name: "RTL",
-    key: "rtl",
-    icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
-    route: "/rtl",
-    component: <RTL />,
-  },
-  {
-    type: "collapse",
-    name: "Notifications",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
-  },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
-  },
-  {
-    type: "collapse",
-    name: "Sign In",
-    key: "sign-in",
-    icon: <Icon fontSize="small">login</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
-  },
-  {
-    type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
-    icon: <Icon fontSize="small">assignment</Icon>,
-    route: "/authentication/sign-up",
-    component: <SignUp />,
-  },
+
 ];
 
 export default routes;
