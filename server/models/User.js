@@ -83,6 +83,10 @@ const userSchema = new mongoose.Schema({
         default: false,
         required : true
     },
+    jeevanKhataId:{
+        type: String,
+        required : true
+    },
 })
 
 const user = mongoose.model("User", userSchema);

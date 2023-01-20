@@ -5,6 +5,26 @@ const roleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    reportAccess:{
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    userAccess:{
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    attributesAccess:{
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    analyticsAccess:{
+        type: Boolean,
+        default: false,
+        required: true
+    },
     createdOn:{
         type: Date,
         default: Date.now(),
@@ -27,6 +47,11 @@ const roleSchema = new mongoose.Schema({
     isDeleted:{
         type: Boolean,
         default: false,
+        required : true
+    },
+    status:{
+        type: String,
+        default: 'Active',
         required : true
     },
 })
