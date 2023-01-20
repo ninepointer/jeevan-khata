@@ -1,6 +1,7 @@
 
 // Material Dashboard 2 React layouts
 import Users from "./adminLayouts/users";
+import AdminDashboard from "./adminLayouts/adminDashboard";
 
 // @mui icons
 import PersonIcon from '@mui/icons-material/Person';
@@ -26,9 +27,16 @@ import SettingsIcon from '@mui/icons-material/Settings';
 const routes = [
   {
     type: "collapse",
+    name: "Admin Dashboard",
+    key: "adminDashboard",
+    icon: <DashboardIcon/>,
+    route: "/adminDashboard",
+    component: <AdminDashboard />,
+  },
+  {
+    type: "collapse",
     name: "Users",
     key: "users",
-    // icon: <Icon fontSize="small">table_view</Icon>,
     icon: <PersonIcon/>,
     route: "/users",
     component: <Users />,
