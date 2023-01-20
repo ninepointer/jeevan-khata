@@ -26,12 +26,12 @@ import Tooltip from "@mui/material/Tooltip";
 import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+import MDBox from "../../../../components/MDBox";
+import MDTypography from "../../../../components/MDTypography";
 
 // Material Dashboard 2 React base styles
-import colors from "assets/theme/base/colors";
-import typography from "assets/theme/base/typography";
+import colors from "../../../../assets/theme/base/colors";
+import typography from "../../../../assets/theme/base/typography";
 
 function ProfileInfoCard({ title, description, info, social, action, shadow }) {
   const labels = [];
@@ -56,9 +56,10 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
 
   // Render the card info items
   const renderItems = labels.map((label, key) => (
+    
     <MDBox key={label} display="flex" py={1} pr={2}>
       <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
-        {label}: &nbsp;
+        {`${label.split(/(?=[A-Z])/)[0]} ${label.split(/(?=[A-Z])/)[1] ? label.split(/(?=[A-Z])/)[1] : ""} ${label.split(/(?=[A-Z])/)[2] ? label.split(/(?=[A-Z])/)[2] : ""}`}: &nbsp;
       </MDTypography>
       <MDTypography variant="button" fontWeight="regular" color="text">
         &nbsp;{values[key]}
@@ -102,9 +103,9 @@ function ProfileInfoCard({ title, description, info, social, action, shadow }) {
             {description}
           </MDTypography>
         </MDBox>
-        <MDBox opacity={0.3}>
+        {/* <MDBox opacity={0.3}>
           <Divider />
-        </MDBox>
+        </MDBox> */}
         <MDBox>
           {renderItems}
           <MDBox display="flex" py={1} pr={2}>

@@ -43,24 +43,24 @@ const User = () => {
   
     useEffect(()=>{
   
-        // axios.get(`${baseUrl}api/v1/readuserdetails`)
-        // .then((res)=>{
-        //   let data = res.data;
-        //           let active = data.filter((elem) => {
-        //               return elem.status === "Active"
-        //           })
-        //           setActiveData(active);
-        //           console.log(active);
+        axios.get(`${baseUrl}api/v1/readuserdetails`)
+        .then((res)=>{
+          let data = res.data;
+                  let active = data.filter((elem) => {
+                      return elem.status === "Active"
+                  })
+                  setActiveData(active);
+                  console.log(active);
   
-        //           // let inActive = data.filter((elem) => {
-        //           //     return elem.status === "Inactive"
-        //           // })
-        //           // setInactiveData(inActive);
-        //           // console.log(inactiveData);
-        // }).catch((err)=>{
-        //     window.alert("Server Down");
-        //     return new Error(err);
-        // })
+                  // let inActive = data.filter((elem) => {
+                  //     return elem.status === "Inactive"
+                  // })
+                  // setInactiveData(inActive);
+                  // console.log(inactiveData);
+        }).catch((err)=>{
+            window.alert("Server Down");
+            return new Error(err);
+        })
     },[reRender])
   
     console.log(activeData);

@@ -21,19 +21,25 @@ import PropTypes from "prop-types";
 // react-chartjs-2 components
 import { Bar } from "react-chartjs-2";
 
+
 // @mui material components
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+import MDBox from "../../../../components/MDBox";
+import MDTypography from "../../../../components/MDTypography";
 
 // HorizontalBarChart configurations
-import configs from "examples/Charts/BarCharts/HorizontalBarChart/configs";
+import configs from "../../../../examples/Charts/BarCharts/HorizontalBarChart/configs";
 
 // Material Dashboard 2 React base styles
-import colors from "assets/theme/base/colors";
+import colors from "../../../../assets/theme/base/colors";
+// import { Chart } from "chart.js";
+
+// import { Chart } from 'chart.js';
+
+
 
 function HorizontalBarChart({ icon, title, description, height, chart }) {
   const chartDatasets = chart.datasets

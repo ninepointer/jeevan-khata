@@ -30,14 +30,15 @@ import Icon from "@mui/material/Icon";
 import Autocomplete from "@mui/material/Autocomplete";
 
 // Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import MDPagination from "components/MDPagination";
+import MDBox from "../../../components/MDBox";
+import MDTypography from "../../../components/MDTypography";
+import MDInput from "../../../components/MDInput";
+import MDPagination from "../../../components/MDPagination";
 
 // Material Dashboard 2 React example components
-import DataTableHeadCell from "examples/Tables/DataTable/DataTableHeadCell";
-import DataTableBodyCell from "examples/Tables/DataTable/DataTableBodyCell";
+import DataTableHeadCell from "./DataTableHeadCell";
+import DataTableBodyCell from "./DataTableBodyCell";
+import MDButton from "../../../components/MDButton";
 
 function DataTable({
   entriesPerPage,
@@ -47,11 +48,12 @@ function DataTable({
   pagination,
   isSorted,
   noEndBorder,
+  addButton,
 }) {
   const defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
   const entries = entriesPerPage.entries
     ? entriesPerPage.entries.map((el) => el.toString())
-    : ["5", "10", "15", "20", "25"];
+    : ["100", "200", "300", "400", "500"];
   const columns = useMemo(() => table.columns, [table]);
   const data = useMemo(() => table.rows, [table]);
 
@@ -110,6 +112,8 @@ function DataTable({
 
   // Search input value state
   const [search, setSearch] = useState(globalFilter);
+  const nextbutton = "Next"
+  const prevbutton = "Prev"
 
   // Search input state handle
   const onSearchChange = useAsyncDebounce((value) => {
@@ -215,8 +219,11 @@ function DataTable({
                   </DataTableBodyCell>
                 ))}
               </TableRow>
+              
             );
+            
           })}
+         
         </TableBody>
       </Table>
 
@@ -262,6 +269,31 @@ function DataTable({
             )}
           </MDPagination>
         )}
+        {addButton && (
+            <MDBox 
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row", lg: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm:"centre",lg:"flex" }}
+            >
+              <MDButton
+                fullWidth
+                variant="contained"
+                color="info"
+              >
+                Prev
+              </MDButton>
+              <MDButton
+                fullWidth
+                variant="contained"
+                color="info"
+              >
+                Next
+              </MDButton>
+              
+              
+            </MDBox>
+          )}
       </MDBox>
     </TableContainer>
   );
@@ -269,12 +301,13 @@ function DataTable({
 
 // Setting default values for the props of DataTable
 DataTable.defaultProps = {
-  entriesPerPage: { defaultValue: 10, entries: [5, 10, 15, 20, 25] },
+  entriesPerPage: { defaultValue: 15, entries: [5, 10, 15, 20, 25] },
   canSearch: false,
   showTotalEntries: true,
   pagination: { variant: "gradient", color: "info" },
   isSorted: true,
   noEndBorder: false,
+  addButton:false
 };
 
 // Typechecking props for the DataTable
@@ -287,6 +320,7 @@ DataTable.propTypes = {
     PropTypes.bool,
   ]),
   canSearch: PropTypes.bool,
+  addButton: PropTypes.bool,
   showTotalEntries: PropTypes.bool,
   table: PropTypes.objectOf(PropTypes.array).isRequired,
   pagination: PropTypes.shape({

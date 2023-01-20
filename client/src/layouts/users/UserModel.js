@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-//import { userContext } from '../../AuthContext';
+import { userContext } from '../../AuthContext';
 import uniqid from "uniqid";
 import {useState, useContext} from "react"
 
@@ -43,13 +43,12 @@ const UserModel = () => {
   });
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
     
-  //const getDetails = useContext(userContext);
+  const getDetails = useContext(userContext);
   let uId = uniqid();
   let date = new Date();
   let createdOn = `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`
   let lastModified = createdOn;
-  //let createdBy = getDetails.userDetails.name
-  let createdBy = "Ganesh Ji"
+  let createdBy = getDetails.userDetails.name
 
   const [reRender, setReRender] = useState(true);
 

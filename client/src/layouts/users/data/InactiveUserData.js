@@ -21,19 +21,19 @@ export default function AllInActiveUsers() {
   useEffect(()=>{
 
       // axios.get(`${baseUrl}api/v1/readmocktradecompanypagination/${skip}/${limit}`)
-      // axios.get(`${baseUrl}api/v1/readuserdetails`)
-      // .then((res)=>{
-      //   let data = res.data;
-      //     console.log(data);
-      //           let inActive = data.filter((elem) => {
-      //               return elem.status === "Inactive"
-      //           })
-      //           setInactiveData(inActive);
-      //           //console.log(inactiveData);
-      // }).catch((err)=>{
-      //     window.alert("Server Down");
-      //     return new Error(err);
-      // })
+      axios.get(`${baseUrl}api/v1/readuserdetails`)
+      .then((res)=>{
+        let data = res.data;
+          console.log(data);
+                let inActive = data.filter((elem) => {
+                    return elem.status === "Inactive"
+                })
+                setInactiveData(inActive);
+                //console.log(inactiveData);
+      }).catch((err)=>{
+          window.alert("Server Down");
+          return new Error(err);
+      })
   },[])
 
   console.log(inactiveData);
