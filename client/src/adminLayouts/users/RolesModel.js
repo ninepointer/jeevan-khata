@@ -30,9 +30,9 @@ const RolesModel = () => {
 
   return (
     <div>
-      <MDButton variant="outlined" onClick={handleClickOpen}>
+      {/* <MDButton variant="outlined" onClick={handleClickOpen}>
         Create Role
-      </MDButton>
+      </MDButton> */}
       <Dialog
         fullScreen={fullScreen}
         open={open}

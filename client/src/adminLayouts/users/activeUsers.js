@@ -25,8 +25,13 @@ import UserModel from './UserModel';
 import activeUserData from './data/activeUserData';
 import UserEditModel from "./UserEditModel";
 
-const activeUser = () => {
+const activeUser = ({setCreateBio}) => {
     const { columns, rows } = activeUserData();
+
+    function openCreateUser(){
+        console.log("in open")
+        setCreateBio(true);
+    }
 
     return (
         <>
@@ -47,10 +52,14 @@ const activeUser = () => {
                                     display: 'flex',
                                     justifyContent: "space-between",
                                 }}>
+
                                 <MDTypography variant="h6" color="white" py={2.5}>
-                                    Jeevan Khata Active Users
+                                    Bio Markers
                                 </MDTypography>
-                                <UserModel />
+
+                                <button  onClick={openCreateUser}>
+                                  Create
+                                </button>
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable
@@ -63,37 +72,6 @@ const activeUser = () => {
                             </MDBox>
                         </Card>
                     </Grid>
-                    {/* <Grid item xs={12} md={12} lg={12}>
-                        <Card>
-                            <MDBox
-                                mx={2}
-                                mt={-3}
-                                py={1}
-                                px={2}
-                                variant="gradient"
-                                bgColor="info"
-                                borderRadius="lg"
-                                coloredShadow="info"
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: "space-between",
-                                }}>
-                                <MDTypography variant="h6" color="white" py={2.5}>
-                                    User Details (Inactive Users)
-                                </MDTypography>
-                                <UserModel />
-                            </MDBox>
-                            <MDBox pt={3}>
-                                <DataTable
-                                    table={{ icolumns, irows }}
-                                    isSorted={false}
-                                    entriesPerPage={false}
-                                    showTotalEntries={false}
-                                    noEndBorder
-                                />
-                            </MDBox>
-                        </Card>
-                    </Grid> */}
                 </Grid>
             </MDBox>
         </>
@@ -101,3 +79,10 @@ const activeUser = () => {
 }
 
 export default activeUser
+
+{/* <MDTypography variant="h6" color="white" py={2.5}>
+Jeevan Khata Active Users
+</MDTypography>
+<MDButton variant="outlined" onClick={}>
+Create User
+</MDButton> */}
