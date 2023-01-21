@@ -7,20 +7,38 @@ import CatchAsync from '../middlewares/CatchAsync';
 
 interface RoleInterface{
     roleName: string,
+    reportAccess: boolean,
+    attributeAccess: boolean,
+    userAccess: boolean,
+    analyticsAccess: boolean
 }
 
 export const createRole = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
-    const{roleName}:RoleInterface = req.body;
+    const{roleName, reportAccess, attributeAccess, userAccess, analyticsAccess }:RoleInterface = req.body;
 
     const newRole = await Role.create({
         roleName: roleName,
-        // createdBy: (req as any).user?._id,
-        createdBy: '63cb5c3cfa001ccb514d010b',
+        reportAccess: reportAccess,
+        attributesAccess: attributeAccess,
+        userAccess: userAccess,
+        analyticsAccess: analyticsAccess,
+        createdBy: (req as any).user?._id,
+        // createdBy: '63cb5c3cfa001ccb514d010b',
         createdOn: Date.now(),
-        // lastModifiedBy: (req as any).user._id,
-        lastModifiedBy: '63cb5c3cfa001ccb514d010b',
+        lastModifiedBy: (req as any).user._id,
+        // lastModifiedBy: '63cb5c3cfa001ccb514d010b',
         lastModifiedOn: Date.now(),
     });
 
     res.status(201).json({status: 'Success', message: 'Role created', data: newRole});
+});
+
+export const getRoles = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
+    const roles = await Role.find();
+
+    if(!roles) return next(createCustomError('Can\'t get roles', 404 ));
+
+    res.status(200).json({status: 'Success', data: roles, results: roles.length });
+
+
 });

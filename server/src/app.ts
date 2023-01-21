@@ -10,6 +10,7 @@ import cors from 'cors';
 import userRoutes from './routes/userRoutes';
 import roleRoutes from './routes/roleRoutes';
 import errorHandler from './middlewares/errorHandler';
+import bioMarkerRoutes from './routes/bioMarkerRoutes';
 const app = express();
 
 const limiter = rateLimit({
@@ -28,7 +29,8 @@ app.get('/', (req:Request,res:Response)=>{
     res.send('Jeevan Khata');
 });
 app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/roles', roleRoutes)
+app.use('/api/v1/roles', roleRoutes);
+app.use('/api/v1/bioMarkers', bioMarkerRoutes);
 
 
 app.use(errorHandler);

@@ -1,8 +1,9 @@
 import express, {Router} from 'express';
-import { createRole } from '../controllers/roleController';
+import { createRole, getRoles } from '../controllers/roleController';
+import { protect } from '../controllers/authController';
 
 const router = express.Router();
 
-router.route('/').get().post(createRole);
+router.route('/').get(protect, getRoles).post(protect, createRole);
 
 export default router;

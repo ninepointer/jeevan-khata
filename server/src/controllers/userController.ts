@@ -23,8 +23,10 @@ interface User{
 export const createUser =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     const{firstName, lastName, gender, email, password, passwordConfirm, mobile, city, state }: User = req.body;
 
+    //Check for required fields 
     if(!(email ||password || mobile || firstName || lastName || gender))return next(createCustomError('Eneter all mandatory fields.', 401));
 
+    //Check if user exists
     if(await User.find({email})) return next(createCustomError('User with this email already exists. Please login with existing email.', 401));
     const user = await User.create({firstName, lastName, gender, email, password, passwordConfirm, mobile, city, state });
 
