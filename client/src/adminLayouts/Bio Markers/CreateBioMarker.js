@@ -20,9 +20,16 @@ import Switch from "@mui/material/Switch";
 
 
 
-// const CreateBioMarker = ({Render}) => {
   const CreateBioMarker = ({setCreateBio}) => {
-    // const {reRender, setReRender} = Render
+
+    let bioMarkerTypeDataFirst = {
+      gender: "",
+      ageGroupStartRange: "",
+      ageGroupEndRange: "",
+      ageGroupUnit: "",
+      range: "",
+      bodyCondition: "",
+    };
     let obj = {
       id : (
         <MDTypography component="a" href="#" variant="caption">
@@ -42,7 +49,7 @@ import Switch from "@mui/material/Switch";
               id="demo-simple-select-standard"
               label=""
               sx={{margin: 1, padding : 1, width:"50px"}}
-              onChange={(e)=>{bioMarkerTypeData.gender = e.target.value}}
+              onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
               >
               <MenuItem value="Male">Male</MenuItem>
               <MenuItem value="Female">Female</MenuItem>
@@ -53,42 +60,39 @@ import Switch from "@mui/material/Switch";
       agegroupstart : ( 
         <TextField
         id="outlined-basic" label="" variant="standard" type={" number"}
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupStartRange = e.target.value}}/>
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
         ),
   
       agegroupend : (
         <TextField
         id="outlined-basic" label="" variant="standard" type="number"
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupEndRange = e.target.value}}/>
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
       ),
         
       agegroupunit : (
         <TextField
         id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupUnit = e.target.value}}/>
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}/>
         ),
         
       range : (
         <TextField
         id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.range = e.target.value}}/>
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
         ),
   
       bodycondition : (
         <TextField
         id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.bodyCondition = e.target.value}}/>
-        ),
-        action : (
-          <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(id)=>{actionButton("0001")}}>
-          OK
-        </MDButton>
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}/>
         )
     }
     const {columns, rows} = CreateBioMarkerTableData();
     const [row, setRow] = useState([
       obj
     ]);
+
+
 
     let uId = uniqid();
     let date = new Date();
@@ -102,30 +106,11 @@ import Switch from "@mui/material/Switch";
       name: "",
       unit: "",
       status: "",
-      bioMarkerType: [
-        
-      ]
+      bioMarkerType: []
     });
 
-    let [bioMarkerTypeData, setBioMarkerTypeData] = useState({
-      gender: "",
-      ageGroupStartRange: "",
-      ageGroupEndRange: "",
-      ageGroupUnit: "",
-      range: "",
-      bodyCondition: "",
-    })
-
-    let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
-    const [render, setRender] = useState(true);
-      
-    // useEffect(()=>{
-
-    // }, [render, row])
-
-    // console.log(getDetails)
-    // let createdBy = getDetails.userDetails.name
-
+    // At initial pushing data to biomarkertype
+    formData.bioMarkerType.push(((bioMarkerTypeDataFirst)));
   
     const handleClose = () => {
       setCreateBio(false);
@@ -134,71 +119,48 @@ import Switch from "@mui/material/Switch";
     // data sent to backend function
     async function formSubmit(){
 
+      if(formData.status){
+        formData.status = "Active";
+      } else{
+        formData.status = "Inactive";
+      }
+
       setFormData(formData);
-      // console.log(formData)
+      console.log(formData)
       const { name, unit, gender, ageGroupStartRange, ageGroupEndRange, ageGroupUnit, range, bodyCondition, status } = formData;
 
-      // const res = await fetch(`${baseUrl}api/v1/instrument`, {
-      //     method: "POST",
-      //     credentials:"include",
-      //     headers: {
-      //         "content-type" : "application/json",
-      //         "Access-Control-Allow-Credentials": true
-      //     },
-      //     body: JSON.stringify({
-      //       name, unit, gender, ageGroupStartRange, ageGroupEndRange, ageGroupUnit, range, bodyCondition, status, uId, lastModifiedOn, lastModifiedBy, isDeleted, createdBy, createdOn
-      //     })
-      // });
-
-      // const data = await res.json();
-      // console.log(data);
-      // if (data.status === 422 || data.error || !data) {
-      //     window.alert(data.error);
-      // } else {
-      //     // window.alert("Bio Marker Created Succesfully");
-      //     console.log("entry succesfull");
-      // }
-      // reRender ? setReRender(false) : setReRender(true)
       setCreateBio(false);
     }
     
+    // deleting one item from bio marker type
     function deleteItem(id){
-      // if(row.length !== 1){
+        console.log("id", id, row)
         let update = row.filter((elem)=>{
           console.log(elem.id.props.children , id)
           return elem.id.props.children !== id;
         })
-        setRow(update);
-      // }
-    }
-
-    console.log("row outer", row)
-
-    function actionButton(id){
-      let update = row.filter((elem)=>{
-        // console.log(elem.id.props.children , id)
-        return elem.id.props.children === id;
-      })
-      // let tempArr = tempArr.push(update[0]); 
-      console.log(update[0])
-      setBioMarkerTypeData(bioMarkerTypeData);
-      formData.bioMarkerType.push(JSON.parse(JSON.stringify(bioMarkerTypeData)));
-      // setAddedBio(tempArr);
-      // deleteItem(id);
-      // console.log(formData)
+        setRow([...update]);
     }
 
 
+    // Adding bio marker type
     function onCreate(){
       let obj = {};
+
+      let bioMarkerTypeData = {
+        gender: "",
+        ageGroupStartRange: "",
+        ageGroupEndRange: "",
+        ageGroupUnit: "",
+        range: "",
+        bodyCondition: "",
+      };
 
       obj.id = (
         <MDTypography component="a" href="#" variant="caption">
           {Date.now()}
         </MDTypography>
       );
-
-      // console.log("id", obj.id)
 
       obj.delete = (
         <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(e)=>{deleteItem(obj.id.props.children)}}>
@@ -215,56 +177,51 @@ import Switch from "@mui/material/Switch";
               label=""
               sx={{margin: 1, padding : .7, width:"50px"}}
               onChange={(e)=>{bioMarkerTypeData.gender = e.target.value}}
+              
               >
               <MenuItem value="Male">Male</MenuItem>
               <MenuItem value="Female">Female</MenuItem>
             </Select>
         </FormControl>
-        // "vijay"
       );
 
       obj.agegroupstart = ( 
         <TextField
         id="outlined-basic" label="" variant="standard" type={" number"}
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupStartRange = e.target.value}}/>
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupStartRange = e.target.value}}
+         />
         );
 
       obj.agegroupend = (
         <TextField
         id="outlined-basic" label="" variant="standard" type="number"
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupEndRange = e.target.value}}/>);
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupEndRange = e.target.value}}
+        />);
         
       obj.agegroupunit = (
         <TextField
         id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupUnit = e.target.value}}/>);
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupUnit = e.target.value}}
+         />);
         
       obj.range = (
         <TextField
         id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.range = e.target.value}}/>);
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.range = e.target.value}}
+        />);
 
       obj.bodycondition = (
         <TextField
         id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.bodyCondition = e.target.value}}/>);
+        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.bodyCondition = e.target.value}}
+        />);
 
-      obj.action = (
-        <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(id)=>{actionButton(obj.id.props.children)}}>
-        OK
-      </MDButton>
-        );
 
-        // tempRow.push(obj);
       setRow((oldState)=> [...oldState, obj])
-
-
-
-      render ? setRender(false):setRender(true)
+      formData.bioMarkerType.push(((bioMarkerTypeData)));
     }
 
 
-    console.log(formData)
   
     return (
       <div>
@@ -323,7 +280,7 @@ import Switch from "@mui/material/Switch";
 
 
         <Button autoFocus onClick={formSubmit}>
-          OK
+          Save
         </Button>
         <Button onClick={handleClose} autoFocus>
           Close

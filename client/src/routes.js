@@ -3,6 +3,7 @@
 import AdminDashboard from "./adminLayouts/adminDashboard";
 import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
 import UnitLayout from "./adminLayouts/units/unitLayout";
+import UserLayout from "./adminLayouts/users/activeUsers";
 
 // @mui icons
 import PersonIcon from '@mui/icons-material/Person';
@@ -51,6 +52,14 @@ const routes = [
     icon: <PersonIcon/>,
     route: "/units",
     component: <UnitLayout />,
+  },
+  {
+    type: "collapse",
+    name: "Users",
+    key: "users",
+    icon: <PersonIcon/>,
+    route: "/users",
+    component: <UserLayout />,
   },
 
 ];

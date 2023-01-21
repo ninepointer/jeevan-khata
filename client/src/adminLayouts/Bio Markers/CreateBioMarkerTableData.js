@@ -11,7 +11,6 @@ export default function CreateBioMarkerTableData() {
           { Header: "Age Group Unit", accessor: "agegroupunit", align: "center" },
           { Header: "Range", accessor: "range", align: "center" },
           { Header: "Body Condition", accessor: "bodycondition", align: "center" }, 
-          { Header: "Action", accessor: "action", align: "center" },        
         ],
   
         rows: []
