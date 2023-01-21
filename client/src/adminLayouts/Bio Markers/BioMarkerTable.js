@@ -49,7 +49,7 @@ const BioMarkerTable = ({setCreateBio}) => {
                                     Bio Markers
                                 </MDTypography>
 
-                                <MDButton variant="outlined" color="info" onClick={onCreate}>
+                                <MDButton variant="outlined" color="white" onClick={onCreate}>
                                   Create Bio Marker
                                 </MDButton>
                             </MDBox>
