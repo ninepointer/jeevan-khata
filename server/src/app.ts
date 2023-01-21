@@ -1,0 +1,36 @@
+import express, {Request, Response} from 'express';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+// import xss from 'xss-clean';
+import hpp from 'hpp';
+import rateLimit from 'express-rate-limit';
+import cors from 'cors';
+
+
+import userRoutes from './routes/userRoutes';
+import roleRoutes from './routes/roleRoutes';
+import errorHandler from './middlewares/errorHandler';
+const app = express();
+
+const limiter = rateLimit({
+    max:1000,
+    windowMs: 60*1000*1000,
+    message: 'Too many requests from this ip. Try again later.' 
+});
+app.use(cors());
+app.use(helmet());
+app.use('/api', limiter);
+
+app.use(express.json({limit:'25kb'}));
+app.use(mongoSanitize());
+// app.use(xss());
+app.get('/', (req:Request,res:Response)=>{
+    res.send('Jeevan Khata');
+});
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/roles', roleRoutes)
+
+
+app.use(errorHandler);
+
+export default app;
