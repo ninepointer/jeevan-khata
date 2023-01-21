@@ -2,6 +2,7 @@
 // Material Dashboard 2 React layouts
 import Users from "./adminLayouts/users";
 import AdminDashboard from "./adminLayouts/adminDashboard";
+import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
 
 // @mui icons
 import PersonIcon from '@mui/icons-material/Person';
@@ -17,14 +18,24 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Icon from "@mui/material/Icon";
-import ContactPageIcon from '@mui/icons-material/ContactPage';
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
+
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import InventoryIcon from '@mui/icons-material/Inventory'; 
 import SettingsIcon from '@mui/icons-material/Settings';
 // import SettingIcon from '@mui/icons-material/Setting'; 
 
+
 const routes = [
+ 
+  {
+    type: "collapse",
+    name: "Bio Markers",
+    key: "biomarkers",
+    // icon: <Icon fontSize="small">person</Icon>,
+    icon: <AccountBoxIcon/>,
+    route: "/biomarkers",
+    component: <BioMarkerLayout />,
+  },
   {
     type: "collapse",
     name: "Admin Dashboard",

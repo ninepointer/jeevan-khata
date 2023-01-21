@@ -33,6 +33,8 @@ import createCache from "@emotion/cache";
 
 // Material Dashboard 2 React routes
 import routes from "./routes";
+// import adminRoutes from "./routes";
+// import userRoutes from "./routesUser";
 
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./context";
@@ -40,10 +42,9 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "./
 // Images
 import brandWhite from "./assets/images/logo-ct.png";
 import brandDark from "./assets/images/logo-ct-dark.png";
-import SignIn from "./adminLayouts/authentication/sign-in"
-import User from "./adminLayouts/users/index"
-import NewMain from "./NewMain"
+// import SignIn from "./layouts/authentication/sign-in"
 import { userContext } from "./AuthContext";
+import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -183,7 +184,7 @@ export default function App() {
         {layout === "companyposition" && <Configurator />}
         <Routes>
         {getRoutes(routes)}
-          <Route path="*" element={<User />} />
+          <Route path="*" element={<BioMarkerLayout />} />
         </Routes>
       </ThemeProvider>
     
