@@ -3,6 +3,7 @@ import Role from '../models/Role';
 import {createCustomError} from '../errors/customError';
 import {promisifiedVerify, signToken} from '../utils/authUtil';
 import CatchAsync from '../middlewares/CatchAsync';
+import role from '../models/Role';
 
 
 interface RoleInterface{
@@ -15,6 +16,8 @@ interface RoleInterface{
 
 export const createRole = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
     const{roleName, reportAccess, attributeAccess, userAccess, analyticsAccess }:RoleInterface = req.body;
+    //check if role exisits
+    if(await Role.find({roleName})) return next(createCustomError('Role already exists. Please edit the existing role.', 401));
 
     const newRole = await Role.create({
         roleName: roleName,
