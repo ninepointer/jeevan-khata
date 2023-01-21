@@ -9,7 +9,7 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
 import MDTypography from "../../components/MDTypography";
-import MDButton from "../../components/MDButton";
+import MDButton from "../../components/MDBox";
 
 
 // Material Dashboard 2 React example components
@@ -21,17 +21,10 @@ import EditSharpIcon from '@mui/icons-material/EditSharp';
 
 
 // Data
-import UserModel from './UserModel';
-import activeUserData from './data/activeUserData';
-import UserEditModel from "./UserEditModel";
+import deletedUserData from './data/deletedUsersData';
 
-const activeUser = ({setCreateBio}) => {
-    const { columns, rows } = activeUserData();
-
-    function openCreateUser(){
-        console.log("in open")
-        setCreateBio(true);
-    }
+const deletedUser = () => {
+    const { columns, rows } = deletedUserData();
 
     return (
         <>
@@ -52,14 +45,9 @@ const activeUser = ({setCreateBio}) => {
                                     display: 'flex',
                                     justifyContent: "space-between",
                                 }}>
-
                                 <MDTypography variant="h6" color="white" py={1}>
-                                    Bio Markers
+                                    Jeevan Khata Active Users
                                 </MDTypography>
-
-                                <MDButton variant="outlined" onClick={openCreateUser}>
-                                  Create
-                                </MDButton>
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable
@@ -78,11 +66,4 @@ const activeUser = ({setCreateBio}) => {
     )
 }
 
-export default activeUser
-
-{/* <MDTypography variant="h6" color="white" py={2.5}>
-Jeevan Khata Active Users
-</MDTypography>
-<MDButton variant="outlined" onClick={}>
-Create User
-</MDButton> */}
+export default deletedUser

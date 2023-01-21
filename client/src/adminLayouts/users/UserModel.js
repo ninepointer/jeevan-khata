@@ -19,7 +19,7 @@ import axios from "axios"
 
 
 
-const UserModel = ({setCreateUser}) => {
+const UserModel = ({setCreateBio}) => {
 
   const [formstate, setformstate] = useState({
     firstName: "",
@@ -43,7 +43,7 @@ const UserModel = ({setCreateUser}) => {
 
 
   const handleClose = () => {
-    setCreateUser(false);
+    setCreateBio(false);
   };
 
 
@@ -74,7 +74,7 @@ const UserModel = ({setCreateUser}) => {
         window.alert("User Created Successfully");
         console.log("entry succesfull");
     }
-    setCreateUser(false);
+    setCreateBio(false);
     // reRender ? setReRender(false) : setReRender(true)
 
 }
