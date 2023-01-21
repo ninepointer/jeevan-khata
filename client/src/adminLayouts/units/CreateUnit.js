@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {useContext, useState, useEffect} from "react";
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,6 +16,8 @@ import MDButton from "../../components/MDButton";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 
   const CreateUnit = ({setCreateUnit}) => {
@@ -33,19 +36,19 @@ import Switch from "@mui/material/Switch";
   
       cunitfullname : ( 
         <TextField
-        id="outlined-basic" label="" variant="standard"
+        id="filled-basic" label="" variant="filled"
         sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionData.unitConversionFullName = e.target.value}}/>
         ),
   
       cunitid : (
         <TextField
-        id="outlined-basic" label="" variant="standard"
+        id="filled-basic" label="" variant="filled"
         sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionData.unitConversionId = e.target.value}}/>
       ),
         
       value : (
         <TextField
-        id="outlined-basic" label="" variant="standard" type="number"
+        id="filled-basic" label="" variant="filled" type="number"
         sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{unitConversionData.value = e.target.value}}/>
         ),
     }
@@ -140,19 +143,19 @@ import Switch from "@mui/material/Switch";
 
       obj.cunitfullname = (
         <TextField
-        id="outlined-basic" label="" variant="standard" type={" number"}
+        id="filled-basic" label="" variant="filled"
         sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionData.unitConversionFullName = e.target.value}}/>
         );
 
       obj.cunitid = ( 
         <TextField
-        id="outlined-basic" label="" variant="standard" type={" number"}
+        id="filled-basic" label="" variant="filled"
         sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionData.unitConversionId = e.target.value}}/>
         );
 
       obj.value = (
         <TextField
-        id="outlined-basic" label="" variant="standard" type="number"
+        id="filled-basic" label="" variant="filled" type="number"
         sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{unitConversionData.value = e.target.value}}/>);
 
         // tempRow.push(obj);
@@ -166,17 +169,29 @@ import Switch from "@mui/material/Switch";
 
     console.log(formData)
   
-    return (
+    return ( 
       <>
+        <MDBox pt={3} pb={3}>
+        <MDTypography variant="h6" fontWeight="medium" borderRadius="10px" color="white" backgroundColor="#afb0b2" marginLeft="15px">
+          &nbsp;&nbsp;Create Unit
+        </MDTypography>
+        <Box
+            component="form"
+            sx={{
+              '& .MuiTextField-root': { m: 1, width: '25ch',margin: 1, padding : 1, width:"200px"  },
+            }}
+            noValidate
+            autoComplete="off"
+          >
         <TextField
-        id="outlined-basic" label="Unit FullName" variant="standard"
-          sx={{margin: 1, padding : 2, width:"300px"}} onChange={(e)=>{formData.unitFullName = e.target.value}}/>
+        id="filled-basic" label="Unit Name" variant="filled"
+          sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{formData.unitFullName = e.target.value}}/>
         
         <TextField
-        id="outlined-basic" label="Unit Id" variant="standard"
-        sx={{margin: 1, padding : 2, width:"300px"}} onChange={(e)=>{formData.unitId = e.target.value}}/>
+        id="filled-basic" label="Unit Id" variant="filled"
+        sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.unitId = e.target.value}}/>
 
-        <MDBox pt={6} pb={3}>
+        <MDBox pt={3} pb={3}>
           <Grid container spacing={6}>
               <Grid item xs={12} md={12} lg={12}>
                   <Card>
@@ -202,7 +217,7 @@ import Switch from "@mui/material/Switch";
                             Add
                           </MDButton>
                       </MDBox>
-                      <MDBox pt={3}>
+                      <MDBox pt={2}>
                           <DataTable
                               table={{ columns, rows: row }}
                               isSorted={false}
@@ -217,10 +232,10 @@ import Switch from "@mui/material/Switch";
     
         </MDBox>
 
-        <MDBox mt={0.5} display="flex" alignItems="center">
-          <MDBox component="span" variant="button" fontWeight="light" fontSize="15px" color="text">Status</MDBox><Switch label="Status"  onChange={(e) => {formData.status = e.target.value}} />
+        <MDBox mt={1} ml={2} display="flex" alignItems="center">
+          <MDBox component="span" variant="button" fontWeight="dark" fontSize="15px" color="text">Status</MDBox><Switch label="Status"  onChange={(e) => {formData.status = e.target.value}} />
         </MDBox>
-
+        </Box>
 
         <Button autoFocus onClick={formSubmit}>
           Save
@@ -228,6 +243,7 @@ import Switch from "@mui/material/Switch";
         <Button onClick={handleClose} autoFocus>
           Close
         </Button>
+        </MDBox>
       </>
     );
   }

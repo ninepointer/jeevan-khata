@@ -45,7 +45,7 @@ const BioMarkerTable = ({setCreateBio}) => {
                                     justifyContent: "space-between",
                                 }}>
 
-                                <MDTypography variant="h6" color="white" py={2.5}>
+                                <MDTypography variant="h6" color="white" py={1}>
                                     Bio Markers
                                 </MDTypography>
 

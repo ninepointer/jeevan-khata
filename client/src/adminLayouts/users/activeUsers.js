@@ -54,14 +54,14 @@ const activeUser = ({setCreateBio}) => {
                                 }}>
 
                                 <MDTypography variant="h6" color="white" py={1}>
-                                    Bio Markers
+                                    Users
                                 </MDTypography>
 
                                 <MDButton variant="outlined" onClick={openCreateUser}>
                                   Create
                                 </MDButton>
                             </MDBox>
-                            <MDBox pt={3}>
+                            <MDBox pt={2}>
                                 <DataTable
                                     table={{ columns, rows }}
                                     isSorted={false}
