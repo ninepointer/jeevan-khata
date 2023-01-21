@@ -1,12 +1,5 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import MDButton from '../../components/MDButton';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -19,7 +12,7 @@ import axios from "axios"
 
 
 
-const UserModel = ({setCreateBio}) => {
+const UserModel = ({setCreate}) => {
 
   const [formstate, setformstate] = useState({
     firstName: "",
@@ -43,7 +36,7 @@ const UserModel = ({setCreateBio}) => {
 
 
   const handleClose = () => {
-    setCreateBio(false);
+    setCreate(false);
   };
 
 
@@ -74,7 +67,7 @@ const UserModel = ({setCreateBio}) => {
         window.alert("User Created Successfully");
         console.log("entry succesfull");
     }
-    setCreateBio(false);
+    setCreate(false);
     // reRender ? setReRender(false) : setReRender(true)
 
 }
@@ -138,10 +131,6 @@ const UserModel = ({setCreateBio}) => {
         <TextField
           id="outlined-basic" label="Role" variant="standard" 
           sx={{ margin: 1, padding: 1, width: "300px" }} onChange={(e)=>{formstate.role = e.target.value}}/>
-
-        <TextField
-          id="outlined-basic" label="jeevanKhata Id" variant="standard" 
-          sx={{ margin: 1, padding: 1, width: "300px" }} onChange={(e)=>{formstate.jeevanKhataId = e.target.value}}/>
 
       <Button autoFocus onClick={formSubmit}>
         Save

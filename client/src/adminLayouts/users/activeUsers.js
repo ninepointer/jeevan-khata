@@ -9,7 +9,7 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
 import MDTypography from "../../components/MDTypography";
-import MDButton from "../../components/MDBox";
+import MDButton from "../../components/MDButton";
 
 
 // Material Dashboard 2 React example components
@@ -25,12 +25,11 @@ import UserModel from './UserModel';
 import activeUserData from './data/activeUserData';
 import UserEditModel from "./UserEditModel";
 
-const activeUser = ({setCreateBio}) => {
+const activeUser = ({setCreate}) => {
     const { columns, rows } = activeUserData();
 
     function openCreateUser(){
-        console.log("in open")
-        setCreateBio(true);
+        setCreate(true);
     }
 
     return (
@@ -57,9 +56,9 @@ const activeUser = ({setCreateBio}) => {
                                     Bio Markers
                                 </MDTypography>
 
-                                <button  onClick={openCreateUser}>
+                                <MDButton variant="outlined" color="white"   onClick={openCreateUser}>
                                   Create
-                                </button>
+                                </MDButton>
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable
