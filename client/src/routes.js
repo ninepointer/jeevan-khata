@@ -1,8 +1,8 @@
 
 // Material Dashboard 2 React layouts
-import Users from "./adminLayouts/users";
 import AdminDashboard from "./adminLayouts/adminDashboard";
 import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
+import UnitLayout from "./adminLayouts/units/unitLayout";
 
 // @mui icons
 import PersonIcon from '@mui/icons-material/Person';
@@ -46,11 +46,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Users",
-    key: "users",
+    name: "Units",
+    key: "units",
     icon: <PersonIcon/>,
-    route: "/users",
-    component: <Users />,
+    route: "/units",
+    component: <UnitLayout />,
   },
 
 ];

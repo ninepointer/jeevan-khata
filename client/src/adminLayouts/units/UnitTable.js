@@ -7,16 +7,24 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
 import MDTypography from "../../components/MDTypography";
+import MDButton from "../../components/MDButton";
 
 // Material Dashboard 2 React example components
 import DataTable from "../../layoutComponents/Tables/DataTable";
+import UnitData from './data/unitData';
 
 // Data
-import RolesModel from './RolesModel';
-import RolesData from './data/rolesData';
+// import RolesModel from './RolesModel';
+// import RolesData from './data/rolesData';
 
-const UserRoles = () => {
-    const { columns, rows } = RolesData();
+
+const UnitTable = ({setCreateUnit}) => {
+
+  const {columns, rows} = UnitData();
+  function onCreate(){
+    setCreateUnit(true); 
+  }
+
     return (
         <>
             <MDBox pt={6} pb={3}>
@@ -37,10 +45,13 @@ const UserRoles = () => {
                                     justifyContent: "space-between",
                                 }}>
 
-                                <MDTypography variant="h6" color="white" py={2.5}>
-                                    User Roles
+                                <MDTypography variant="h6" color="white" py={1}>
+                                    Units
                                 </MDTypography>
-                                <RolesModel />
+
+                                <MDButton variant="outlined" color="white" onClick={onCreate}>
+                                  Create Units
+                                </MDButton>
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable
@@ -59,4 +70,4 @@ const UserRoles = () => {
     )
 }
 
-export default UserRoles
+export default UnitTable

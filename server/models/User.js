@@ -87,6 +87,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required : true
     },
+    status:{
+        type: String,
+        required : true
+    }
 })
 
 const user = mongoose.model("User", userSchema);

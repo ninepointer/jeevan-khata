@@ -27,15 +27,18 @@ import breakpoints from "../../../assets/theme/base/breakpoints";
 import PersonIcon from '@mui/icons-material/Person';
 import burceMars from "../../../assets/images/bruce-mars.jpg";
 import backgroundImage from "../../../assets/images/bg-profile.jpeg";
-import ActiveUsers from "../activeUsers";
-import DeletedUsers from "../deletedUsers";
-import Roles from "../roles";
+import UnitTable from "../UnitTable";
+import CreateUnit from "../CreateUnit";
+// import ActiveUsers from "../activeUsers";
+// import DeletedUsers from "../deletedUsers";
+// import Roles from "../roles";
 
 
 
 function UserHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
+  const [isCreate, checkIsCreate] = useState(false);
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -99,30 +102,20 @@ function UserHeader({ children }) {
               {/* <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}> */}
               <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}>
                 <Tab
-                  label="Active Users"
+                  label="Units"
                   icon={
                     <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
                   }
-                />
-                <Tab
-                  label="Deleted Users"
-                  icon={
-                    <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
-                  }
-                />
-
-                <Tab
-                  label="Roles"
-                  icon={
-                    <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
-                     }
                 />
              
               </Tabs>
-            </AppBar>
-            <TabPanel value={tabValue} index={0}><ActiveUsers/> </TabPanel>
-            <TabPanel value={tabValue} index={1}><DeletedUsers/> </TabPanel>
-            <TabPanel value={tabValue} index={2}><Roles/> </TabPanel>
+            </AppBar> 
+            {isCreate ?
+            <TabPanel value={tabValue} index={0}>< CreateUnit setCreateUnit={checkIsCreate}/> </TabPanel>
+            :
+            <TabPanel value={tabValue} index={0}>< UnitTable setCreateUnit={checkIsCreate}/> </TabPanel>
+            }
+            
 
           </Grid>
         </Grid>
