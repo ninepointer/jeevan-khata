@@ -163,13 +163,13 @@ import Switch from "@mui/material/Switch";
     }
     
     function deleteItem(id){
-      if(row.length !== 1){
+      // if(row.length !== 1){
         let update = row.filter((elem)=>{
           console.log(elem.id.props.children , id)
           return elem.id.props.children !== id;
         })
         setRow(update);
-      }
+      // }
     }
 
     console.log("row outer", row)
@@ -179,11 +179,13 @@ import Switch from "@mui/material/Switch";
         // console.log(elem.id.props.children , id)
         return elem.id.props.children === id;
       })
-      let tempArr = tempArr.push(update[0]); 
-      setBioMarkerTypeData(update[0]);
-      formData.bioMarkerType.push(update[0]);
-      setAddedBio(tempArr);
-      deleteItem(id);
+      // let tempArr = tempArr.push(update[0]); 
+      console.log(update[0])
+      setBioMarkerTypeData(bioMarkerTypeData);
+      formData.bioMarkerType.push(JSON.parse(JSON.stringify(bioMarkerTypeData)));
+      // setAddedBio(tempArr);
+      // deleteItem(id);
+      // console.log(formData)
     }
 
 
@@ -262,7 +264,7 @@ import Switch from "@mui/material/Switch";
     }
 
 
-    console.log(row)
+    console.log(formData)
   
     return (
       <div>
@@ -296,7 +298,7 @@ import Switch from "@mui/material/Switch";
                             Add Bio Markers Type
                           </MDTypography>
 
-                          <MDButton variant="outlined" color="info" onClick={onCreate}>
+                          <MDButton variant="outlined" color="white" onClick={onCreate}>
                             Add
                           </MDButton>
                       </MDBox>
