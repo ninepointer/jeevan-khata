@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose, { Schema } from "mongoose";
 
 const bioMarkerSchema = new mongoose.Schema({
     name:{
@@ -11,37 +11,37 @@ const bioMarkerSchema = new mongoose.Schema({
     },
     status:{
         type: String,
-        required : true
+        // required : true
     },
     uid:{
         type: String,
-        required : true
+        // required : true
     },
     createdOn:{
         type: Date,
         default: Date.now(),
-        required : true
+        // required : true
     },
     createdBy:{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required : true
+        // required : true
     },
     lastModifiedOn:{
         type: Date,
-        required : true
+        // required : true
     },
     lastModifiedBy:{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required : true
+        // required : true
     },
     isDeleted:{
         type: Boolean,
         default: false,
-        required : true
+        // required : true
     },
-    bioMarkerTypes:{
+    bioMarkerTypes:[{
         gender : { 
             type: String,
             required : false
@@ -66,8 +66,8 @@ const bioMarkerSchema = new mongoose.Schema({
             type: String,
             required : false
         },
-    }
+    }]
 })
 
 const bioMarker = mongoose.model("BioMarker", bioMarkerSchema);
-module.exports = bioMarker;
+export default bioMarker;

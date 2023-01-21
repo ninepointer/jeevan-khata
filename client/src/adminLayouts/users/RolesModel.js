@@ -21,7 +21,7 @@ const RolesModel = ({setCreate}) => {
     analyticsAccess: "",
     status: ""
   });
-  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
     
   const getDetails = useContext(userContext);
 
@@ -40,20 +40,34 @@ const RolesModel = ({setCreate}) => {
 
     const { roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status } = formstate;
 
-    const res = await axios.post(`${baseUrl}api/v1/roles`, {
-      withCredentials: true,
+    // const res = await axios.post(`${baseUrl}api/v1/roles`, {
+    //   withCredentials: true,
+    //   headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //       "Access-Control-Allow-Credentials": true
+    //   },
+    //   body: JSON.stringify({
+    //     roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status
+
+    //   })
+    // })
+
+    const res = await fetch(`${baseUrl}api/v1/roles`, {
+      method: "POST",
+      credentials:"include",
       headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          "content-type" : "application/json",
           "Access-Control-Allow-Credentials": true
       },
       body: JSON.stringify({
         roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status
-
       })
-    })
+  });
+  
+    const data = await res.json();
            
-    const data = res.data;
+    // const data = res.data;
     console.log(data);
     if(data.status === 422 || data.error || !data){ 
         window.alert(data.error);
