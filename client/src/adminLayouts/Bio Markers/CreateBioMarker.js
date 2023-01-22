@@ -201,7 +201,6 @@ import Switch from "@mui/material/Switch";
     }
     
     // deleting one item from bio marker type
-    console.log("before delete", row)
     function deleteItem(id){
         console.log("id", id, row)
         let update = row.filter((elem)=>{

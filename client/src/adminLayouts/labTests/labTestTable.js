@@ -6,18 +6,20 @@ import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
-import MDButton from "../../components/MDButton";
 import MDTypography from "../../components/MDTypography";
+import MDButton from "../../components/MDButton";
 
 // Material Dashboard 2 React example components
 import DataTable from "../../layoutComponents/Tables/DataTable";
+import LabTestData from './data/labTestData';
 
-// Data
-import RolesModel from './RolesModel';
-import RolesData from './data/rolesData';
+const LabTest = ({setCreateLabTest}) => {
 
-const UserRoles = () => {
-    const { columns, rows } = RolesData();
+  const {columns, rows} = LabTestData();
+  function onCreate(){
+    setCreateLabTest(true); 
+  }
+
     return (
         <>
             <MDBox pt={6} pb={3}>
@@ -39,12 +41,12 @@ const UserRoles = () => {
                                 }}>
 
                                 <MDTypography variant="h6" color="white" py={1}>
-                                    User Roles
+                                    Lab Tests
                                 </MDTypography>
-                                <MDButton variant="outlined">
-                                    Create Role
+
+                                <MDButton variant="outlined" color="white" onClick={onCreate}>
+                                  Create Lab Test
                                 </MDButton>
-                                {/* onClick={handleClickOpen} */}
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable
@@ -63,4 +65,4 @@ const UserRoles = () => {
     )
 }
 
-export default UserRoles
+export default LabTest

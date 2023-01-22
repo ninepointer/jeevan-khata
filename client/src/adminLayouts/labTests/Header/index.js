@@ -27,18 +27,18 @@ import breakpoints from "../../../assets/theme/base/breakpoints";
 import PersonIcon from '@mui/icons-material/Person';
 import burceMars from "../../../assets/images/bruce-mars.jpg";
 import backgroundImage from "../../../assets/images/loginpageimage.jpeg";
-import ActiveUsers from "../activeUsers";
-import DeletedUsers from "../deletedUsers";
-import Roles from "../roles";
-import UserModel from "../UserModel";
+import LabTestTable from "../labTestTable";
+import CreateLabTest from "../CreateLabTest";
+// import ActiveUsers from "../activeUsers";
+// import DeletedUsers from "../deletedUsers";
+// import Roles from "../roles";
 
 
 
-function UserHeader({ children }) {
+function LabTestHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
   const [isCreate, checkIsCreate] = useState(false);
-
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -102,34 +102,20 @@ function UserHeader({ children }) {
               {/* <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}> */}
               <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}>
                 <Tab
-                  label="Active Users"
+                  label="Lab Tests"
                   icon={
                     <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
                   }
-                />
-                <Tab
-                  label="Deleted Users"
-                  icon={
-                    <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
-                  }
-                />
-
-                <Tab
-                  label="Roles"
-                  icon={
-                    <PersonIcon fontSize="small" sx={{ mt: -0.25}}/>
-                     }
                 />
              
               </Tabs>
-            </AppBar>
-            {console.log(isCreate)}
+            </AppBar> 
             {isCreate ?
-            <TabPanel value={tabValue} index={0}><UserModel setCreateUser={checkIsCreate}/></TabPanel>
-              :
-            <TabPanel value={tabValue} index={0}><ActiveUsers setCreateUser={checkIsCreate}/></TabPanel>}
-            <TabPanel value={tabValue} index={1}><DeletedUsers/> </TabPanel>
-            <TabPanel value={tabValue} index={2}><Roles setCreateRole={checkIsCreate}/></TabPanel>
+            <TabPanel value={tabValue} index={0}><CreateLabTest setCreateLabTest={checkIsCreate}/> </TabPanel>
+            :
+            <TabPanel value={tabValue} index={0}><LabTestTable setCreateLabTest={checkIsCreate}/> </TabPanel>
+            }
+            
 
           </Grid>
         </Grid>
@@ -143,12 +129,12 @@ function UserHeader({ children }) {
 }
 
 // Setting default props for the Header
-UserHeader.defaultProps = {
+LabTestHeader.defaultProps = {
   children: "",
 };
 
 // Typechecking props for the Header
-UserHeader.propTypes = {
+LabTestHeader.propTypes = {
   children: PropTypes.node,
 };
 
@@ -166,4 +152,4 @@ function TabPanel(props){
   )
 }
 
-export default UserHeader;
+export default LabTestHeader;

@@ -10,6 +10,7 @@ import CatchAsync from '../middlewares/CatchAsync'
 interface User{
     firstName: string,
     lastName: string,
+    dateOfBirth: Date,
     gender: string,
     email: string,
     password: string,
@@ -19,14 +20,14 @@ interface User{
 }
 
 export const createUser =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    const{firstName, lastName, gender, email, password, mobile, city, state }: User = req.body;
-
+    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state }: User = req.body;
+    console.log("User :",(req as any).user)
     //Check for required fields 
-    if(!(email ||password || mobile || firstName || lastName || gender))return next(createCustomError('Enter all mandatory fields.', 401));
+    if(!(email ||password || mobile  || firstName || lastName || dateOfBirth || gender))return next(createCustomError('Enter all mandatory fields.', 401));
 
     //Check if user exists
     if(await User.findOne({email})) return next(createCustomError('User with this email already exists. Please login with existing email.', 401));
-    const user = await User.create({firstName, lastName, gender, email, password, mobile, city, state });
+    const user = await User.create({firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state });
 
     if(!user) return next(createCustomError('Couldn\'t create user', 400));
 
@@ -35,7 +36,8 @@ export const createUser =CatchAsync(async (req:Request, res: Response, next:Next
 });
 
 export const getUsers = CatchAsync(async (req: Request, res: Response, next: NextFunction)=>{
-    const users = await User.find();
+    const users = await User.find()
+    .populate({path : "role", select: "roleName"});
 
     if(!users) return next(createCustomError('No users found.', 404));
     

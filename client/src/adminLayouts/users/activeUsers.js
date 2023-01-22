@@ -5,6 +5,7 @@ import axios from "axios";
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import ModeTwoToneIcon from '@mui/icons-material/ModeTwoTone';
 
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
@@ -25,106 +26,113 @@ import UserModel from './UserModel';
 import activeUserData from './data/activeUserData';
 import UserEditModel from "./UserEditModel";
 
-const ActiveUser = ({setCreate}) => {
+const ActiveUser = ({setCreateUser}) => {
     const { columns, rows } = activeUserData();
-    const [activeData, setActiveData] = useState([]);
+    const [activeUsers,setActiveUsers] = useState([]);
     const [reRender, setReRender] = useState(true);
 
+    function openCreateUser(){
+        console.log("in open")
+        setCreateUser(true);
+    }
+
     let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
-
-    useEffect(async()=>{
-  
-    //   fetch(`${baseUrl}api/v1/users`)
-    //     .then(response => response.json())
-    //     .then(data => console.log(data))
-    //     .catch(error => console.error(error))
-    // },[reRender])
-
-    const res = await fetch(`${baseUrl}api/v1/users`, {
-      method: "GET",
-      credentials:"include",
-      headers: {
-          "content-type" : "application/json",
+    async function getActiveUsers (){
+      const res = await fetch(`${baseUrl}api/v1/users`, {
+        method: "GET",
+        credentials:"include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
           "Access-Control-Allow-Credentials": true
       },
-      });
-      
-      const data = await res.json();
-      console.log(data);
-      setActiveData(data.data);
-      
+      },
+    )
+    let data = await res.json()
+      setActiveUsers(data.data);
+      //rows = data.data;
+      console.log(data.data)
+    }
+
+    useEffect(()=>{
+      getActiveUsers()
+      .then();
     },[reRender])
 
-    activeData.map((elem)=>{
-        let activeusers = {}
-    
-        activeusers.edit = (
-            <MDButton variant="Contained" color="info" fontWeight="medium">
-              {/* <UserEditModel data={activeData} id={elem._id} Render={{setReRender, reRender}}/> */}
-            </MDButton>
-          );
-        activeusers.jeevankhataId = (
-            <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-              {elem.jeevanKhataId}
-            </MDTypography>
-          );
-        activeusers.firstName = (
-            <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-              {elem.firstName}
-            </MDTypography>
-          );
-        activeusers.lastName = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.lastName}
-          </MDTypography>
-        );
-        activeusers.email = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.email}
-          </MDTypography>
-        );
-        activeusers.mobile = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.mobile}
-          </MDTypography>
-        );
-        activeusers.gender = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.gender}
-          </MDTypography>
-        );
-        activeusers.dateOfBirth = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {/* {elem.dateOfBirth} */}
-          </MDTypography>
-        );
-        activeusers.city = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.city}
-          </MDTypography>
-        );
-        activeusers.state = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.state}
-          </MDTypography>
-        );
-        activeusers.role = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.role}
-          </MDTypography>
-        );
-        activeusers.createdOn = (
-          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-            {elem.createdOn}
-          </MDTypography>
-        );
-       
-        rows.push(activeusers)
-    })
 
-    function openCreateUser(){
-        setCreate(true);
-    }
+    activeUsers.map((elem)=>{
+      let activeusersrows = {}
+      const dobdate = new Date(elem.dateOfBirth);
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      const dob = dobdate.toLocaleDateString('en-US', options);
+      const createdondate = new Date(elem.createdOn);
+      const options1 = { year: 'numeric', month: 'short', day: 'numeric' };
+      const createdOn = createdondate.toLocaleDateString('en-US', options1)
+      //const statuscolor = elem.status == "Active" ? "success" : "error"
+  
+      activeusersrows.edit = (
+          <MDButton variant="Contained" color="info" fontWeight="medium">
+            <ModeTwoToneIcon/>{/* <UserEditModel data={activeusersrows} id={elem._id} Render={{setReRender, reRender}}/> */}
+          </MDButton>
+        );
+        activeusersrows.jeevankhataId = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.jeevanKhataId}
+          </MDTypography>
+        );
+      activeusersrows.firstName = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.firstName}
+        </MDTypography>
+      );
+      activeusersrows.lastName = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.lastName}
+        </MDTypography>
+      );
+      activeusersrows.email = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.email}
+        </MDTypography>
+      );
+      activeusersrows.mobile = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.mobile}
+        </MDTypography>
+      );
+      activeusersrows.gender = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.gender}
+        </MDTypography>
+      );
+      activeusersrows.dateOfBirth = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {dob}
+        </MDTypography>
+      );
+      activeusersrows.city = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.city}
+        </MDTypography>
+      );
+      activeusersrows.state = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.state}
+        </MDTypography>
+      );
+      activeusersrows.role = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.role.roleName}
+        </MDTypography>
+      );
+      activeusersrows.createdOn = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {createdOn}
+        </MDTypography>
+      );
+     
+      rows.push(activeusersrows)
+    })
 
     return (
         <>
