@@ -181,25 +181,25 @@ useEffect(() => {
 
 
     // Adding bio marker type
-    let [bioMarkerTypeDataFirst, setBioMarkerTypeDataFirst] = useState({
-      gender: "",
-      ageGroupStartRange: "",
-      ageGroupEndRange: "",
-      ageGroupUnit: "",
-      range: "",
-      bodyCondition: "",
-    });
+    // let [bioMarkerTypeDataFirst, setBioMarkerTypeDataFirst] = useState({
+    //   gender: "",
+    //   ageGroupStartRange: "",
+    //   ageGroupEndRange: "",
+    //   ageGroupUnit: "",
+    //   range: "",
+    //   bodyCondition: "",
+    // });
     function onCreate(){
       // let obj = {};
 
-      // let bioMarkerTypeDataFirst = {
-      //   gender: "",
-      //   ageGroupStartRange: "",
-      //   ageGroupEndRange: "",
-      //   ageGroupUnit: "",
-      //   range: "",
-      //   bodyCondition: "",
-      // };
+      let bioMarkerTypeDataFirst = {
+        gender: "",
+        ageGroupStartRange: "",
+        ageGroupEndRange: "",
+        ageGroupUnit: "",
+        range: "",
+        bodyCondition: "",
+      };
 
     let obj = {
       id : Date.now(),
@@ -217,13 +217,13 @@ useEffect(() => {
           //helperText="Please select your gender"
           variant="filled"
           sx={{margin: 1, padding: 1, width: "100px"}}
-          // onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
-          onChange={(e) => {
-            setBioMarkerTypeDataFirst({
-              ...bioMarkerTypeDataFirst,
-              gender: e.target.value,
-            });
-          }}
+          onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
+          // onChange={(e) => {
+          //   setBioMarkerTypeDataFirst({
+          //     ...bioMarkerTypeDataFirst,
+          //     gender: e.target.value,
+          //   });
+          // }}
 
         >
           {gender.map((option) => (
@@ -383,7 +383,7 @@ useEffect(() => {
         // let newObj = (JSON.stringify(obj))
         //     (temp.current).push(newObj);
         //     setRow((temp.current))
-        setBioMarkerTypeDataFirst(bioMarkerTypeDataFirst)
+        // setBioMarkerTypeDataFirst(bioMarkerTypeDataFirst)
       setRow((oldState)=> [...oldState, obj])
       formData.bioMarkerType.push(((bioMarkerTypeDataFirst)));
       // render ? serRender(false) : serRender(true)
