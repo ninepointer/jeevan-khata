@@ -11,6 +11,7 @@ const cors_1 = __importDefault(require("cors"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const roleRoutes_1 = __importDefault(require("./routes/roleRoutes"));
 const errorHandler_1 = __importDefault(require("./middlewares/errorHandler"));
+const bioMarkerRoutes_1 = __importDefault(require("./routes/bioMarkerRoutes"));
 const app = (0, express_1.default)();
 const limiter = (0, express_rate_limit_1.default)({
     max: 1000,
@@ -28,5 +29,6 @@ app.get('/', (req, res) => {
 });
 app.use('/api/v1/users', userRoutes_1.default);
 app.use('/api/v1/roles', roleRoutes_1.default);
+app.use('/api/v1/bioMarkers', bioMarkerRoutes_1.default);
 app.use(errorHandler_1.default);
 exports.default = app;

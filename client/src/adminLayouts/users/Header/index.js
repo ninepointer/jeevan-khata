@@ -30,12 +30,16 @@ import backgroundImage from "../../../assets/images/bg-profile.jpeg";
 import ActiveUsers from "../activeUsers";
 import DeletedUsers from "../deletedUsers";
 import Roles from "../roles";
+import UserModel from "../UserModel";
+import RolesModel from "../RolesModel"
 
 
 
 function UserHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
+  const [isCreate, checkIsCreate] = useState(false);
+
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -120,9 +124,16 @@ function UserHeader({ children }) {
              
               </Tabs>
             </AppBar>
-            <TabPanel value={tabValue} index={0}><ActiveUsers/> </TabPanel>
+            {console.log(isCreate)}
+            {isCreate ?
+            <TabPanel value={tabValue} index={0}>< UserModel setCreate={checkIsCreate}/> </TabPanel>
+              :
+            <TabPanel value={tabValue} index={0}>< ActiveUsers setCreate={checkIsCreate}/> </TabPanel>}
             <TabPanel value={tabValue} index={1}><DeletedUsers/> </TabPanel>
-            <TabPanel value={tabValue} index={2}><Roles/> </TabPanel>
+            {isCreate ?
+            <TabPanel value={tabValue} index={2}><RolesModel setCreate={checkIsCreate}/> </TabPanel>
+              :
+            <TabPanel value={tabValue} index={2}><Roles setCreate={checkIsCreate}/> </TabPanel>}
 
           </Grid>
         </Grid>

@@ -47,7 +47,7 @@ import { userContext } from '../../../AuthContext';
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
-  const [userId, setEmail] = useState(false);
+  const [email, setEmail] = useState(false);
   const [pass, setPassword] = useState(false);
   const setDetails = useContext(userContext);
 
@@ -56,41 +56,41 @@ function Basic() {
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
 
-  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
 
     const navigate = useNavigate();
     let userData ;
 
-    const userDetail = async ()=>{
-      try{
-          const res = await axios.get(`${baseUrl}api/v1/loginDetail`, {
-              withCredentials: true,
-              headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                  "Access-Control-Allow-Credentials": true
-              },
-          });
+    // const userDetail = async ()=>{
+    //   try{
+    //       const res = await axios.get(`${baseUrl}api/v1/users/login`, {
+    //           withCredentials: true,
+    //           headers: {
+    //               Accept: "application/json",
+    //               "Content-Type": "application/json",
+    //               "Access-Control-Allow-Credentials": true
+    //           },
+    //       });
                    
-          setDetails.setUserDetail(res.data);
-          userData = res.data;
-          console.log("this is data of particular user", res.data);
+    //       setDetails.setUserDetail(res.data);
+    //       userData = res.data;
+    //       console.log("this is data of particular user", res.data);
   
-          if(!res.status === 200){
-              throw new Error(res.error);
-          }
-      } catch(err){
-          console.log("Fail to fetch data of user");
-          console.log(err);
-      }
-    }
+    //       if(!res.status === 200){
+    //           throw new Error(res.error);
+    //       }
+    //   } catch(err){
+    //       console.log("Fail to fetch data of user");
+    //       console.log(err);
+    //   }
+    // }
 
 
     async function logInButton(e){
         e.preventDefault();
-        console.log(userId, pass);
+        console.log(email, pass);
         
-        const res = await fetch(`${baseUrl}api/v1/login`, {
+        const res = await fetch(`${baseUrl}api/v1/users/login`, {
             method: "POST",
             credentials:"include",
             headers: {
@@ -98,13 +98,13 @@ function Basic() {
                 "Access-Control-Allow-Credentials": true
             },
             body: JSON.stringify({
-                userId, pass
+                email, password: pass
             })
         });
         
         const data = await res.json();
         console.log(data);
-        if(data.status === 422 || data.error || !data){
+        if(data.error || !data){
             window.alert(data.error);
             console.log("invalid user details");
         }else{
@@ -112,13 +112,13 @@ function Basic() {
             console.log("entry succesfull");
 
             // this function is extracting data of user who is logged in
-            await userDetail();
+            // await userDetail();
 
-            if(userData.role === "admin"){
-              navigate("/companyposition");
-            } else if(userData.role === "user"){
-              navigate("/Position");
-            }
+            // if(userData.role === "admin"){
+            //   navigate("/companyposition");
+            // } else if(userData.role === "user"){
+            //   navigate("/Position");
+            // }
             
         }
     }

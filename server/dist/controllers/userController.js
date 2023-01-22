@@ -18,8 +18,10 @@ const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
 exports.createUser = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { firstName, lastName, gender, email, password, passwordConfirm, mobile, city, state } = req.body;
+    //Check for required fields 
     if (!(email || password || mobile || firstName || lastName || gender))
         return next((0, customError_1.createCustomError)('Eneter all mandatory fields.', 401));
+    //Check if user exists
     if (yield User_1.default.find({ email }))
         return next((0, customError_1.createCustomError)('User with this email already exists. Please login with existing email.', 401));
     const user = yield User_1.default.create({ firstName, lastName, gender, email, password, passwordConfirm, mobile, city, state });

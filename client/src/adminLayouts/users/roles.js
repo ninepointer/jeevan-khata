@@ -6,6 +6,7 @@ import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
+import MDButton from "../../components/MDButton";
 import MDTypography from "../../components/MDTypography";
 
 // Material Dashboard 2 React example components
@@ -15,8 +16,11 @@ import DataTable from "../../layoutComponents/Tables/DataTable";
 import RolesModel from './RolesModel';
 import RolesData from './data/rolesData';
 
-const UserRoles = () => {
+const UserRoles = ({setCreate}) => {
     const { columns, rows } = RolesData();
+    function openCreateUser(){
+        setCreate(true);
+    }
     return (
         <>
             <MDBox pt={6} pb={3}>
@@ -40,7 +44,9 @@ const UserRoles = () => {
                                 <MDTypography variant="h6" color="white" py={2.5}>
                                     User Roles
                                 </MDTypography>
-                                <RolesModel />
+                                <MDButton variant="outlined" color="white" onClick={openCreateUser} >
+                                    Create Role
+                                </MDButton>
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable

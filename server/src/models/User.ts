@@ -45,7 +45,7 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
         type: String,
         required : false
     },
-    passwordConfirm: String,
+    
     passwordChangedAt:{
         type: Date,
         required : false
