@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // Material Dashboard 2 React base styles
 import colors from "../base/colors";
 import borders from "../base/borders";
@@ -26,16 +11,16 @@ const { borderRadius } = borders;
 const sidenav = {
   styleOverrides: {
     root: {
-      width: pxToRem(250),
+      width: pxToRem(150),
       whiteSpace: "nowrap",
       border: "none",
     },
 
     paper: {
-      width: pxToRem(250),
+      width: pxToRem(150),
       backgroundColor: white.main,
       height: `calc(100vh - ${pxToRem(32)})`,
-      margin: pxToRem(16),
+      margin: pxToRem(8),
       borderRadius: borderRadius.xl,
       border: "none",
     },

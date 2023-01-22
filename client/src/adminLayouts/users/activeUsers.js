@@ -25,11 +25,12 @@ import UserModel from './UserModel';
 import activeUserData from './data/activeUserData';
 import UserEditModel from "./UserEditModel";
 
-const activeUser = ({setCreate}) => {
+const activeUser = ({setCreateBio}) => {
     const { columns, rows } = activeUserData();
 
     function openCreateUser(){
-        setCreate(true);
+        console.log("in open")
+        setCreateBio(true);
     }
 
     return (
@@ -52,15 +53,15 @@ const activeUser = ({setCreate}) => {
                                     justifyContent: "space-between",
                                 }}>
 
-                                <MDTypography variant="h6" color="white" py={2.5}>
-                                    Bio Markers
+                                <MDTypography variant="h6" color="white" py={1}>
+                                    Users
                                 </MDTypography>
 
-                                <MDButton variant="outlined" color="white"   onClick={openCreateUser}>
+                                <MDButton variant="outlined" onClick={openCreateUser}>
                                   Create
                                 </MDButton>
                             </MDBox>
-                            <MDBox pt={3}>
+                            <MDBox pt={2}>
                                 <DataTable
                                     table={{ columns, rows }}
                                     isSorted={false}

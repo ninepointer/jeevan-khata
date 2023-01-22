@@ -6,6 +6,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Box from '@mui/material/Box';
 import uniqid from "uniqid";
 import CreateBioMarkerTableData from "./CreateBioMarkerTableData"
 import DataTable from "../../layoutComponents/Tables/DataTable";
@@ -21,6 +22,44 @@ import Switch from "@mui/material/Switch";
 
 
   const CreateBioMarker = ({setCreateBio}) => {
+
+    const gender = [
+      {
+        value: 'Male',
+        label: 'Male',
+      },
+      {
+        value: 'Female',
+        label: 'Female',
+      },
+    ];
+
+    const ageunit = [
+      {
+        value: 'Weeks',
+        label: 'Weeks',
+      },
+      {
+        value: 'Months',
+        label: 'Months',
+      },
+      {
+        value: 'Years',
+        label: 'Years',
+      },
+    ];
+
+    const bodycondition = [
+      {
+        value: 'On Period',
+        label: 'On Period',
+      },
+      {
+        value: 'Pregnency',
+        label: 'Pregency',
+      },
+
+    ];
 
     let bioMarkerTypeDataFirst = {
       gender: "",
@@ -42,49 +81,78 @@ import Switch from "@mui/material/Switch";
         </MDButton>
       ),
       gender : (
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-standard-label"></InputLabel>
-            <Select
-              labelId="demo-simple-select-standard-label"
-              id="demo-simple-select-standard"
-              label=""
-              sx={{margin: 1, padding : 1, width:"50px"}}
-              onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
-              >
-              <MenuItem value="Male">Male</MenuItem>
-              <MenuItem value="Female">Female</MenuItem>
-            </Select>
-        </FormControl>
+        <TextField
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          //helperText="Please select your gender"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "100px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
+        >
+          {gender.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
       ),
   
       agegroupstart : ( 
         <TextField
-        id="outlined-basic" label="" variant="standard" type={" number"}
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
+        id="filled-basic" label="" variant="filled" type="number"
+        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
         ),
   
       agegroupend : (
         <TextField
-        id="outlined-basic" label="" variant="standard" type="number"
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
+        id="filled-basic" label="" variant="filled" type="number"
+        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
       ),
         
       agegroupunit : (
         <TextField
-        id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}/>
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          //helperText="Please select the age unit"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "150px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
+        >
+          {ageunit.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
         ),
         
       range : (
         <TextField
-        id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
+        id="filled-basic" label="" variant="filled"
+        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
         ),
   
       bodycondition : (
         <TextField
-        id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}/>
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          //helperText="Please select the body condition"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "150px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
+        >
+          {bodycondition.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
         )
     }
     const {columns, rows} = CreateBioMarkerTableData();
@@ -133,7 +201,6 @@ import Switch from "@mui/material/Switch";
     }
     
     // deleting one item from bio marker type
-    console.log("before delete", row)
     function deleteItem(id){
         console.log("id", id, row)
         let update = row.filter((elem)=>{
@@ -170,52 +237,79 @@ import Switch from "@mui/material/Switch";
       );
 
       obj.gender = (
-        <FormControl variant="standard" >
-          <InputLabel id="demo-simple-select-standard-label"></InputLabel>
-            <Select
-              labelId="demo-simple-select-standard-label"
-              id="demo-simple-select-standard"
-              label=""
-              sx={{margin: 1, padding : .7, width:"50px"}}
-              onChange={(e)=>{bioMarkerTypeData.gender = e.target.value}}
-              
-              >
-              <MenuItem value="Male">Male</MenuItem>
-              <MenuItem value="Female">Female</MenuItem>
-            </Select>
-        </FormControl>
+            <TextField
+            id="filled-basic"
+            select
+            label=""
+            defaultValue=""
+            //helperText="Please select your gender"
+            variant="filled"
+            sx={{margin: 1, padding: 1, width: "100px"}}
+            onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
+          >
+            {gender.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
       );
 
       obj.agegroupstart = ( 
         <TextField
-        id="outlined-basic" label="" variant="standard" type={" number"}
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupStartRange = e.target.value}}
-         />
+        id="filled-basic" label="" variant="filled" type="number"
+        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
         );
 
       obj.agegroupend = (
         <TextField
-        id="outlined-basic" label="" variant="standard" type="number"
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupEndRange = e.target.value}}
-        />);
+        id="filled-basic" label="" variant="filled" type="number"
+        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
+      );
         
       obj.agegroupunit = (
         <TextField
-        id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.ageGroupUnit = e.target.value}}
-         />);
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          //helperText="Please select the age unit"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "150px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
+        >
+          {ageunit.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        );
         
       obj.range = (
         <TextField
-        id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.range = e.target.value}}
-        />);
+        id="filled-basic" label="" variant="filled"
+        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
+        );
 
       obj.bodycondition = (
         <TextField
-        id="outlined-basic" label="" variant="standard" 
-        sx={{margin: 1, padding : 1, width:"50px"}} onChange={(e)=>{bioMarkerTypeData.bodyCondition = e.target.value}}
-        />);
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          //helperText="Please select the body condition"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "150px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
+        >
+          {bodycondition.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        );
 
 
       setRow((oldState)=> [...oldState, obj])
@@ -225,16 +319,28 @@ import Switch from "@mui/material/Switch";
 
   
     return (
-      <div>
+      <>
+        <MDBox pt={2} pb={2}>
+        <MDTypography variant="h6" fontWeight="medium" borderRadius="10px" color="white" backgroundColor="#afb0b2" marginLeft="15px">
+          &nbsp;&nbsp;Create Bio Marker
+        </MDTypography>
+        <Box
+          component="form"
+          sx={{
+            '& .MuiTextField-root': { m: 1, width: '25ch',margin: 1, padding: 1, width: "250px" },
+          }}
+          noValidate
+          autoComplete="off"
+        >
         <TextField
-        id="outlined-basic" label="Name" variant="standard"
+        id="filled-basic" label="Name" variant="filled"
           sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.name = e.target.value}}/>
         
         <TextField
-        id="outlined-basic" label="Unit" variant="standard"
+        id="filled-basic" label="Unit" variant="filled"
         sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.unit = e.target.value}}/>
 
-        <MDBox pt={6} pb={3}>
+        <MDBox pt={3} pb={3}>
           <Grid container spacing={6}>
               <Grid item xs={12} md={12} lg={12}>
                   <Card>
@@ -252,7 +358,7 @@ import Switch from "@mui/material/Switch";
                               justifyContent: "space-between",
                           }}>
 
-                          <MDTypography variant="h6" color="white" py={2.5}>
+                          <MDTypography variant="h6" color="white" py={1}>
                             Add Bio Markers Type
                           </MDTypography>
 
@@ -260,7 +366,7 @@ import Switch from "@mui/material/Switch";
                             Add
                           </MDButton>
                       </MDBox>
-                      <MDBox pt={3}>
+                      <MDBox pt={2}>
                           <DataTable
                               table={{ columns, rows: row }}
                               isSorted={false}
@@ -278,7 +384,7 @@ import Switch from "@mui/material/Switch";
         <MDBox mt={0.5} display="flex" alignItems="center">
           <MDBox component="span" variant="button" fontWeight="light" fontSize="15px" color="text">Status</MDBox><Switch label="Status"  onChange={(e) => {formData.status = e.target.value}} />
         </MDBox>
-
+        </Box>
 
         <Button autoFocus onClick={formSubmit}>
           Save
@@ -286,7 +392,8 @@ import Switch from "@mui/material/Switch";
         <Button onClick={handleClose} autoFocus>
           Close
         </Button>
-      </div>
+        </MDBox>
+      </>
     );
   }
 

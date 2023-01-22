@@ -19,7 +19,7 @@ import { useMemo } from "react";
 import PropTypes from "prop-types";
 
 // react-chartjs-2 components
-import { Bar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2/auto";
 
 
 // @mui material components

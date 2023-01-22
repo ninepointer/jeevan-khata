@@ -21,12 +21,10 @@ import EditSharpIcon from '@mui/icons-material/EditSharp';
 
 
 // Data
-import UserModel from './UserModel';
-import activeUserData from './data/activeUserData';
-import UserEditModel from "./UserEditModel";
+import deletedUserData from './data/deletedUsersData';
 
-const activeUser = () => {
-    const { columns, rows } = activeUserData();
+const deletedUser = () => {
+    const { columns, rows } = deletedUserData();
 
     return (
         <>
@@ -47,10 +45,9 @@ const activeUser = () => {
                                     display: 'flex',
                                     justifyContent: "space-between",
                                 }}>
-                                <MDTypography variant="h6" color="white" py={2.5}>
+                                <MDTypography variant="h6" color="white" py={1}>
                                     Jeevan Khata Active Users
                                 </MDTypography>
-                                <UserModel />
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable
@@ -63,41 +60,10 @@ const activeUser = () => {
                             </MDBox>
                         </Card>
                     </Grid>
-                    {/* <Grid item xs={12} md={12} lg={12}>
-                        <Card>
-                            <MDBox
-                                mx={2}
-                                mt={-3}
-                                py={1}
-                                px={2}
-                                variant="gradient"
-                                bgColor="info"
-                                borderRadius="lg"
-                                coloredShadow="info"
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: "space-between",
-                                }}>
-                                <MDTypography variant="h6" color="white" py={2.5}>
-                                    User Details (Inactive Users)
-                                </MDTypography>
-                                <UserModel />
-                            </MDBox>
-                            <MDBox pt={3}>
-                                <DataTable
-                                    table={{ icolumns, irows }}
-                                    isSorted={false}
-                                    entriesPerPage={false}
-                                    showTotalEntries={false}
-                                    noEndBorder
-                                />
-                            </MDBox>
-                        </Card>
-                    </Grid> */}
                 </Grid>
             </MDBox>
         </>
     )
 }
 
-export default activeUser
+export default deletedUser

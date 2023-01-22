@@ -31,7 +31,6 @@ import ActiveUsers from "../activeUsers";
 import DeletedUsers from "../deletedUsers";
 import Roles from "../roles";
 import UserModel from "../UserModel";
-import RolesModel from "../RolesModel"
 
 
 
@@ -126,14 +125,11 @@ function UserHeader({ children }) {
             </AppBar>
             {console.log(isCreate)}
             {isCreate ?
-            <TabPanel value={tabValue} index={0}>< UserModel setCreate={checkIsCreate}/> </TabPanel>
+            <TabPanel value={tabValue} index={0}>< UserModel setCreateBio={checkIsCreate}/> </TabPanel>
               :
-            <TabPanel value={tabValue} index={0}>< ActiveUsers setCreate={checkIsCreate}/> </TabPanel>}
+            <TabPanel value={tabValue} index={0}>< ActiveUsers setCreateBio={checkIsCreate}/> </TabPanel>}
             <TabPanel value={tabValue} index={1}><DeletedUsers/> </TabPanel>
-            {isCreate ?
-            <TabPanel value={tabValue} index={2}><RolesModel setCreate={checkIsCreate}/> </TabPanel>
-              :
-            <TabPanel value={tabValue} index={2}><Roles setCreate={checkIsCreate}/> </TabPanel>}
+            <TabPanel value={tabValue} index={2}><Roles setCreateBio={checkIsCreate}/> </TabPanel>
 
           </Grid>
         </Grid>
