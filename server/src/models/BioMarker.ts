@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
+
 
 const bioMarkerSchema = new mongoose.Schema({
     name:{
@@ -29,6 +31,7 @@ const bioMarkerSchema = new mongoose.Schema({
     },
     lastModifiedOn:{
         type: Date,
+        default: Date.now(),
         // required : true
     },
     lastModifiedBy:{
@@ -39,6 +42,11 @@ const bioMarkerSchema = new mongoose.Schema({
     isDeleted:{
         type: Boolean,
         default: false,
+        // required : true
+    },
+    alias:{
+        type: [String],
+        
         // required : true
     },
     bioMarkerTypes:[{
@@ -60,7 +68,7 @@ const bioMarkerSchema = new mongoose.Schema({
         },
         range : { 
             type: String,
-            required : true
+            required : false
         },
         bodyCondition : { 
             type: String,
@@ -69,5 +77,36 @@ const bioMarkerSchema = new mongoose.Schema({
     }]
 })
 
+
+bioMarkerSchema.pre('save', function (next) {
+    if (!this.uid) {
+        // this.lastModifiedOn = Date.now();
+        this.uid = uuidv4();
+        return next();
+    };
+    // this.lastModifiedOn = Date.now();
+    next();
+  });
+
+  bioMarkerSchema.post('save', async function(doc, next){
+    if(!doc.createdBy){
+        doc.createdBy = doc._id;
+    }
+    if(!doc.lastModifiedBy){
+      doc.lastModifiedBy = doc._id;
+    }
+    // doc.lastModifiedOn = Date.now();
+    doc.save().then(() => {
+      next();
+    }).catch(err => {
+      next(err);
+    });
+    next();  
+  });
+
 const bioMarker = mongoose.model("BioMarker", bioMarkerSchema);
 export default bioMarker;
+
+// function uuidv4(): string | undefined {
+//     throw new Error("Function not implemented.");
+// }

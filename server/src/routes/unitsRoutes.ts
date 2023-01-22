@@ -1,9 +1,9 @@
 import express, {Router} from 'express';
 import { protect } from '../controllers/authController';
-import { createBioMarker, getBioMarkers } from '../controllers/bioMarkerController';
+import { createUnit, getUnits } from '../controllers/unitController';
 
 const router = express.Router();
 
-router.route('/').get(getBioMarkers).post(protect, createBioMarker);
+router.route('/').get(getUnits).post(protect, createUnit);
 
 export default router;

@@ -12,6 +12,7 @@ import userRoutes from './routes/userRoutes';
 import roleRoutes from './routes/roleRoutes';
 import errorHandler from './middlewares/errorHandler';
 import bioMarkerRoutes from './routes/bioMarkerRoutes';
+import unitsRoutes from './routes/unitsRoutes';
 
 const app = express();
 app.use(cookieParser());
@@ -39,6 +40,7 @@ app.get('/', (req:Request,res:Response)=>{
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/roles', roleRoutes);
 app.use('/api/v1/bioMarkers', bioMarkerRoutes);
+app.use('/api/v1/units', unitsRoutes);
 
 
 app.use(errorHandler);

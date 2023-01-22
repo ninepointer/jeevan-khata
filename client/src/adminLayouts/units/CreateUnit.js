@@ -22,40 +22,47 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
   const CreateUnit = ({setCreateUnit}) => {
     // const {reRender, setReRender} = Render
-    let obj = {
-      id : (
-        <MDTypography component="a" variant="caption">
-          {"0001"}
-        </MDTypography>
-      ),
-      delete : (
-        <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(id)=>{deleteItem("0001")}}>
-          🗑️
-        </MDButton>
-      ),
-  
-      cunitfullname : ( 
-        <TextField
-        id="filled-basic" label="" variant="filled"
-        sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionData.unitConversionFullName = e.target.value}}/>
-        ),
-  
-      cunitid : (
-        <TextField
-        id="filled-basic" label="" variant="filled"
-        sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionData.unitConversionId = e.target.value}}/>
-      ),
-        
-      value : (
-        <TextField
-        id="filled-basic" label="" variant="filled" type="number"
-        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{unitConversionData.value = e.target.value}}/>
-        ),
+    let unitConversionDataFirst = {
+      unitConversionFullName: "",
+      unitConversionId: "",
+      value: "",
     }
+    // let obj = {
+    //   id : (
+    //     <MDTypography component="a" variant="caption">
+    //       {Date.now()}
+    //     </MDTypography>
+    //   ),
+    //   delete : (
+    //     <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(id)=>{deleteItem(obj.id.props.children)}}>
+    //       🗑️
+    //     </MDButton>
+    //   ),
+  
+    //   cunitfullname : ( 
+    //     <TextField
+    //     id="filled-basic" label="" variant="filled"
+    //     sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionDataFirst.unitConversionFullName = e.target.value}}/>
+    //     ),
+  
+    //   cunitid : (
+    //     <TextField
+    //     id="filled-basic" label="" variant="filled"
+    //     sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionDataFirst.unitConversionId = e.target.value}}/>
+    //   ),
+        
+    //   value : (
+    //     <TextField
+    //     id="filled-basic" label="" variant="filled" type="number"
+    //     sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{unitConversionDataFirst.value = e.target.value}}/>
+    //     ),
+    // }
     const {columns, rows} = CreateUnitTableData();
     const [row, setRow] = useState([
-      obj
+      // obj
     ]);
+
+
 
     let uId = uniqid();
     let date = new Date();
@@ -74,13 +81,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
       ]
     });
 
-    let [unitConversionData, setUnitConversionData] = useState({
-      unitConversionFullName: "",
-      unitConversionId: "",
-      value: "",
-    })
 
-    let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
+
+    let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
     const [render, setRender] = useState(true);
   
     const handleClose = () => {
@@ -91,8 +94,31 @@ import FormControlLabel from '@mui/material/FormControlLabel';
     async function formSubmit(){
 
       setFormData(formData);
-      // console.log(formData)
-      const { unitFullName, unitId, status } = formData;
+      console.log(formData)
+      const { unitFullName, unitId, status, unitConversionData } = formData;
+
+      const res = await fetch(`${baseUrl}api/v1/units`, {
+        method: "POST",
+        credentials:"include",
+        headers: {
+            "content-type" : "application/json",
+            "Access-Control-Allow-Credentials": true
+        },
+        body: JSON.stringify({
+          unitFullName, unitId,  unitConversion: unitConversionData
+        })
+    });
+    
+    const data = await res.json();
+             
+      console.log(data);
+      if(data.status === 422 || data.error || !data){ 
+          window.alert(data.error);
+          console.log("Invalid Entry");
+      }else{
+          window.alert("Unit Created Successfully");
+          console.log("entry succesfull");
+      }
 
       setCreateUnit(false);
     }
@@ -109,23 +135,35 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
     console.log("row outer", row)
 
-    function actionButton(id){
-      let update = row.filter((elem)=>{
-        // console.log(elem.id.props.children , id)
-        return elem.id.props.children === id;
-      })
-      // let tempArr = tempArr.push(update[0]); 
-      console.log(update[0])
-      setUnitConversionData(unitConversionData);
-      formData.unit.push(JSON.parse(JSON.stringify(unitConversionData)));
-      // setAddedBio(tempArr);
-      // deleteItem(id);
-      // console.log(formData)
-    }
+    // function actionButton(id){
+    //   let update = row.filter((elem)=>{
+    //     // console.log(elem.id.props.children , id)
+    //     return elem.id.props.children === id;
+    //   })
+    //   // let tempArr = tempArr.push(update[0]); 
+    //   console.log(update[0])
+    //   setUnitConversionData(unitConversionData);
+    //   formData.unit.push(JSON.parse(JSON.stringify(unitConversionData)));
+    //   // setAddedBio(tempArr);
+    //   // deleteItem(id);
+    //   // console.log(formData)
+    // }
 
 
     function onCreate(){
       let obj = {};
+
+      let unitConversionData = {
+      unitConversionFullName: "",
+      unitConversionId: "",
+      value: "",
+      };
+
+          // let [unitConversionData, setUnitConversionData] = useState({
+    //   unitConversionFullName: "",
+    //   unitConversionId: "",
+    //   value: "",
+    // })
 
       obj.id = (
         <MDTypography component="a" variant="caption">
@@ -160,7 +198,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
         // tempRow.push(obj);
       setRow((oldState)=> [...oldState, obj])
-
+      formData.unitConversionData.push(unitConversionData);
 
 
       render ? setRender(false):setRender(true)
