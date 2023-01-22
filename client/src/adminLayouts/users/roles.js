@@ -16,8 +16,11 @@ import DataTable from "../../layoutComponents/Tables/DataTable";
 import RolesModel from './RolesModel';
 import RolesData from './data/rolesData';
 
-const UserRoles = () => {
+const UserRoles = ({setCreate}) => {
     const { columns, rows } = RolesData();
+    function openCreateUser(){
+        setCreate(true);
+    }
     return (
         <>
             <MDBox pt={6} pb={3}>
@@ -41,10 +44,9 @@ const UserRoles = () => {
                                 <MDTypography variant="h6" color="white" py={1}>
                                     User Roles
                                 </MDTypography>
-                                <MDButton variant="outlined">
+                                <MDButton variant="outlined" color="white" onClick={openCreateUser} >
                                     Create Role
                                 </MDButton>
-                                {/* onClick={handleClickOpen} */}
                             </MDBox>
                             <MDBox pt={3}>
                                 <DataTable

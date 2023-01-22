@@ -3,13 +3,6 @@ import Button from '@mui/material/Button';
 import MDBox from '../../components/MDBox';
 import MDTypography from '../../components/MDTypography';
 import Box from '@mui/material/Box';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import MDButton from '../../components/MDButton';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -23,7 +16,7 @@ import { textAlign } from '@mui/system';
 
 
 
-const UserModel = ({setCreateUser}) => {
+const UserModel = ({setCreate}) => {
 
   const gender = [
     {
@@ -49,7 +42,7 @@ const UserModel = ({setCreateUser}) => {
     password: "",
     role: "",
   });
-  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
     
   const getDetails = useContext(userContext);
 
@@ -58,7 +51,7 @@ const UserModel = ({setCreateUser}) => {
 
 
   const handleClose = () => {
-    setCreateUser(false);
+    setCreate(false);
   };
 
 
@@ -68,19 +61,32 @@ const UserModel = ({setCreateUser}) => {
 
     const { firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, password, role} = formstate;
 
-    const res = await axios.post(`${baseUrl}api/v1/users`, {
-      withCredentials: true,
+    // const res = await axios.post(`${baseUrl}api/v1/users`, {
+    //   withCredentials: true,
+    //   headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //       "Access-Control-Allow-Credentials": true
+    //   },
+    //   body: JSON.stringify({
+
+    // });
+
+    const res = await fetch(`${baseUrl}api/v1/users`, {
+      method: "POST",
+      credentials:"include",
       headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          "content-type" : "application/json",
           "Access-Control-Allow-Credentials": true
       },
       body: JSON.stringify({
         firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, password, role })
-
-    });
+      })
+  // });
+  
+  const data = await res.json();
            
-    const data = res.data;
+    // const data = res.data;
     console.log(data);
     if(data.status === 422 || data.error || !data){ 
         window.alert(data.error);
@@ -89,7 +95,7 @@ const UserModel = ({setCreateUser}) => {
         window.alert("User Created Successfully");
         console.log("entry succesfull");
     }
-    setCreateUser(false);
+    setCreate(false);
     // reRender ? setReRender(false) : setReRender(true)
 
 }

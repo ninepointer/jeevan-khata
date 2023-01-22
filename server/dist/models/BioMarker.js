@@ -35,62 +35,62 @@ const bioMarkerSchema = new mongoose_1.default.Schema({
     },
     status: {
         type: String,
-        required: true
+        // required : true
     },
     uid: {
         type: String,
-        required: true
+        // required : true
     },
     createdOn: {
         type: Date,
         default: Date.now(),
-        required: true
+        // required : true
     },
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        // required : true
     },
     lastModifiedOn: {
         type: Date,
-        required: true
+        // required : true
     },
     lastModifiedBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        // required : true
     },
     isDeleted: {
         type: Boolean,
         default: false,
-        required: true
+        // required : true
     },
-    bioMarkerTypes: {
-        gender: {
-            type: String,
-            required: false
-        },
-        ageGroupStartRange: {
-            type: Number,
-            required: false
-        },
-        ageGroupEndRange: {
-            type: Number,
-            required: false
-        },
-        ageGroupUnit: {
-            type: String,
-            required: false
-        },
-        range: {
-            type: String,
-            required: true
-        },
-        bodyCondition: {
-            type: String,
-            required: false
-        },
-    }
+    bioMarkerTypes: [{
+            gender: {
+                type: String,
+                required: false
+            },
+            ageGroupStartRange: {
+                type: Number,
+                required: false
+            },
+            ageGroupEndRange: {
+                type: Number,
+                required: false
+            },
+            ageGroupUnit: {
+                type: String,
+                required: false
+            },
+            range: {
+                type: String,
+                required: true
+            },
+            bodyCondition: {
+                type: String,
+                required: false
+            },
+        }]
 });
 const bioMarker = mongoose_1.default.model("BioMarker", bioMarkerSchema);
-module.exports = bioMarker;
+exports.default = bioMarker;

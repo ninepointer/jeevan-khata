@@ -42,12 +42,12 @@ import BasicLayout from "../components/BasicLayout";
 
 
 // Images
- import bgImage from "../../../assets/images/bg-sign-in-basic.jpeg";
+ import bgImage from "../../../assets/images/loginpageimage.jpeg";
 import { userContext } from '../../../AuthContext';
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
-  const [userId, setEmail] = useState(false);
+  const [email, setEmail] = useState(false);
   const [pass, setPassword] = useState(false);
   const setDetails = useContext(userContext);
 
@@ -56,41 +56,41 @@ function Basic() {
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
 
-  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:5000/"
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
 
     const navigate = useNavigate();
     let userData ;
 
-    const userDetail = async ()=>{
-      try{
-          const res = await axios.get(`${baseUrl}api/v1/loginDetail`, {
-              withCredentials: true,
-              headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                  "Access-Control-Allow-Credentials": true
-              },
-          });
+    // const userDetail = async ()=>{
+    //   try{
+    //       const res = await axios.get(`${baseUrl}api/v1/users/login`, {
+    //           withCredentials: true,
+    //           headers: {
+    //               Accept: "application/json",
+    //               "Content-Type": "application/json",
+    //               "Access-Control-Allow-Credentials": true
+    //           },
+    //       });
                    
-          setDetails.setUserDetail(res.data);
-          userData = res.data;
-          console.log("this is data of particular user", res.data);
+    //       setDetails.setUserDetail(res.data);
+    //       userData = res.data;
+    //       console.log("this is data of particular user", res.data);
   
-          if(!res.status === 200){
-              throw new Error(res.error);
-          }
-      } catch(err){
-          console.log("Fail to fetch data of user");
-          console.log(err);
-      }
-    }
+    //       if(!res.status === 200){
+    //           throw new Error(res.error);
+    //       }
+    //   } catch(err){
+    //       console.log("Fail to fetch data of user");
+    //       console.log(err);
+    //   }
+    // }
 
 
     async function logInButton(e){
         e.preventDefault();
-        console.log(userId, pass);
+        console.log(email, pass);
         
-        const res = await fetch(`${baseUrl}api/v1/login`, {
+        const res = await fetch(`${baseUrl}api/v1/users/login`, {
             method: "POST",
             credentials:"include",
             headers: {
@@ -98,27 +98,27 @@ function Basic() {
                 "Access-Control-Allow-Credentials": true
             },
             body: JSON.stringify({
-                userId, pass
+                email, password: pass
             })
         });
         
         const data = await res.json();
         console.log(data);
-        if(data.status === 422 || data.error || !data){
+        if(data.error || !data){
             window.alert(data.error);
-            console.log("invalid user details");
+            console.log("Invalid User Details");
         }else{
-            window.alert("Login succesfull");
-            console.log("entry succesfull");
+            window.alert("Login Succesfull");
+            console.log("Entry Succesfull");
 
             // this function is extracting data of user who is logged in
-            await userDetail();
+            // await userDetail();
 
-            if(userData.role === "admin"){
-              navigate("/companyposition");
-            } else if(userData.role === "user"){
-              navigate("/Position");
-            }
+            // if(userData.role === "admin"){
+            //   navigate("/companyposition");
+            // } else if(userData.role === "user"){
+            //   navigate("/Position");
+            // }
             
         }
     }
@@ -143,7 +143,7 @@ function Basic() {
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
             Sign In
           </MDTypography>
-          {/* <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
+          <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
             <Grid item xs={2}>
               <MDTypography component={MuiLink} href="#" variant="body1" color="white">
                 <FacebookIcon color="inherit" />
@@ -159,7 +159,7 @@ function Basic() {
                 <GoogleIcon color="inherit" />
               </MDTypography>
             </Grid>
-          </Grid> */}
+          </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
@@ -169,7 +169,7 @@ function Basic() {
             <MDBox mb={2}>
               <MDInput type="password" label="Password" onChange={handlePasswordChange} fullWidth />
             </MDBox>
-            {/* <MDBox display="flex" alignItems="center" ml={-1}>
+            <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
               <MDTypography
                 variant="button"
@@ -180,13 +180,13 @@ function Basic() {
               >
                 &nbsp;&nbsp;Remember me
               </MDTypography>
-            </MDBox> */}
+            </MDBox>
             <MDBox mt={4} mb={1}>
               <MDButton variant="gradient" color="info" onClick={logInButton} fullWidth>
                 sign in
               </MDButton>
             </MDBox>
-            {/* <MDBox mt={3} mb={1} textAlign="center">
+            <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
                 Don&apos;t have an account?{" "}
                 <MDTypography
@@ -200,7 +200,7 @@ function Basic() {
                   Sign up
                 </MDTypography>
               </MDTypography>
-            </MDBox> */}
+            </MDBox>
           </MDBox>
         </MDBox>
       </Card>

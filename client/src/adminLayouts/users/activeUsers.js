@@ -25,12 +25,105 @@ import UserModel from './UserModel';
 import activeUserData from './data/activeUserData';
 import UserEditModel from "./UserEditModel";
 
-const activeUser = ({setCreateBio}) => {
+const ActiveUser = ({setCreate}) => {
     const { columns, rows } = activeUserData();
+    const [activeData, setActiveData] = useState([]);
+    const [reRender, setReRender] = useState(true);
+
+    let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
+
+    useEffect(async()=>{
+  
+    //   fetch(`${baseUrl}api/v1/users`)
+    //     .then(response => response.json())
+    //     .then(data => console.log(data))
+    //     .catch(error => console.error(error))
+    // },[reRender])
+
+    const res = await fetch(`${baseUrl}api/v1/users`, {
+      method: "GET",
+      credentials:"include",
+      headers: {
+          "content-type" : "application/json",
+          "Access-Control-Allow-Credentials": true
+      },
+      });
+      
+      const data = await res.json();
+      console.log(data);
+      setActiveData(data.data);
+      
+    },[reRender])
+
+    activeData.map((elem)=>{
+        let activeusers = {}
+    
+        activeusers.edit = (
+            <MDButton variant="Contained" color="info" fontWeight="medium">
+              {/* <UserEditModel data={activeData} id={elem._id} Render={{setReRender, reRender}}/> */}
+            </MDButton>
+          );
+        activeusers.jeevankhataId = (
+            <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+              {elem.jeevanKhataId}
+            </MDTypography>
+          );
+        activeusers.firstName = (
+            <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+              {elem.firstName}
+            </MDTypography>
+          );
+        activeusers.lastName = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.lastName}
+          </MDTypography>
+        );
+        activeusers.email = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.email}
+          </MDTypography>
+        );
+        activeusers.mobile = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.mobile}
+          </MDTypography>
+        );
+        activeusers.gender = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.gender}
+          </MDTypography>
+        );
+        activeusers.dateOfBirth = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {/* {elem.dateOfBirth} */}
+          </MDTypography>
+        );
+        activeusers.city = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.city}
+          </MDTypography>
+        );
+        activeusers.state = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.state}
+          </MDTypography>
+        );
+        activeusers.role = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.role}
+          </MDTypography>
+        );
+        activeusers.createdOn = (
+          <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+            {elem.createdOn}
+          </MDTypography>
+        );
+       
+        rows.push(activeusers)
+    })
 
     function openCreateUser(){
-        console.log("in open")
-        setCreateBio(true);
+        setCreate(true);
     }
 
     return (
@@ -78,11 +171,4 @@ const activeUser = ({setCreateBio}) => {
     )
 }
 
-export default activeUser
-
-{/* <MDTypography variant="h6" color="white" py={2.5}>
-Jeevan Khata Active Users
-</MDTypography>
-<MDButton variant="outlined" onClick={}>
-Create User
-</MDButton> */}
+export default ActiveUser

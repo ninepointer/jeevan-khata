@@ -31,7 +31,7 @@ export const login = async (req: Request, res:Response, next: NextFunction) =>{
 
     res.cookie('jwt', token, {
         expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN!)* 24 * 60 * 60 * 1000),
-        secure: process.env.NODE_ENV === 'production',
+        // secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
     });
     res.status(200).json({
@@ -69,12 +69,19 @@ export const signup = async (req: Request, res:Response, next: NextFunction) =>{
 export const protect = async (req: Request, res:Response, next: NextFunction): Promise<void> => {
 
     let token: string;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    token = req.headers.authorization.split(' ')[1];
+//   if (
+//     req.headers.authorization &&
+//     req.headers.authorization.startsWith('Bearer')
+//   ) {
+//     token = req.headers.authorization.split(' ')[1];
+//   }
+console.log((req ))
+  if (req.cookies) {
+        token = req.cookies.jwt;
   }
+    
+  console.log(token!)
+
   if (!token!) return next(createCustomError('You are not logged in. Please log in to continue.',401));
   
   const decoded = await promisifiedVerify(token, process.env.JWT_SECRET!);

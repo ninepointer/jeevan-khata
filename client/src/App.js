@@ -45,6 +45,7 @@ import brandDark from "./assets/images/logo-ct-dark.png";
 // import SignIn from "./layouts/authentication/sign-in"
 import { userContext } from "./AuthContext";
 import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
+import SignIn from "./adminLayouts/authentication/sign-in/index"
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -181,13 +182,17 @@ export default function App() {
             {configsButton}
           </>
         )}
-        {layout === "companyposition" && <Configurator />}
+        {/* {layout === "companyposition" && <Configurator />}
         <Routes>
         {getRoutes(routes)}
           <Route path="*" element={<BioMarkerLayout />} />
+        </Routes> */}
+         {layout === "login" && <Configurator />}
+        <Routes>
+        {getRoutes(routes)}
+          <Route path="*" element={<SignIn />} />
         </Routes>
       </ThemeProvider>
     
   );
 } 
-
