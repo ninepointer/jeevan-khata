@@ -1,90 +1,169 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import MDButton from '../../components/MDButton';
 import TextField from '@mui/material/TextField';
+import axios from "axios";
+import {useState, useContext} from "react"
+import { userContext } from '../../AuthContext';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 
 
-const RolesModel = () => {
-  const [open, setOpen] = React.useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+const RolesModel = ({setCreate}) => {
+  const [formstate, setformstate] = useState({
+    roleName: "",
+    reportAccess: "",
+    userAccess: "",
+    attributesAccess: "",
+    analyticsAccess: "",
+    status: ""
+  });
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
+    
+  const getDetails = useContext(userContext);
+
+  const [reRender, setReRender] = useState(true);
+
+
 
   const handleClose = () => {
-    setOpen(false);
+    setCreate(false);
   };
+
+
+  async function formSubmit() {
+    setformstate(formstate);
+    console.log(formstate)
+
+    const { roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status } = formstate;
+
+    // const res = await axios.post(`${baseUrl}api/v1/roles`, {
+    //   withCredentials: true,
+    //   headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //       "Access-Control-Allow-Credentials": true
+    //   },
+    //   body: JSON.stringify({
+    //     roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status
+
+    //   })
+    // })
+
+    const res = await fetch(`${baseUrl}api/v1/roles`, {
+      method: "POST",
+      credentials:"include",
+      headers: {
+          "content-type" : "application/json",
+          "Access-Control-Allow-Credentials": true
+      },
+      body: JSON.stringify({
+        roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status
+      })
+  });
+  
+    const data = await res.json();
+           
+    // const data = res.data;
+    console.log(data);
+    if(data.status === 422 || data.error || !data){ 
+        window.alert(data.error);
+        console.log("Invalid Entry");
+    }else{
+        window.alert("Role Created Successfully");
+        console.log("entry succesfull");
+    }
+    setCreate(false);
+    // reRender ? setReRender(false) : setReRender(true)
+
+  }
+
 
   return (
     <div>
-      {/* <MDButton variant="outlined" onClick={handleClickOpen}>
-        Create Role
-      </MDButton> */}
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogTitle id="responsive-dialog-title">
-          {""}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ display: "flex", flexDirection: "column" }}>
-            <TextField
-              id="outlined-basic" label="Role Name" variant="standard"
-              sx={{ margin: 1, padding: 1, width: "300px" }} />
+      <TextField
+        id="outlined-basic" label="Role Name" variant="standard"
+        sx={{ margin: 1, padding: 1, width: "300px" }} onChange={(e)=>{formstate.roleName = e.target.value}} />
 
-            <TextField
-              id="outlined-basic" label="Instruments" variant="standard" 
-              sx={{ margin: 1, padding: 1, width: "300px" }} />
-            
+      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="demo-simple-select-standard-label">Report Access</InputLabel>
+        <Select
+          labelId="demo-simple-select-standard-label"
+          id="demo-simple-select-standard"
+          label="Report Access"
+          sx={{ margin: 1, padding: 1, width: "300px" }}
+          onChange={(e)=>{formstate.reportAccess = e.target.value}}
+        >
+          <MenuItem value="true">True</MenuItem>
+          <MenuItem value="false">False</MenuItem>
+        </Select>
+      </FormControl>
 
-            <TextField
-              id="outlined-basic" label="Trading Account" variant="standard"
-              sx={{ margin: 1, padding: 1, width: "300px" }} />
+      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="demo-simple-select-standard-label">User Access</InputLabel>
+        <Select
+          labelId="demo-simple-select-standard-label"
+          id="demo-simple-select-standard"
+          label="User Access"
+          sx={{ margin: 1, padding: 1, width: "300px" }}
+          onChange={(e)=>{formstate.userAccess = e.target.value}}
+        >
+          <MenuItem value="true">True</MenuItem>
+          <MenuItem value="false">False</MenuItem>
+        </Select>
+      </FormControl>
 
-            
-            <TextField
-              id="outlined-basic" label="API Parameters" variant="standard" 
-              sx={{ margin: 1, padding: 1, width: "300px" }} />
+      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="demo-simple-select-standard-label">Attributes Access</InputLabel>
+        <Select
+          labelId="demo-simple-select-standard-label"
+          id="demo-simple-select-standard"
+          label="Attributes Access"
+          sx={{ margin: 1, padding: 1, width: "300px" }}
+          onChange={(e)=>{formstate.attributesAccess = e.target.value}}
+        >
+          <MenuItem value="true">True</MenuItem>
+          <MenuItem value="false">False</MenuItem>
+        </Select>
+      </FormControl>
 
-            <TextField
-              id="outlined-basic" label="Users" variant="standard" 
-              sx={{ margin: 1, padding: 1, width: "300px" }} />
+      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="demo-simple-select-standard-label">Analytics Access</InputLabel>
+        <Select
+          labelId="demo-simple-select-standard-label"
+          id="demo-simple-select-standard"
+          label="Analytics Access"
+          sx={{ margin: 1, padding: 1, width: "300px" }}
+          onChange={(e)=>{formstate.analyticsAccess = e.target.value}}
+        >
+          <MenuItem value="true">True</MenuItem>
+          <MenuItem value="false">False</MenuItem>
+        </Select>
+      </FormControl>
 
-            <TextField
-              id="outlined-basic" label="AlgoBox" variant="standard" 
-              sx={{ margin: 1, padding: 1, width: "300px" }} />
+      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
+        <Select
+          labelId="demo-simple-select-standard-label"
+          id="demo-simple-select-standard"
+          label="Status"
+          sx={{ margin: 1, padding: 1, width: "300px" }}
+          onChange={(e)=>{formstate.status = e.target.value}}
+        >
+          <MenuItem value="Active">Active</MenuItem>
+          <MenuItem value="Inactive">Inactive</MenuItem>
+        </Select>
+      </FormControl>
 
-            <TextField
-              id="outlined-basic" label="Reports" variant="standard" 
-              sx={{ margin: 1, padding: 1, width: "300px" }} />
-
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose}>
-            OK
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Button autoFocus onClick={formSubmit}>
+        Save
+      </Button>
+      <Button onClick={handleClose} autoFocus>
+        Close
+      </Button>
     </div>
   );
 }

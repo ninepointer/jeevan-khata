@@ -13,7 +13,7 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
     },
     uid:{
         type: String,
-        required: true
+        // required: true
     },
     createdOn:{
         type: Date,
@@ -23,16 +23,16 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
     createdBy:{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required : true
+        // required : true
     },
     lastModifiedOn:{
         type: Date,
-        required : true
+        // required : true
     },
     lastModifiedBy:{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required : true
+        // required : true
     },
     isDeleted:{
         type: Boolean,
@@ -59,7 +59,7 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
         },
         id : { 
             type: String,
-            required : true
+            // required : true
         },
         created_On:{
             type: Date,
@@ -69,16 +69,16 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
         created_By:{
             type: Schema.Types.ObjectId,
             ref: 'User',
-            required : true
+            // required : true
         },
         lastModified_On:{
             type: Date,
-            required : true
+            // required : true
         },
         lastModified_By:{
             type: Schema.Types.ObjectId,
             ref: 'User',
-            required : true
+            // required : true
         },
     }]
 })

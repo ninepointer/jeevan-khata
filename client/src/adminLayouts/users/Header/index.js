@@ -26,11 +26,12 @@ import breakpoints from "../../../assets/theme/base/breakpoints";
 // Images
 import PersonIcon from '@mui/icons-material/Person';
 import burceMars from "../../../assets/images/bruce-mars.jpg";
-import backgroundImage from "../../../assets/images/loginpageimage.jpeg";
+import backgroundImage from "../../../assets/images/bg-profile.jpeg";
 import ActiveUsers from "../activeUsers";
 import DeletedUsers from "../deletedUsers";
 import Roles from "../roles";
 import UserModel from "../UserModel";
+import RolesModel from "../RolesModel"
 
 
 
@@ -73,7 +74,7 @@ function UserHeader({ children }) {
         display="flex"
         alignItems="center"
         position="relative"
-        minHeight="10rem"
+        minHeight="18.75rem"
         borderRadius="x1"
         sx={{
           backgroundImage: ({ functions: { rgba, linearGradient }, palette: { gradients } }) =>
@@ -125,11 +126,14 @@ function UserHeader({ children }) {
             </AppBar>
             {console.log(isCreate)}
             {isCreate ?
-            <TabPanel value={tabValue} index={0}><UserModel setCreateUser={checkIsCreate}/></TabPanel>
+            <TabPanel value={tabValue} index={0}>< UserModel setCreate={checkIsCreate}/> </TabPanel>
               :
-            <TabPanel value={tabValue} index={0}><ActiveUsers setCreateUser={checkIsCreate}/></TabPanel>}
+            <TabPanel value={tabValue} index={0}>< ActiveUsers setCreate={checkIsCreate}/> </TabPanel>}
             <TabPanel value={tabValue} index={1}><DeletedUsers/> </TabPanel>
-            <TabPanel value={tabValue} index={2}><Roles setCreateRole={checkIsCreate}/></TabPanel>
+            {isCreate ?
+            <TabPanel value={tabValue} index={2}><RolesModel setCreate={checkIsCreate}/> </TabPanel>
+              :
+            <TabPanel value={tabValue} index={2}><Roles setCreate={checkIsCreate}/> </TabPanel>}
 
           </Grid>
         </Grid>

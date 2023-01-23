@@ -47,7 +47,7 @@ const routes = [
     type: "collapse",
     name: "Lab Tests",
     key: "labTests",
-    // icon: <Icon fontSize="small">table_view</Icon>,
+    // icon: <Icon fontSize="small">table_view</Icon>, 
     icon: <BiotechTwoToneIcon/>,
     route: "/labTests",
     component: <LabTest />,
@@ -74,7 +74,8 @@ const routes = [
     type: "collapse",
     name: "Users",
     key: "users",
-    // icon: <Icon fontSize="small">table_view</Icon>,
+        // </Routes> element={<SignIn />}}
+        // icon: <Icon fontSize="small">table_view</Icon>, 
     icon: <PeopleAltTwoToneIcon/>,
     route: "/users",
     component: <Users />,

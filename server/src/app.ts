@@ -23,9 +23,9 @@ const limiter = rateLimit({
     message: 'Too many requests from this ip. Try again later.' 
 });
 app.use(cors({
-    credentials:true,
-    origin: "http://localhost:3000"
-  
+    credentials: true,
+    origin: "http://localhost:3000", 
+    methods: ["GET", "POST", "PUT", "DELETE"],
   }));
 app.use(helmet());
 app.use('/api', limiter);

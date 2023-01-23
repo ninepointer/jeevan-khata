@@ -4,6 +4,6 @@ import { protect } from '../controllers/authController';
 
 const router = express.Router();
 
-router.route('/').get(protect, getRoles).post(protect, createRole);
+router.route('/').get( getRoles).post(protect, createRole);
 
 export default router;

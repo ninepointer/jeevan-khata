@@ -104,6 +104,7 @@ function Basic() {
         
         const data = await res.json();
         console.log(data);
+        setDetails.setUserDetail(data.data);
         if(data.error || !data){
             window.alert(data.error);
             console.log("Invalid User Details");
