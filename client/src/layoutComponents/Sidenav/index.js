@@ -55,14 +55,14 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const navigate = useNavigate();
   async function goOut(){
-    await axios.get(`${baseUrl}api/v1/logout`, {
+    await axios.get(`${baseUrl}api/v1/users/logout`, {
       withCredentials: true,
       // headers: {
       //     Accept: "application/json",
       //     "Content-Type": "application/json",
       //     "Access-Control-Allow-Credentials": true
       // },
-  });
+    });
     navigate("/");
   }
 

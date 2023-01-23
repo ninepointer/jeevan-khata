@@ -66,6 +66,24 @@ export const signup = async (req: Request, res:Response, next: NextFunction) =>{
         
 }
 
+export const logout = async (req: Request, res:Response, next: NextFunction) =>{
+
+    res.clearCookie("jwtoken", { path: "/" });
+    res
+    .status(200)
+    .json({ success: true, message: "User logged out successfully" });
+
+        
+}
+
+// router.get("/logout", authentication, (req, res)=>{
+//     res.clearCookie("jwtoken", { path: "/" });
+//     res
+//     .status(200)
+//     .json({ success: true, message: "User logged out successfully" });
+
+// })
+
 export const protect = async (req: Request, res:Response, next: NextFunction): Promise<void> => {
 
     let token: string;

@@ -115,8 +115,9 @@ function Basic() {
             // this function is extracting data of user who is logged in
             // await userDetail();
 
+            navigate("/adminDashboard");
             // if(userData.role === "admin"){
-            //   navigate("/companyposition");
+            //   navigate("/adminDashboard");
             // } else if(userData.role === "user"){
             //   navigate("/Position");
             // }

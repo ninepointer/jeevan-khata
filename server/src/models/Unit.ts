@@ -88,7 +88,9 @@ unitSchema.pre('save', function (next) {
         // this.lastModifiedOn = Date.now();
         this.uid = uuidv4();
         const random6DigitNumber = Math.floor(Math.random() * 900000) + 100000;
-        this.unitConversion[0].id = uuidv4() + random6DigitNumber;
+        if(this.unitConversion[0]){
+            this.unitConversion[0].id = uuidv4() + random6DigitNumber;
+        }
         return next();
     };
     // this.lastModifiedOn = Date.now();

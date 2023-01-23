@@ -20,9 +20,15 @@ import reportsLineChartData from "../../adminLayouts/adminDashboard/data/reports
 // Dashboard components
 import Projects from "../../adminLayouts/adminDashboard/components/Projects";
 import OrdersOverview from "../../adminLayouts/adminDashboard/components/OrdersOverview";
+import {userContext} from "../../AuthContext"
+import {useContext} from "react"
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+
+  const getDetails = useContext(userContext);
+
+  console.log("getDetails", getDetails)
 
   return (
     <DashboardLayout>

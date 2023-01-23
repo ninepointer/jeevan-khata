@@ -68,6 +68,7 @@ export default function App() {
   //get userdetail who is loggedin
   const setDetails = useContext(userContext);
   const getDetails = useContext(userContext);
+  console.log("app getdetail", getDetails)
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -159,6 +160,7 @@ export default function App() {
           )}
           {layout === "vr" && <Configurator />}
           <Routes>
+          {/* {(getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && getRoutes(routes)} */}
           {getRoutes(routes)}
             <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
           </Routes>
@@ -182,6 +184,7 @@ export default function App() {
             {configsButton}
           </>
         )}
+        {/* (getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") &&  */}
         {/* {layout === "companyposition" && <Configurator />}
         <Routes>
         {getRoutes(routes)}
@@ -189,6 +192,7 @@ export default function App() {
         </Routes> */}
          {layout === "login" && <Configurator />}
         <Routes>
+        {/* {(getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && } */}
         {getRoutes(routes)}
           <Route path="*" element={<SignIn />} />
         </Routes>
