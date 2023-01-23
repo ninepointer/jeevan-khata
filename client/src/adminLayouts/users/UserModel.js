@@ -68,22 +68,12 @@ const UserModel = ({setCreateUser}) => {
 
     const { firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, password, role} = formstate;
 
-    // const res = await axios.post(`${baseUrl}api/v1/users`, {
-    //   withCredentials: true,
-    //   headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //       "Access-Control-Allow-Credentials": true
-    //   },
-    //   body: JSON.stringify({
-
-    // });
-
-    const res = await fetch(`${baseUrl}api/v1/users`, {
-      method: "POST",
-      credentials:"include",
-      headers: {
-          "content-type" : "application/json",
+      const res = await fetch(`${baseUrl}api/v1/users`, {
+        method: "POST",
+        credentials:"include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
           "Access-Control-Allow-Credentials": true
       },
       body: JSON.stringify({

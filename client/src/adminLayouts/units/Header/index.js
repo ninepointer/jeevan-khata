@@ -26,7 +26,7 @@ import breakpoints from "../../../assets/theme/base/breakpoints";
 // Images
 import PersonIcon from '@mui/icons-material/Person';
 import burceMars from "../../../assets/images/bruce-mars.jpg";
-import backgroundImage from "../../../assets/images/bg-profile.jpeg";
+import backgroundImage from "../../../assets/images/loginpageimage.jpeg";
 import UnitTable from "../UnitTable";
 import CreateUnit from "../CreateUnit";
 // import ActiveUsers from "../activeUsers";
@@ -73,7 +73,7 @@ function UserHeader({ children }) {
         display="flex"
         alignItems="center"
         position="relative"
-        minHeight="18.75rem"
+        minHeight="10rem"
         borderRadius="x1"
         sx={{
           backgroundImage: ({ functions: { rgba, linearGradient }, palette: { gradients } }) =>

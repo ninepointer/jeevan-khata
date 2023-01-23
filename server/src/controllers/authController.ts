@@ -75,7 +75,7 @@ export const protect = async (req: Request, res:Response, next: NextFunction): P
 //   ) {
 //     token = req.headers.authorization.split(' ')[1];
 //   }
-console.log((req ))
+//console.log((req ))
   if (req.cookies) {
         token = req.cookies.jwt;
   }

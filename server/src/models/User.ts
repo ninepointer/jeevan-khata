@@ -57,6 +57,7 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
     role:{
         type: Schema.Types.ObjectId,
         ref: 'Role',
+        default: Object('63cc2464c60a8373837d3235'),
         required : false
     },
     createdOn:{

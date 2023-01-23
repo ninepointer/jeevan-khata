@@ -57,7 +57,7 @@ function Footer({ company, links }) {
             &nbsp;{name}&nbsp;
           </MDTypography>
         </Link>
-        for a better web.
+        for a better health.
       </MDBox>
       <MDBox
         component="ul"
