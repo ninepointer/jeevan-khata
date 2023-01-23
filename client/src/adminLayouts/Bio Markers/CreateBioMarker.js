@@ -139,56 +139,36 @@ useEffect(() => {
 
       setFormData(formData);
       console.log(formData)
-    //   const { name , unit , status, bioMarkerType, alias} = formData;
-    //   let aliasArr = alias.split(",");
-    //   const res = await fetch(`${baseUrl}api/v1/bioMarkers`, {
-    //     method: "POST",
-    //     credentials:"include",
-    //     headers: {
-    //         "content-type" : "application/json",
-    //         "Access-Control-Allow-Credentials": true
-    //     },
-    //     body: JSON.stringify({
-    //       name , unit , status,  bioMarkerTypes: bioMarkerType, alias: aliasArr
-    //     })
-    // });
+      const { name , unit , status, bioMarkerType, alias} = formData;
+      let aliasArr = alias.split(",");
+      const res = await fetch(`${baseUrl}api/v1/bioMarkers`, {
+        method: "POST",
+        credentials:"include",
+        headers: {
+            "content-type" : "application/json",
+            "Access-Control-Allow-Credentials": true
+        },
+        body: JSON.stringify({
+          name , unit , status,  bioMarkerTypes: bioMarkerType, alias: aliasArr
+        })
+    });
     
-    // const data = await res.json();
+    const data = await res.json();
              
-    //   console.log(data);
-    //   if(data.status === 422 || data.error || !data){ 
-    //       window.alert(data.error);
-    //       console.log("Invalid Entry");
-    //   }else{
-    //       window.alert("Bio Marker Created Successfully");
-    //       console.log("entry succesfull");
-    //   }
-      // setCreateBio(false);
+      console.log(data);
+      if(data.status === 422 || data.error || !data){ 
+          window.alert(data.error);
+          console.log("Invalid Entry");
+      }else{
+          window.alert("Bio Marker Created Successfully");
+          console.log("entry succesfull");
+      }
+      setCreateBio(false);
     }
     let temp = useRef([]);
     // deleting one item from bio marker type
     console.log("row", row, temp.current)
-    // function deleteItem(e, id){
-    //   e.preventDefault();
-    //     console.log("id", id, row)
-    //     let update = row.filter((elem)=>{
-    //       // console.log(elem.id.props.children , id)
-    //       return elem.id !== id;
-    //     })
-    //     // setRow(update)
-    //     setRow([...update]);
-    // }
 
-
-    // Adding bio marker type
-    // let [bioMarkerTypeDataFirst, setBioMarkerTypeDataFirst] = useState({
-    //   gender: "",
-    //   ageGroupStartRange: "",
-    //   ageGroupEndRange: "",
-    //   ageGroupUnit: "",
-    //   range: "",
-    //   bodyCondition: "",
-    // });
     function onCreate(){
       // let obj = {};
 
@@ -291,99 +271,7 @@ useEffect(() => {
         )
     }
 
-    // (temp.current).push(obj)
-      // obj.id = (
-      //   <MDTypography component="a" href="#" variant="caption">
-      //     {Date.now()}
-      //   </MDTypography>
-      // );
 
-      // obj.delete = (
-      //   <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(e)=>{deleteItem(obj.id.props.children)}}>
-      //     🗑️
-      //   </MDButton>
-      // );
-
-      // obj.gender = (
-      //       <TextField
-      //       id="filled-basic"
-      //       select
-      //       label=""
-      //       defaultValue=""
-      //       //helperText="Please select your gender"
-      //       variant="filled"
-      //       sx={{margin: 1, padding: 1, width: "100px"}}
-      //       onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
-      //     >
-      //       {gender.map((option) => (
-      //         <MenuItem key={option.value} value={option.value}>
-      //           {option.label}
-      //         </MenuItem>
-      //       ))}
-      //     </TextField>
-      // );
-
-      // obj.agegroupstart = ( 
-      //   <TextField
-      //   id="filled-basic" label="" variant="filled" type="number"
-      //   sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
-      //   );
-
-      // obj.agegroupend = (
-      //   <TextField
-      //   id="filled-basic" label="" variant="filled" type="number"
-      //   sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
-      // );
-        
-      // obj.agegroupunit = (
-      //   <TextField
-      //     id="filled-basic"
-      //     select
-      //     label=""
-      //     defaultValue=""
-      //     //helperText="Please select the age unit"
-      //     variant="filled"
-      //     sx={{margin: 1, padding: 1, width: "150px"}}
-      //     onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
-      //   >
-      //     {ageunit.map((option) => (
-      //       <MenuItem key={option.value} value={option.value}>
-      //         {option.label}
-      //       </MenuItem>
-      //     ))}
-      //   </TextField>
-      //   );
-        
-      // obj.range = (
-      //   <TextField
-      //   id="filled-basic" label="" variant="filled"
-      //   sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
-      //   );
-
-      // obj.bodycondition = (
-      //   <TextField
-      //     id="filled-basic"
-      //     select
-      //     label=""
-      //     defaultValue=""
-      //     //helperText="Please select the body condition"
-      //     variant="filled"
-      //     sx={{margin: 1, padding: 1, width: "150px"}}
-      //     onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
-      //   >
-      //     {bodycondition.map((option) => (
-      //       <MenuItem key={option.value} value={option.value}>
-      //         {option.label}
-      //       </MenuItem>
-      //     ))}
-      //   </TextField>
-      //   );
-
-        // console.log(temp)
-        // let newObj = (JSON.stringify(obj))
-        //     (temp.current).push(newObj);
-        //     setRow((temp.current))
-        // setBioMarkerTypeDataFirst(bioMarkerTypeDataFirst)
       setRow((oldState)=> [...oldState, obj])
       formData.bioMarkerType.push(((bioMarkerTypeDataFirst)));
       // render ? serRender(false) : serRender(true)
