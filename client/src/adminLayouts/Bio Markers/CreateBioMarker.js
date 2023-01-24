@@ -16,6 +16,7 @@ import MDButton from "../../components/MDButton";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
+import axios from "axios"
 
 
 
@@ -118,6 +119,17 @@ useEffect(() => {
     //   setUnitDetail(data.data)
   
     // }, [])
+
+    useEffect(()=>{
+      axios.get(`${baseUrl}api/v1/units`)
+      .then((res)=>{
+        setUnitDetail(res.data.data)
+        console.log("res.data.data", res.data.data)
+      })
+      .catch(()=>{
+        console.log("Fail to fetch data")
+      })
+    },[])
 
 
 
@@ -313,11 +325,11 @@ useEffect(() => {
         id="filled-basic" label="Name" variant="filled"
           sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.name = e.target.value}}/>
         
-        <TextField
-        id="filled-basic" label="Unit" variant="filled"
-        sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.unit = e.target.value}}/>
-
         {/* <TextField
+        id="filled-basic" label="Unit" variant="filled"
+        sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.unit = e.target.value}}/> */}
+
+        <TextField
           id="filled-basic"
           select
           label="Unit"
@@ -332,7 +344,7 @@ useEffect(() => {
               {option.unitFullName}
             </MenuItem>
           ))}
-        </TextField> */}
+        </TextField>
 
         <TextField
         id="filled-basic" label="Alias" variant="filled"

@@ -57,23 +57,34 @@ const UserModel = ({setCreate}) => {
   const [roleDetail, setRoleDetail] = useState([]);
 
 
-  useEffect(async ()=>{
-    const res = await fetch(`${baseUrl}api/v1/roles`, {
-      method: "GET",
-      credentials:"include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": true
-      }
-    })
+  // useEffect(async ()=>{
+  //   const res = await fetch(`${baseUrl}api/v1/roles`, {
+  //     method: "GET",
+  //     credentials:"include",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //       "Access-Control-Allow-Credentials": true
+  //     }
+  //   })
 
-    const data = await res.json();
+  //   const data = await res.json();
           
-    console.log("role", data);
-    setRoleDetail(data.data)
+  //   console.log("role", data);
+  //   setRoleDetail(data.data)
 
-  }, [])
+  // }, [])
+
+  useEffect(()=>{
+    axios.get(`${baseUrl}api/v1/roles`)
+    .then((res)=>{
+      setRoleDetail(res.data.data)
+      console.log("res.data.data", res.data.data)
+    })
+    .catch(()=>{
+      console.log("Fail to fetch data")
+    })
+  },[])
 
 
   const handleClose = () => {
