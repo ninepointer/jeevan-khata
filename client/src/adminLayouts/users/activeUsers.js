@@ -26,14 +26,14 @@ import UserModel from './UserModel';
 import activeUserData from './data/activeUserData';
 import UserEditModel from "./UserEditModel";
 
-const ActiveUser = ({setCreateUser}) => {
+const ActiveUser = ({setCreate}) => {
     const { columns, rows } = activeUserData();
     const [activeUsers,setActiveUsers] = useState([]);
     const [reRender, setReRender] = useState(true);
 
     function openCreateUser(){
         console.log("in open")
-        setCreateUser(true);
+        setCreate(true);
     }
 
     let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"

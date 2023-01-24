@@ -33,6 +33,7 @@ import createCache from "@emotion/cache";
 
 // Material Dashboard 2 React routes
 import routes from "./routes";
+import homeRoutes from "./homeRoute";
 // import adminRoutes from "./routes";
 // import userRoutes from "./routesUser";
 
@@ -46,8 +47,11 @@ import brandDark from "./assets/images/logo-ct-dark.png";
 import { userContext } from "./AuthContext";
 import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
 import SignIn from "./adminLayouts/authentication/sign-in/index"
+import Cookies from 'js-cookie';
 
 export default function App() {
+  const cookieValue = Cookies.get("jwt");
+  ////console.log("cookieValue", cookieValue);
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
@@ -68,7 +72,7 @@ export default function App() {
   //get userdetail who is loggedin
   const setDetails = useContext(userContext);
   const getDetails = useContext(userContext);
-  console.log("app getdetail", getDetails)
+  ////console.log("app getdetail", getDetails)
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -86,7 +90,43 @@ export default function App() {
     }
   };
 
-  // Change the openConfigurator state
+  // const setDetails = useContext(userContext);
+  // const getDetails = useContext(userContext);
+
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
+
+
+  useEffect(()=>{
+    axios.get(`${baseUrl}api/v1/users/logindetail`, {
+        withCredentials: true,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true
+        },
+    })
+    .then((res)=>{
+      ////console.log("response", res.data)
+      setDetails.setUserDetail(res.data.data);
+      setDetailUser((res.data.data));
+
+
+    }).catch((err)=>{
+      console.log("Fail to fetch data of user");
+
+      ////console.log(err);
+    })
+            
+  }, [])
+
+  // if(!getDetails.userDetails.role){
+  //   ////console.log(homeRoutes)
+  //   homeRoutes[0].route = "*"
+  // }
+
+
+
+  // Change the openConfigurator state  logindetail
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
 
   // Setting the dir attribute for the body element
@@ -114,33 +154,35 @@ export default function App() {
       return null;
     });
 
-  const configsButton = (
-    <MDBox
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      width="3.25rem"
-      height="3.25rem"
-      bgColor="white"
-      shadow="sm"
-      borderRadius="50%"
-      position="fixed"
-      right="2rem"
-      bottom="2rem"
-      zIndex={99}
-      color="dark"
-      sx={{ cursor: "pointer" }}
-      onClick={handleConfiguratorOpen}
-    >
-      {/* <Icon fontSize="small" color="inherit">
-        settings
-      </Icon> */}
-      <SettingsIcon/>
-    </MDBox>
-  );
+  // const configsButton = (
+  //   <MDBox
+  //     display="flex"
+  //     justifyContent="center"
+  //     alignItems="center"
+  //     width="3.25rem"
+  //     height="3.25rem"
+  //     bgColor="white"
+  //     shadow="sm"
+  //     borderRadius="50%"
+  //     position="fixed"
+  //     right="2rem"
+  //     bottom="2rem"
+  //     zIndex={99}
+  //     color="dark"
+  //     sx={{ cursor: "pointer" }}
+  //     onClick={handleConfiguratorOpen}
+  //   >
+  //     {/* <Icon fontSize="small" color="inherit">
+  //       settings
+  //     </Icon> */}
+  //     {/* <SettingsIcon/> */}
+  //   </MDBox>
+  // );
 
+  ////console.log(detailUser.role, getDetails.userDetails.role)
+  ////console.log(detailUser.role === "63cb5e30f6c8df05f26ada0a" || getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a")
   return direction === "rtl" ? (
-    
+      
       <CacheProvider value={rtlCache}>
         <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
           <CssBaseline />
@@ -150,18 +192,18 @@ export default function App() {
                 color={sidenavColor}
                 brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
                 brandName="Jeevan Khata"
-                routes={routes}
+                routes={(detailUser.role === "63cb5e30f6c8df05f26ada0a" || getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") ? routes : homeRoutes}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
               />
               <Configurator />
-              {configsButton}
+              {/* {configsButton} */}
             </>
           )}
           {layout === "vr" && <Configurator />}
           <Routes>
-          {/* {(getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && getRoutes(routes)} */}
-          {getRoutes(routes)}
+          {((getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && getRoutes(routes) )}
+          {/* {getRoutes(routes)} */}
             <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
           </Routes>
         </ThemeProvider>
@@ -172,29 +214,35 @@ export default function App() {
         <CssBaseline />
         {layout === "dashboard" && (
           <>
+          {(getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") &&
             <Sidenav
               color={sidenavColor}
               brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
               brandName="Jeevan Khata"
-              routes={routes}
+              routes={(detailUser.role === "63cb5e30f6c8df05f26ada0a" || getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") ? routes : homeRoutes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
-            />
+            />}
             <Configurator />
-            {configsButton}
+            {/* {configsButton} */}
           </>
         )}
         {/* (getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") &&  */}
         {/* {layout === "companyposition" && <Configurator />}
         <Routes>
         {getRoutes(routes)}
+        : getRoutes(homeRoutes)
           <Route path="*" element={<BioMarkerLayout />} />
+          :
+          <Route path="*"  />
         </Routes> */}
          {layout === "login" && <Configurator />}
         <Routes>
-        {/* {(getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && } */}
-        {getRoutes(routes)}
+        {((getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && getRoutes(routes) )}
+        {/* {getRoutes(routes)} */}
+        {!cookieValue && 
           <Route path="*" element={<SignIn />} />
+          }
         </Routes>
       </ThemeProvider>
     

@@ -143,6 +143,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return returnValue;
   });
 
+  console.log("renderRoutes", renderRoutes)
+
   return (
     <SidenavRoot
       {...rest}
@@ -181,7 +183,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           (darkMode && !transparentSidenav && whiteSidenav)
         }
       />
-      <List>{renderRoutes}</List>
+      {renderRoutes.length !== 1 &&
+      <List>{renderRoutes}</List>}
       <MDBox p={2} mt="auto">
         <MDButton
           component="a"

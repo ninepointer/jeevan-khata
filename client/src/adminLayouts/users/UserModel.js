@@ -17,13 +17,13 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { userContext } from '../../AuthContext';
-import {useState, useContext} from "react"
+import {useState, useContext, useEffect} from "react"
 import axios from "axios"
 import { textAlign } from '@mui/system';
 
 
 
-const UserModel = ({setCreateUser}) => {
+const UserModel = ({setCreate}) => {
 
   const gender = [
     {
@@ -54,11 +54,30 @@ const UserModel = ({setCreateUser}) => {
   const getDetails = useContext(userContext);
 
   const [reRender, setReRender] = useState(true);
+  const [roleDetail, setRoleDetail] = useState([]);
 
+
+  useEffect(async ()=>{
+    const res = await fetch(`${baseUrl}api/v1/roles`, {
+      method: "GET",
+      credentials:"include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": true
+      }
+    })
+
+    const data = await res.json();
+          
+    console.log("role", data);
+    setRoleDetail(data.data)
+
+  }, [])
 
 
   const handleClose = () => {
-    setCreateUser(false);
+    setCreate(false);
   };
 
 
@@ -92,7 +111,7 @@ const UserModel = ({setCreateUser}) => {
         window.alert("User Created Successfully");
         console.log("entry succesfull");
     }
-    setCreateUser(false);
+    setCreate(false);
     // reRender ? setReRender(false) : setReRender(true)
 
 }
@@ -137,7 +156,7 @@ const UserModel = ({setCreateUser}) => {
           defaultValue=""
           helperText="Please select your gender"
           variant="filled"
-          sx={{margin: 1, padding: 1, width: "250px"}}
+          sx={{margin: 4, padding: 2, width: "200px"}}
           onChange={(e)=>{formstate.gender = e.target.value}}
         >
           {gender.map((option) => (
@@ -167,10 +186,27 @@ const UserModel = ({setCreateUser}) => {
         <TextField
           id="filled-basic" label="Password" variant="filled" 
           sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{formstate.password = e.target.value}}/>
-        
-        <TextField
+        {/* roleDetail */}
+        {/* <TextField
           id="filled-basic" label="Role" variant="filled" 
-          sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{formstate.role = e.target.value}}/>
+          sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{formstate.role = e.target.value}}/> */}
+        <TextField
+          id="filled-basic"
+          select
+          label="Role"
+          defaultValue=""
+          helperText="Please select role"
+          variant="filled"
+          sx={{margin: 4, padding: 2, width: "200px"}}
+          onChange={(e)=>{formstate.role = e.target.value}}
+        >
+          {roleDetail.map((option) => (
+            <MenuItem key={option.roleName} value={option.roleName}>
+              {option.roleName}
+            </MenuItem>
+          ))}
+        </TextField>
+
 
         <TextField
           disabled id="filled-basic" label="JeevanKhata ID" variant="filled" 

@@ -32,7 +32,7 @@ export const login = async (req: Request, res:Response, next: NextFunction) =>{
     res.cookie('jwt', token, {
         expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRES_IN!)* 24 * 60 * 60 * 1000),
         // secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
+        // httpOnly: true,
     });
     res.status(200).json({
         status: 'success',
@@ -76,13 +76,6 @@ export const logout = async (req: Request, res:Response, next: NextFunction) =>{
         
 }
 
-// router.get("/logout", authentication, (req, res)=>{
-//     res.clearCookie("jwtoken", { path: "/" });
-//     res
-//     .status(200)
-//     .json({ success: true, message: "User logged out successfully" });
-
-// })
 
 export const protect = async (req: Request, res:Response, next: NextFunction): Promise<void> => {
 
@@ -117,4 +110,14 @@ export const protect = async (req: Request, res:Response, next: NextFunction): P
   }
   (req as any).user = freshUser;
   next();
+}
+
+export const getUserDetailAfterRefresh = async (req: Request, res:Response, next: NextFunction) => {
+    console.log("req is", req)
+    // let user = req.user;
+    res.status(200).json({
+        status: 'success',
+        data: (req as any).user,
+    });
+    // res.json(req);
 }

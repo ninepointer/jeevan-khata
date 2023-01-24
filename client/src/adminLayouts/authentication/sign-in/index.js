@@ -52,7 +52,7 @@ function Basic() {
   const setDetails = useContext(userContext);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
-  console.log("sign componenet")
+  //console.log("sign componenet")
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
 
@@ -74,21 +74,21 @@ function Basic() {
                    
     //       setDetails.setUserDetail(res.data);
     //       userData = res.data;
-    //       console.log("this is data of particular user", res.data);
+    //       //console.log("this is data of particular user", res.data);
   
     //       if(!res.status === 200){
     //           throw new Error(res.error);
     //       }
     //   } catch(err){
-    //       console.log("Fail to fetch data of user");
-    //       console.log(err);
+    //       //console.log("Fail to fetch data of user");
+    //       //console.log(err);
     //   }
     // }
 
 
     async function logInButton(e){
         e.preventDefault();
-        console.log(email, pass);
+        //console.log(email, pass);
         
         const res = await fetch(`${baseUrl}api/v1/users/login`, {
             method: "POST",
@@ -103,7 +103,7 @@ function Basic() {
         });
         
         const data = await res.json();
-        console.log(data);
+        //console.log(data);
         setDetails.setUserDetail(data.data);
         if(data.error || !data){
             window.alert(data.error);

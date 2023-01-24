@@ -77,13 +77,14 @@ import Switch from "@mui/material/Switch";
     let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
 
     const {columns, rows} = CreateBioMarkerTableData();
+    const [unitDetail, setUnitDetail] = useState([]);
     const [render, serRender] = useState(true);
     const [row, setRow] = useState([
     ]);
   const [id, setId] = useState(null);
 
   function deleteItem(id){
-    console.log(id)
+    //console.log(id)
     setId(id);
   }
 
@@ -92,16 +93,31 @@ useEffect(() => {
     return elem.id !== id;
   })
 
-  console.log("update", update);
+  //console.log("update", update);
   setRow([...update]);
   // if(id){
-  //   setRow(prevRow => prevRow.filter((elem)=> {console.log(elem.id, id); return elem.id !== id}));
+  //   setRow(prevRow => prevRow.filter((elem)=> {//console.log(elem.id, id); return elem.id !== id}));
   // }
 }, [id])
 
-    // useEffect(()=>{
 
-    // }, [render])
+    // useEffect(async ()=>{
+    //   const res = await fetch(`${baseUrl}api/v1/units`, {
+    //     method: "GET",
+    //     credentials:"include",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //       "Access-Control-Allow-Credentials": true
+    //     }
+    //   })
+  
+    //   const data = await res.json();
+            
+    //   //console.log("role", data);
+    //   setUnitDetail(data.data)
+  
+    // }, [])
 
 
 
@@ -138,7 +154,7 @@ useEffect(() => {
       }
 
       setFormData(formData);
-      console.log(formData)
+      //console.log(formData)
       const { name , unit , status, bioMarkerType, alias} = formData;
       let aliasArr = alias.split(",");
       const res = await fetch(`${baseUrl}api/v1/bioMarkers`, {
@@ -155,19 +171,19 @@ useEffect(() => {
     
     const data = await res.json();
              
-      console.log(data);
+      //console.log(data);
       if(data.status === 422 || data.error || !data){ 
           window.alert(data.error);
-          console.log("Invalid Entry");
+          //console.log("Invalid Entry");
       }else{
           window.alert("Bio Marker Created Successfully");
-          console.log("entry succesfull");
+          //console.log("entry succesfull");
       }
       setCreateBio(false);
     }
     let temp = useRef([]);
     // deleting one item from bio marker type
-    console.log("row", row, temp.current)
+    //console.log("row", row, temp.current)
 
     function onCreate(){
       // let obj = {};
@@ -301,6 +317,23 @@ useEffect(() => {
         id="filled-basic" label="Unit" variant="filled"
         sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.unit = e.target.value}}/>
 
+        {/* <TextField
+          id="filled-basic"
+          select
+          label="Unit"
+          defaultValue=""
+          helperText="Please select unit"
+          variant="filled"
+          sx={{margin: 4, padding: 2, width: "200px"}}
+          onChange={(e)=>{formData.unit = e.target.value}}
+        >
+          {unitDetail.map((option) => (
+            <MenuItem key={option.unitFullName} value={option.unitFullName}>
+              {option.unitFullName}
+            </MenuItem>
+          ))}
+        </TextField> */}
+
         <TextField
         id="filled-basic" label="Alias" variant="filled"
         sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.alias = e.target.value}}/>
@@ -367,7 +400,6 @@ export default CreateBioMarker
 
 
 
-// import React, { useState } from 'react';
 
 // const ItemRow = ({ item, onDelete }) => {
 //   const handleDelete = () => {
@@ -413,7 +445,7 @@ export default CreateBioMarker
 //   };
 
 //   const handleSubmit = () => {
-//     console.log(items);
+//     //console.log(items);
 //   }
 
 //   return (
