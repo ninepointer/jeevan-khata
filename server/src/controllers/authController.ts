@@ -68,7 +68,7 @@ export const signup = async (req: Request, res:Response, next: NextFunction) =>{
 
 export const logout = async (req: Request, res:Response, next: NextFunction) =>{
 
-    res.clearCookie("jwtoken", { path: "/" });
+    res.clearCookie("jwt", { path: "/" });
     res
     .status(200)
     .json({ success: true, message: "User logged out successfully" });

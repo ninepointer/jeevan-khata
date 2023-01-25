@@ -2,7 +2,7 @@ export default function RoleData() {
 
     return {
       columns: [
-        { Header: "Edit", accessor: "edit", align: "center" },
+        { Header: "View", accessor: "view", align: "center" },
         { Header: "Role Name", accessor: "roleName", align: "center" },
         { Header: "Report Access", accessor: "reportAccess", align: "center" },
         { Header: "User Access", accessor: "userAccess", align: "center" },

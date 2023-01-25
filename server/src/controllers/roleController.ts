@@ -3,7 +3,6 @@ import Role from '../models/Role';
 import {createCustomError} from '../errors/customError';
 import {promisifiedVerify, signToken} from '../utils/authUtil';
 import CatchAsync from '../middlewares/CatchAsync';
-import role from '../models/Role';
 
 
 interface RoleInterface{
@@ -39,11 +38,46 @@ export const createRole = CatchAsync(async(req:Request, res:Response, next: Next
 });
 
 export const getRoles = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
-    const roles = await Role.find();
+    const roles = await Role.find({isDeleted: false});
 
     if(!roles) return next(createCustomError('Can\'t get roles', 404 ));
 
     res.status(200).json({status: 'Success', data: roles, results: roles.length });
 
 
+});
+
+export const editRole = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const{roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status }:RoleInterface = req.body;
+    const {id} = req.params;
+
+    const unitData = await Role.findOne({_id: id})
+    console.log("user", unitData)
+
+    unitData!.roleName = roleName,
+    unitData!.reportAccess = reportAccess,
+    unitData!.userAccess = userAccess,
+    unitData!.attributesAccess = attributesAccess,
+    unitData!.analyticsAccess = analyticsAccess,
+    unitData!.status = status
+
+    await unitData!.save();
+    res.status(201).json({status: "Success", data:unitData});
+    
+});
+
+export const deleteRole = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const {id} = req.params;
+
+    const filter = { _id: id };
+    const update = { $set: { isDeleted: true } };
+
+    try{
+        const roleDetail = await Role.updateOne(filter, update);
+        console.log("this is roledetail", roleDetail);
+        res.status(201).json({massage : "data delete succesfully"});
+    } catch (e){
+        res.status(500).json({error:"Failed to delete data"});
+    }    
+    
 });

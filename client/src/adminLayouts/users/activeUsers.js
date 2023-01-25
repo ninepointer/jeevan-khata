@@ -26,7 +26,8 @@ import UserModel from './UserModel';
 import activeUserData from './data/activeUserData';
 import UserEditModel from "./UserEditModel";
 
-const ActiveUser = ({setCreate}) => {
+const ActiveUser = ({setCreate, setView, setEditData}) => {
+    const {checkIsView, setGetId} = setView
     const { columns, rows } = activeUserData();
     const [activeUsers,setActiveUsers] = useState([]);
     const [reRender, setReRender] = useState(true);
@@ -59,6 +60,15 @@ const ActiveUser = ({setCreate}) => {
       .then();
     },[reRender])
 
+    function setViewFunc(id){
+
+      // isView.checking = true;
+      setGetId(id);
+      checkIsView(true)
+      setEditData(activeUsers)
+      console.log("in view func")
+    }
+
 
     activeUsers.map((elem)=>{
       let activeusersrows = {}
@@ -72,7 +82,7 @@ const ActiveUser = ({setCreate}) => {
   
       activeusersrows.edit = (
           <MDButton variant="Contained" color="info" fontWeight="medium">
-            <ModeTwoToneIcon/>{/* <UserEditModel data={activeusersrows} id={elem._id} Render={{setReRender, reRender}}/> */}
+            <ModeTwoToneIcon onClick={(e)=>{setViewFunc(elem._id)}}/>{/* <UserEditModel data={activeusersrows} id={elem._id} Render={{setReRender, reRender}}/> */}
           </MDButton>
         );
         activeusersrows.jeevankhataId = (

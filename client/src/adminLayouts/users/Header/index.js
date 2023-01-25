@@ -32,6 +32,8 @@ import DeletedUsers from "../deletedUsers";
 import Roles from "../roles";
 import UserModel from "../UserModel";
 import RolesModel from "../RolesModel"
+import UserEditModel from "../UserEditModel"
+import RoleEdit from "../RoleEdit";
 
 
 
@@ -39,6 +41,10 @@ function UserHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
   const [isCreate, checkIsCreate] = useState(false);
+  const [isView, checkIsView] = useState(false);
+  const [getId, setGetId] = useState("");
+  const [reRender, setReRender] = useState(false);
+  const [editData, setEditData] = useState([]);
 
 
   useEffect(() => {
@@ -124,16 +130,34 @@ function UserHeader({ children }) {
              
               </Tabs>
             </AppBar>
-            {console.log(isCreate)}
-            {isCreate ?
+            {console.log(isView, isCreate)}
+            {isCreate || isView ?
+
+            (isCreate ?
             <TabPanel value={tabValue} index={0}>< UserModel setCreate={checkIsCreate}/> </TabPanel>
+            :
+            <TabPanel value={tabValue} index={0}>< UserEditModel Render={{reRender, setReRender}} setView={checkIsView} activeUsers={editData} id={getId}/> </TabPanel>)
               :
-            <TabPanel value={tabValue} index={0}>< ActiveUsers setCreate={checkIsCreate}/> </TabPanel>}
+            <TabPanel value={tabValue} index={0}>< ActiveUsers setEditData={setEditData} setView={{checkIsView, setGetId}} setCreate={checkIsCreate}/> </TabPanel>}
+
+
+
             <TabPanel value={tabValue} index={1}><DeletedUsers/> </TabPanel>
-            {isCreate ?
+
+            {/* {isCreate ?
             <TabPanel value={tabValue} index={2}><RolesModel setCreate={checkIsCreate}/> </TabPanel>
               :
-            <TabPanel value={tabValue} index={2}><Roles setCreate={checkIsCreate}/> </TabPanel>}
+            <TabPanel value={tabValue} index={2}><Roles setCreate={checkIsCreate}/> </TabPanel>} */}
+
+            {isCreate || isView ?
+
+            (isCreate ?
+            <TabPanel value={tabValue} index={2}>< RolesModel setCreate={checkIsCreate}/> </TabPanel>
+            :
+            <TabPanel value={tabValue} index={2}>< RoleEdit Render={{reRender, setReRender}} setView={checkIsView} roleData={editData} id={getId}/> </TabPanel>)
+              :
+            <TabPanel value={tabValue} index={2}>< Roles setEditData={setEditData} setView={{checkIsView, setGetId}} setCreate={checkIsCreate}/> </TabPanel>}
+
 
           </Grid>
         </Grid>

@@ -26,7 +26,7 @@ const limiter = rateLimit({
 app.use(cors({
     credentials: true,
     origin: "http://localhost:3000", 
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   }));
 app.use(helmet());
 app.use('/api', limiter);

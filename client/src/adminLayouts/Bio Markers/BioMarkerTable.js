@@ -1,8 +1,10 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 
 // @mui material components
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import ModeTwoToneIcon from '@mui/icons-material/ModeTwoTone';
+
 
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
@@ -18,12 +20,99 @@ import BioMarkerData from './data/bioMarkerData';
 // import RolesData from './data/rolesData';
 
 
-const BioMarkerTable = ({setCreateBio}) => {
+const BioMarkerTable = ({setCreateBio, setView, setEditData}) => {
 
   const {columns, rows} = BioMarkerData();
   function onCreate(){
     setCreateBio(true);
   }
+
+
+  const {checkIsView, setGetId} = setView
+  const [bioMarkerData,setBioMarkerData] = useState([]);
+  const [reRender, setReRender] = useState(true);
+
+//   function openCreateUser(){
+//       console.log("in open")
+//       setCreate(true);
+//   }
+
+  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
+  async function getActiveUsers (){
+    const res = await fetch(`${baseUrl}api/v1/bioMarkers`, {
+      method: "GET",
+      credentials:"include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": true
+    },
+    },
+  )
+  let data = await res.json()
+    setBioMarkerData(data.data);
+    //rows = data.data;
+    console.log(data.data)
+  }
+
+  useEffect(()=>{
+    getActiveUsers()
+    .then();
+  },[reRender])
+
+  function setViewFunc(id){
+
+    // isView.checking = true;
+    setGetId(id);
+    checkIsView(true)
+    setEditData(bioMarkerData)
+    console.log("in view func")
+  }
+
+
+  bioMarkerData.map((elem)=>{
+    let bioMarkerRow = {}
+    const createdondate = new Date(elem.createdOn);
+    const options1 = { year: 'numeric', month: 'short', day: 'numeric' };
+    const createdOn = createdondate.toLocaleDateString('en-US', options1)
+
+    // let length = 0;
+    // if(elem.gender && elem.bodyCondition){
+    //   length += 1;
+    // }
+     
+
+    bioMarkerRow.view = (
+        <MDButton variant="Contained" color="info" fontWeight="medium">
+          <ModeTwoToneIcon onClick={(e)=>{setViewFunc(elem._id)}}/>
+        </MDButton>
+      );
+      bioMarkerRow.name = (
+        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+          {elem.name}
+        </MDTypography>
+      );
+    bioMarkerRow.unit = (
+      <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+        {elem.unit}
+      </MDTypography>
+    );
+    bioMarkerRow.bioMarkerTypeCount = (
+      <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+        { elem.bioMarkerTypes.length}
+      </MDTypography>
+    );
+    bioMarkerRow.createdOn = (
+      <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+        {createdOn}
+      </MDTypography>
+    );
+   
+    rows.push(bioMarkerRow)
+  })
+
+
+
 
     return (
         <>

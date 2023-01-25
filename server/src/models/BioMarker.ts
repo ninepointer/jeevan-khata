@@ -13,6 +13,7 @@ const bioMarkerSchema = new mongoose.Schema({
     },
     status:{
         type: String,
+        default: 'Active',
         // required : true
     },
     uid:{

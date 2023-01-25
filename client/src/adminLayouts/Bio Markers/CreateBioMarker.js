@@ -66,14 +66,7 @@ import axios from "axios"
 
     ];
 
-    // let bioMarkerTypeDataFirst = {
-    //   gender: "",
-    //   ageGroupStartRange: "",
-    //   ageGroupEndRange: "",
-    //   ageGroupUnit: "",
-    //   range: "",
-    //   bodyCondition: "",
-    // };
+
 
     let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
 
@@ -89,36 +82,15 @@ import axios from "axios"
     setId(id);
   }
 
-useEffect(() => {
-  let update = row.filter((elem)=>{
-    return elem.id !== id;
-  })
+    useEffect(() => {
+      let update = row.filter((elem)=>{
+        return elem.id !== id;
+      })
 
-  //console.log("update", update);
-  setRow([...update]);
-  // if(id){
-  //   setRow(prevRow => prevRow.filter((elem)=> {//console.log(elem.id, id); return elem.id !== id}));
-  // }
-}, [id])
+      setRow([...update]);
 
+    }, [id])
 
-    // useEffect(async ()=>{
-    //   const res = await fetch(`${baseUrl}api/v1/units`, {
-    //     method: "GET",
-    //     credentials:"include",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //       "Access-Control-Allow-Credentials": true
-    //     }
-    //   })
-  
-    //   const data = await res.json();
-            
-    //   //console.log("role", data);
-    //   setUnitDetail(data.data)
-  
-    // }, [])
 
     useEffect(()=>{
       axios.get(`${baseUrl}api/v1/units`)
@@ -148,9 +120,6 @@ useEffect(() => {
       alias: "",
       bioMarkerType: []
     });
-
-    // At initial pushing data to biomarkertype
-    // formData.bioMarkerType.push(((bioMarkerTypeDataFirst)));
   
     const handleClose = () => {
       setCreateBio(false);
@@ -166,7 +135,6 @@ useEffect(() => {
       }
 
       setFormData(formData);
-      //console.log(formData)
       const { name , unit , status, bioMarkerType, alias} = formData;
       let aliasArr = alias.split(",");
       const res = await fetch(`${baseUrl}api/v1/bioMarkers`, {
@@ -183,22 +151,15 @@ useEffect(() => {
     
     const data = await res.json();
              
-      //console.log(data);
       if(data.status === 422 || data.error || !data){ 
           window.alert(data.error);
-          //console.log("Invalid Entry");
       }else{
           window.alert("Bio Marker Created Successfully");
-          //console.log("entry succesfull");
       }
       setCreateBio(false);
     }
-    let temp = useRef([]);
-    // deleting one item from bio marker type
-    //console.log("row", row, temp.current)
 
     function onCreate(){
-      // let obj = {};
 
       let bioMarkerTypeDataFirst = {
         gender: "",
@@ -222,16 +183,10 @@ useEffect(() => {
           select
           label=""
           defaultValue=""
-          //helperText="Please select your gender"
           variant="filled"
           sx={{margin: 1, padding: 1, width: "100px"}}
           onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
-          // onChange={(e) => {
-          //   setBioMarkerTypeDataFirst({
-          //     ...bioMarkerTypeDataFirst,
-          //     gender: e.target.value,
-          //   });
-          // }}
+
 
         >
           {gender.map((option) => (
@@ -302,7 +257,6 @@ useEffect(() => {
 
       setRow((oldState)=> [...oldState, obj])
       formData.bioMarkerType.push(((bioMarkerTypeDataFirst)));
-      // render ? serRender(false) : serRender(true)
     }
 
 
@@ -325,9 +279,6 @@ useEffect(() => {
         id="filled-basic" label="Name" variant="filled"
           sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.name = e.target.value}}/>
         
-        {/* <TextField
-        id="filled-basic" label="Unit" variant="filled"
-        sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.unit = e.target.value}}/> */}
 
         <TextField
           id="filled-basic"

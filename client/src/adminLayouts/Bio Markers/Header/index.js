@@ -29,6 +29,7 @@ import burceMars from "../../../assets/images/bruce-mars.jpg";
 import backgroundImage from "../../../assets/images/loginpageimage.jpeg";
 import BioMarkerTable from "../BioMarkerTable";
 import CreateBioMarker from "../CreateBioMarker";
+import EditBioMarker from "../EditBioMarker";
 // import ActiveUsers from "../activeUsers";
 // import DeletedUsers from "../deletedUsers";
 // import Roles from "../roles";
@@ -39,6 +40,11 @@ function UserHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
   const [isCreate, checkIsCreate] = useState(false);
+  const [isView, checkIsView] = useState(false);
+  const [getId, setGetId] = useState("");
+  const [reRender, setReRender] = useState(false);
+  const [editData, setEditData] = useState([]);
+
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -110,11 +116,21 @@ function UserHeader({ children }) {
              
               </Tabs>
             </AppBar> 
-            {isCreate ?
+            {/* {isCreate ?
             <TabPanel value={tabValue} index={0}>< CreateBioMarker setCreateBio={checkIsCreate}/> </TabPanel>
             :
             <TabPanel value={tabValue} index={0}>< BioMarkerTable setCreateBio={checkIsCreate}/> </TabPanel>
-            }
+            } */}
+
+            {isCreate || isView ?
+
+            (isCreate ?
+            <TabPanel value={tabValue} index={0}>< CreateBioMarker setCreateBio={checkIsCreate}/> </TabPanel>
+            :
+            <TabPanel value={tabValue} index={0}>< EditBioMarker Render={{reRender, setReRender}} setView={checkIsView} bioMarkerData={editData} id={getId}/> </TabPanel>)
+              :
+            <TabPanel value={tabValue} index={0}>< BioMarkerTable setEditData={setEditData} setView={{checkIsView, setGetId}} setCreateBio={checkIsCreate}/> </TabPanel>}
+
             
 
           </Grid>
