@@ -56,6 +56,8 @@ const CreateLabTest = ({setCreateLabTest}) => {
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
+
+    console.log(personName)
   };
   const names = [
     'BM1',
@@ -92,11 +94,33 @@ const CreateLabTest = ({setCreateLabTest}) => {
 
 
   async function formSubmit() {
+    formstate.bioMarkers = personName;
     setformstate(formstate);
     console.log(formstate)
 
-    const { testName, testScientificName, bioMarkers} = formstate;
-
+    const { testName , testScientificName , bioMarkers} = formstate;
+    const res = await fetch(`${baseUrl}api/v1/labTests`, {
+      method: "POST",
+      credentials:"include",
+      headers: {
+          "content-type" : "application/json",
+          "Access-Control-Allow-Credentials": true
+      },
+      body: JSON.stringify({
+        testName , testScientificName , bioMarkers
+      })
+    });
+  
+  const data = await res.json();
+           
+    console.log(data);
+    if(data.status === 422 || data.error || !data){ 
+        window.alert(data.error);
+        //console.log("Invalid Entry");
+    }else{
+        window.alert("Lab Test Created Successfully");
+        //console.log("entry succesfull");
+    }
     setCreateLabTest(false);
     // reRender ? setReRender(false) : setReRender(true)
 
@@ -126,34 +150,34 @@ const CreateLabTest = ({setCreateLabTest}) => {
           sx={{margin: 1, padding: 1, width: "250px", minHeight: "50px"}} onChange={(e)=>{formstate.testScientificName = e.target.value}}/>
 
         <FormControl sx={{ m: 2, width: 300, minHeight: 100 }}>
-                <InputLabel id="filled-basic">Bio Markers</InputLabel>
-                <Select
-                  labelId="filled-basic"
-                  id="filled-basic"
-                  multiple
-                  value={personName}
-                  onChange={handleChange}
-                  input={<OutlinedInput id="filled-basic" label="Bio Markers" />}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, minHeight:50, height:65 }}>
-                      {selected.map((value) => (
-                        <Chip key={value} label={value} />
-                      ))}
-                    </Box>
-                  )}
-                  MenuProps={MenuProps}
-                >
-                  {names.map((name) => (
-                    <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, personName, theme)}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+          <InputLabel id="filled-basic">Bio Markers</InputLabel>
+          <Select
+            labelId="filled-basic"
+            id="filled-basic"
+            multiple
+            value={personName}
+            onChange={handleChange}
+            input={<OutlinedInput id="filled-basic" label="Bio Markers" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, minHeight:50, height:65 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
+            MenuProps={MenuProps}
+          >
+            {names.map((name) => (
+              <MenuItem
+                key={name}
+                value={name}
+                style={getStyles(name, personName, theme)}
+              >
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         
 
         </Box>

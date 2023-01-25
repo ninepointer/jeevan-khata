@@ -181,6 +181,8 @@ export default function App() {
 
   ////console.log(detailUser.role, getDetails.userDetails.role)
   ////console.log(detailUser.role === "63cb5e30f6c8df05f26ada0a" || getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a")
+
+  console.log("pathname", pathname)
   return direction === "rtl" ? (
       
       <CacheProvider value={rtlCache}>
@@ -243,7 +245,10 @@ export default function App() {
         {!cookieValue ? 
           <Route path="*" element={<SignIn />} />
           :
+          !pathname || pathname === "/" ?
           <Route path="*" element={<Navigate to="/adminDashboard" />} />
+          :
+          <Route path="*" element={<Navigate to={pathname} />} />
           }
         </Routes>
       </ThemeProvider>
