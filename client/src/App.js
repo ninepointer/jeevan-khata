@@ -240,8 +240,10 @@ export default function App() {
         <Routes>
         {((getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && getRoutes(routes) )}
         {/* {getRoutes(routes)} */}
-        {!cookieValue && 
+        {!cookieValue ? 
           <Route path="*" element={<SignIn />} />
+          :
+          <Route path="*" element={<Navigate to="/adminDashboard" />} />
           }
         </Routes>
       </ThemeProvider>
