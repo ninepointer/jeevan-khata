@@ -157,11 +157,12 @@ userSchema.post('save', async function(doc, next){
     doc.lastModifiedBy = doc._id;
   }
   doc.lastModifiedOn = Date.now();
-  doc.save().then(() => {
-    next();
-  }).catch(err => {
-    next(err);
-  });
+  console.log("users")
+//   doc.save().then(() => {
+//     next();
+//   }).catch(err => {
+//     next(err);
+//   });
   next();  
 });
 
@@ -171,4 +172,5 @@ const user = mongoose.model("User", userSchema);
 export default user;
 
 
-// TODO : role not updating, labtest focus, modifiedby createdby not updating
+// TODO : role not updating in role, modifiedby createdby not updating,
+// length for unit and biomarker, infinity loop in post middleware

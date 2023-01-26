@@ -159,11 +159,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
       value: "",
       };
 
-          // let [unitConversionData, setUnitConversionData] = useState({
-    //   unitConversionFullName: "",
-    //   unitConversionId: "",
-    //   value: "",
-    // })
 
       obj.id = (
         <MDTypography component="a" variant="caption">

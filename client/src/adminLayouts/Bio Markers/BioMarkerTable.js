@@ -20,7 +20,7 @@ import BioMarkerData from './data/bioMarkerData';
 // import RolesData from './data/rolesData';
 
 
-const BioMarkerTable = ({setCreateBio, setView, setEditData}) => {
+const BioMarkerTable = ({setCreateBio, setView, setEditData, reRender}) => {
 
   const {columns, rows} = BioMarkerData();
   function onCreate(){
@@ -30,7 +30,7 @@ const BioMarkerTable = ({setCreateBio, setView, setEditData}) => {
 
   const {checkIsView, setGetId} = setView
   const [bioMarkerData,setBioMarkerData] = useState([]);
-  const [reRender, setReRender] = useState(true);
+  // const [reRender, setReRender] = useState(true);
 
 //   function openCreateUser(){
 //       console.log("in open")

@@ -8,7 +8,8 @@ interface MyArray extends Array<Record<string, any>> {}
 interface Unit{
     unitFullName: string,
     unitId: string,
-    unitConversion:MyArray
+    unitConversion:MyArray,
+    status: string
 }
 // unitFullName, unitId,  unitConversionData
 export const createUnit = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
@@ -27,63 +28,57 @@ export const createUnit = CatchAsync(async(req:Request, res:Response, next:NextF
 });
 
 export const getUnits = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
-    const units = await Unit.find();
+    const units = await Unit.find({isDeleted: false});
 
     res.status(200).json({status:'Success', results: units.length, data: units});
 });
 
-export const editUser = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    // const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state }: Unit = req.body;
+export const editUnit = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const{ unitFullName, unitId, unitConversion, status }:Unit = req.body;
     const {id} = req.params;
-    console.log("User :",(req as any).user)
-    const userData = await Unit.findOne({_id: id})
-    console.log("user", userData)
 
-    // if(password){
-    //     userData!.firstName = firstName
-    //     userData!.lastName = lastName,
-    //     userData!.gender = gender,
-    //     userData!.dateOfBirth = dateOfBirth,
-    //     userData!.email = email,
-    //     userData!.password = password,
-    //     userData!.mobile = mobile,
-    //     userData!.city = city,
-    //     userData!.state = state
+    const unitData = await Unit.findOne({_id: id})
+    console.log("user", unitData)
 
-    // } 
-    // else {
-    //     userData!.firstName = firstName
-    //     userData!.lastName = lastName,
-    //     userData!.gender = gender,
-    //     userData!.dateOfBirth = dateOfBirth,
-    //     userData!.email = email,
-    //     userData!.mobile = mobile,
-    //     userData!.city = city,
-    //     userData!.state = state
-    // }
+    unitData!.unitFullName = unitFullName,
+    unitData!.unitId = unitId,
+    (unitData as any).unitConversion = unitConversion,
+    unitData!.status = status,
 
-    await userData!.save();
-    res.status(201).json({status: "Success", data:userData});
-
-
-    // const user = await User.create({firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state });
-
-    // if(!user) return next(createCustomError('Couldn\'t create user', 400));
-
-    // res.status(201).json({status: "Success", data:user});
+    await unitData!.save();
+    res.status(201).json({status: "Success", data:unitData});
     
 });
 
-export const deleteUser = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+export const deleteUnit = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     const {id} = req.params;
 
+    const filter = { _id: id };
+    const update = { $set: { isDeleted: true } };
+
     try{
-        const {id} = req.params
-        const unitDetail = await Unit.deleteOne({_id : id})
-        console.log("this is unitdetail", unitDetail);
-        res.status(201).json({massage : "data delete succesfully"});
+        const unitDetail = await Unit.updateOne(filter, update);
+        res.status(201).json({massage : "Unit delete succesfully"});
     } catch (e){
         res.status(500).json({error:"Failed to delete data"});
     }    
+    
+});
+
+export const deleteUnitConversionType = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const {id} = req.params;
+ 
+    
+    Unit.updateOne({ "unitConversion": { $elemMatch: { _id: id } } },
+    { $set: { "unitConversion.$.is_Deleted": true } }, (err: any, result: any) => {
+        if (err) {
+            // handle error
+        } else {
+            res.status(201).json({massage : "Unit Conversion delete succesfully"});
+            console.log(result);
+        }
+    });
+
+    // console.log(biomarkertype) const biomarkertype = await 
     
 });

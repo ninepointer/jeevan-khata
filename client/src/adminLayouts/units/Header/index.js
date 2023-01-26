@@ -29,16 +29,20 @@ import burceMars from "../../../assets/images/bruce-mars.jpg";
 import backgroundImage from "../../../assets/images/loginpageimage.jpeg";
 import UnitTable from "../UnitTable";
 import CreateUnit from "../CreateUnit";
+import EditUnit from "../EditUnit"
 // import ActiveUsers from "../activeUsers";
 // import DeletedUsers from "../deletedUsers";
 // import Roles from "../roles";
-
 
 
 function UserHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
   const [isCreate, checkIsCreate] = useState(false);
+  const [isView, checkIsView] = useState(false);
+  const [getId, setGetId] = useState("");
+  const [reRender, setReRender] = useState(false);
+  const [editData, setEditData] = useState([]);
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -110,11 +114,22 @@ function UserHeader({ children }) {
              
               </Tabs>
             </AppBar> 
-            {isCreate ?
+            {/* {isCreate ?
             <TabPanel value={tabValue} index={0}>< CreateUnit setCreateUnit={checkIsCreate}/> </TabPanel>
             :
             <TabPanel value={tabValue} index={0}>< UnitTable setCreateUnit={checkIsCreate}/> </TabPanel>
-            }
+            } */}
+
+            {isCreate || isView ?
+
+            (isCreate ?
+            <TabPanel value={tabValue} index={0}>< CreateUnit setCreateBio={checkIsCreate}/> </TabPanel>
+            :
+            <TabPanel value={tabValue} index={0}>< EditUnit Render={{reRender, setReRender}} setView={checkIsView} unitData={editData} id={getId}/> </TabPanel>)
+              :
+            <TabPanel value={tabValue} index={0}>< UnitTable setEditData={setEditData} setView={{checkIsView, setGetId}} setCreateBio={checkIsCreate}/> </TabPanel>}
+
+
             
 
           </Grid>

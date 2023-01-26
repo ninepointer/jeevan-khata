@@ -129,7 +129,7 @@ function UserHeader({ children }) {
             :
             <TabPanel value={tabValue} index={0}>< EditBioMarker Render={{reRender, setReRender}} setView={checkIsView} bioMarkerData={editData} id={getId}/> </TabPanel>)
               :
-            <TabPanel value={tabValue} index={0}>< BioMarkerTable setEditData={setEditData} setView={{checkIsView, setGetId}} setCreateBio={checkIsCreate}/> </TabPanel>}
+            <TabPanel value={tabValue} index={0}>< BioMarkerTable reRender={reRender} setEditData={setEditData} setView={{checkIsView, setGetId}} setCreateBio={checkIsCreate}/> </TabPanel>}
 
             
 

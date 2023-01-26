@@ -29,16 +29,18 @@ import burceMars from "../../../assets/images/bruce-mars.jpg";
 import backgroundImage from "../../../assets/images/loginpageimage.jpeg";
 import LabTestTable from "../labTestTable";
 import CreateLabTest from "../CreateLabTest";
-// import ActiveUsers from "../activeUsers";
-// import DeletedUsers from "../deletedUsers";
-// import Roles from "../roles";
-
+import EditLabTest from "../EditLabTest"
 
 
 function LabTestHeader({ children }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
   const [isCreate, checkIsCreate] = useState(false);
+  const [isView, checkIsView] = useState(false);
+  const [getId, setGetId] = useState("");
+  const [reRender, setReRender] = useState(false);
+  const [editData, setEditData] = useState([]);
+
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -110,11 +112,23 @@ function LabTestHeader({ children }) {
              
               </Tabs>
             </AppBar> 
-            {isCreate ?
+            {/* {isCreate ?
             <TabPanel value={tabValue} index={0}><CreateLabTest setCreateLabTest={checkIsCreate}/> </TabPanel>
             :
             <TabPanel value={tabValue} index={0}><LabTestTable setCreateLabTest={checkIsCreate}/> </TabPanel>
-            }
+            } */}
+
+
+          {isCreate || isView ?
+
+          (isCreate ?
+          <TabPanel value={tabValue} index={0}>< CreateLabTest setCreate={checkIsCreate}/> </TabPanel>
+          :
+          <TabPanel value={tabValue} index={0}>< EditLabTest Render={{reRender, setReRender}} setView={checkIsView} labTestData={editData} id={getId}/> </TabPanel>)
+            :
+          <TabPanel value={tabValue} index={0}>< LabTestTable setEditData={setEditData} setView={{checkIsView, setGetId}} setCreate={checkIsCreate}/> </TabPanel>}
+
+
             
 
           </Grid>

@@ -17,18 +17,21 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { userContext } from '../../AuthContext';
-import {useState, useContext} from "react"
+import {useState, useContext, useEffect} from "react"
 import axios from "axios"
 import { textAlign } from '@mui/system';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Chip from '@mui/material/Chip';
+import Switch from "@mui/material/Switch";
 
 
 
-const CreateLabTest = ({setCreateLabTest}) => {
+
+const CreateLabTest = ({setCreate}) => {
 
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
+  const [bioMarker, setBioMarker] = React.useState([]);
   const [formstate, setformstate] = useState({
     testName: "",
     testScientificName: "",
@@ -53,24 +56,27 @@ const CreateLabTest = ({setCreateLabTest}) => {
       target: { value },
     } = event;
     setPersonName(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
 
     console.log(personName)
   };
-  const names = [
-    'BM1',
-    'BM2',
-    'BM3',
-    'BM4',
-    'BM5',
-    'BM6',
-    'BM7',
-    'BM8',
-    'BM9',
-    'BM10',
-  ];
+
+  useEffect(()=>{
+    axios.get(`${baseUrl}api/v1/bioMarkers/bioMarkerName`)
+    .then((res)=>{
+      setBioMarker(res.data.data)
+      console.log("res.data.data", res.data.data)
+    })
+    .catch(()=>{
+      console.log("Fail to fetch data")
+    })
+  },[])
+  let names = [];
+  bioMarker.map((elem)=>{
+    names.push(elem.name)
+  })
+
 
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
   
@@ -89,7 +95,7 @@ const CreateLabTest = ({setCreateLabTest}) => {
 
 
   const handleClose = () => {
-    setCreateLabTest(false);
+    setCreate(false);
   };
 
 
@@ -121,7 +127,7 @@ const CreateLabTest = ({setCreateLabTest}) => {
         window.alert("Lab Test Created Successfully");
         //console.log("entry succesfull");
     }
-    setCreateLabTest(false);
+    setCreate(false);
     // reRender ? setReRender(false) : setReRender(true)
 
 }
@@ -149,17 +155,18 @@ const CreateLabTest = ({setCreateLabTest}) => {
           id="filled-basic" label="Scientific Name" variant="filled"
           sx={{margin: 1, padding: 1, width: "250px", minHeight: "50px"}} onChange={(e)=>{formstate.testScientificName = e.target.value}}/>
 
+
         <FormControl sx={{ m: 2, width: 300, minHeight: 100 }}>
           <InputLabel id="filled-basic">Bio Markers</InputLabel>
           <Select
-            labelId="filled-basic"
+            // labelId="filled-basic"
             id="filled-basic"
             multiple
             value={personName}
             onChange={handleChange}
             input={<OutlinedInput id="filled-basic" label="Bio Markers" />}
             renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, minHeight:50, height:65 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, minHeight:100 , height:100 }}>
                 {selected.map((value) => (
                   <Chip key={value} label={value} />
                 ))}
@@ -179,6 +186,9 @@ const CreateLabTest = ({setCreateLabTest}) => {
           </Select>
         </FormControl>
         
+        <MDBox mt={0.5} display="flex" alignItems="center">
+          <MDBox component="span" variant="button" fontWeight="light" fontSize="15px" color="text">Status</MDBox><Switch label="Status"  onChange={(e) => {formstate.status = e.target.value}} />
+        </MDBox>
 
         </Box>
       <Button autoFocus onClick={formSubmit}>

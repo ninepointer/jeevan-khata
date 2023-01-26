@@ -5,6 +5,7 @@ import LabTest from "./adminLayouts/labTests/labTestLayout";
 import AdminDashboard from "./adminLayouts/adminDashboard";
 import Units from "./adminLayouts/units/unitLayout";
 import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
+import FileUploader from "./fileUpload";
 
 // @mui icons
 import PersonIcon from '@mui/icons-material/Person';
@@ -79,6 +80,17 @@ const routes = [
     icon: <PeopleAltTwoToneIcon/>,
     route: "/users",
     component: <Users />,
+  },
+  {
+    type: "collapse",
+    name: "File Upload",
+    
+    key: "fileUpload",
+        // </Routes> element={<SignIn />}}
+        // icon: <Icon fontSize="small">table_view</Icon>, 
+    icon: <PeopleAltTwoToneIcon/>,
+    route: "/upload",
+    component: <FileUploader />,
   },
 
 ];

@@ -68,6 +68,36 @@ import axios from "axios"
     ];
 
 
+    const handleChange = (e, index, checkEntity) => {
+      const values = [...BioMarkerType];
+
+      switch(checkEntity) {
+        case "gender":
+          values[index].gender = e.target.value;
+          break;
+        case "ageStart":
+          values[index].ageGroupStartRange = e.target.value;
+          break;
+        case "ageEnd":
+          values[index].ageGroupEndRange = e.target.value;
+          break;
+        case "ageUnit":
+          values[index].ageGroupUnit = e.target.value;
+          break;
+        case "range":
+          values[index].range = e.target.value;
+          break;
+        case "bodyCondition":
+          values[index].bodyCondition = e.target.value;
+          break;          
+        default:
+          // code block
+      }
+      
+      setBioMarkerType(values);
+    };
+
+
     const [unitDetail, setUnitDetail] = useState([]);
 
     useEffect(()=>{
@@ -80,12 +110,6 @@ import axios from "axios"
           console.log("Fail to fetch data")
         })
       },[])
-
-
-
-    // const [open, setOpen] = React.useState(false);
-    // const theme = useTheme();
-  
   
     const handleClose = () => {
       setView(false);
@@ -128,7 +152,7 @@ import axios from "axios"
   const [formstate, setformstate] = useState({
     name: "",
     unit: "",
-    bioMarkerTypes: "",
+    bioMarkerTypes: [],
     alias: "",
     status: "",
   });
@@ -146,10 +170,11 @@ import axios from "axios"
 
   
       setformstate(formstate);
+      console.log(formstate)
       const {name, unit, bioMarkerTypes, alias, status} = formstate;
   
   
-      const res = await fetch(`${baseUrl}api/v1/roles/update/${id}`, {
+      const res = await fetch(`${baseUrl}api/v1/bioMarkers/update/${id}`, {
           method: "PUT",
           headers: {
               "Accept": "application/json",
@@ -175,13 +200,13 @@ import axios from "axios"
   
       setEditOn(true);
       setView(false);
-      reRender ? setReRender(false) : setReRender(true)
+      // reRender ? setReRender(false) : setReRender(true)
   }
   
   async function Ondelete(){
     console.log(editData)
-    const res = await fetch(`${baseUrl}api/v1/roles/delete/${id}`, {
-        method: "DELETE",
+    const res = await fetch(`${baseUrl}api/v1/bioMarkers/delete/${id}`, {
+        method: "PATCH",
     });
   
   
@@ -200,8 +225,44 @@ import axios from "axios"
     reRender ? setReRender(false) : setReRender(true)
   }
 
-  function deleteItem(id){
 
+  async function deleteBioMarkerType(type_id, create_id){
+    console.log(type_id, create_id, rows)
+    if(type_id){
+      const res = await fetch(`${baseUrl}api/v1/bioMarkers/bioMarkerTypeDelete/${type_id}`, {
+          method: "PATCH",
+      });
+    
+    
+      const dataResp = await res.json();
+      
+      console.log(dataResp);
+      if (dataResp.status === 422 || dataResp.error || !dataResp) {
+          window.alert(dataResp.error);
+          console.log("Failed to Delete");
+      } else {
+          console.log(dataResp);
+          window.alert("Delete succesfull");
+          console.log("Delete succesfull");
+      }
+
+      BioMarkerType.map((elem)=>{
+        if(elem._id === type_id){
+          console.log(elem);
+          elem.is_Deleted = true;
+        }
+      })
+      // setView(false);
+    } else if(create_id){
+      let update = BioMarkerType.filter((elem)=>{
+        return elem.id !== create_id;
+      })
+
+      console.log(update, BioMarkerType)
+      setBioMarkerType([...update]);
+    }
+    
+    reRender ? setReRender(false) : setReRender(true)
   }
   
     const [editOn, setEditOn] = useState(true);
@@ -210,23 +271,14 @@ import axios from "axios"
     }
 
 
-    BioMarkerType.map((elem)=>{
+    BioMarkerType.map((elem, index)=>{
 
-        if(elem.gender && elem.bodyCondition){
-        let bioMarkerTypeDataFirst = {
-            gender: "",
-            ageGroupStartRange: "",
-            ageGroupEndRange: "",
-            ageGroupUnit: "",
-            range: "",
-            bodyCondition: "",
-          };
-    
-          bioMarkerTypeDataFirst.gender = elem.gender
+      console.log("elem", elem)
+        if(elem.is_Deleted === false){
         let obj = {
-        //   id : Date.now(),
+          // id : Date.now(),
           delete : (
-              <MDButton variant="Contained" color="info" fontWeight="medium" onClick={()=>{deleteItem(elem._id)}}>
+              <MDButton variant="Contained" color="info" fontWeight="medium" onClick={()=>{deleteBioMarkerType(elem._id, elem.id , "database")}}>
                   🗑️
               </MDButton>
           ),
@@ -239,8 +291,11 @@ import axios from "axios"
               variant="filled"
               sx={{margin: 1, padding: 1, width: "100px"}}
               disabled={editOn}
-              onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
-              value={bioMarkerTypeDataFirst.gender}
+              // onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
+              // value={bioMarkerTypeDataFirst.gender}
+              value={elem.gender}
+              onChange={e => handleChange(e, index, "gender")}
+  
     
             >
               {gender.map((option) => (
@@ -254,13 +309,24 @@ import axios from "axios"
           agegroupstart : ( 
             <TextField
             id="filled-basic" label="" variant="filled" type="number" disabled={editOn}
-            sx={{margin: 1, padding : 1, width:"100px"}} value={elem.ageGroupStartRange} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
+            sx={{margin: 1, padding : 1, width:"100px"}} 
+            value={elem.ageGroupStartRange} 
+            // onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}
+            // value={elem.gender}
+            onChange={e => handleChange(e, index, "ageStart")}
+
+            />
             ),
       
           agegroupend : (
             <TextField
             id="filled-basic" label="" variant="filled" type="number" disabled={editOn}
-            sx={{margin: 1, padding : 1, width:"100px"}} value={elem.ageGroupEndRange} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
+            sx={{margin: 1, padding : 1, width:"100px"}} 
+            // value={elem.gender}
+            onChange={e => handleChange(e, index, "ageEnd")}
+            value={elem.ageGroupEndRange} 
+            // onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}
+            />
           ),
             
           agegroupunit : (
@@ -271,10 +337,13 @@ import axios from "axios"
               defaultValue=""
               //helperText="Please select the age unit"
               variant="filled"
-              value={elem.ageGroupUnit}
+              // value={elem.ageGroupUnit}
               sx={{margin: 1, padding: 1, width: "150px"}}
               disabled={editOn}
-              onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
+              value={elem.ageGroupUnit}
+              onChange={e => handleChange(e, index, "ageUnit")}
+
+              // onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
             >
               {ageunit.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -287,7 +356,10 @@ import axios from "axios"
           range : (
             <TextField
             id="filled-basic" label="" variant="filled" value={elem.range} disabled={editOn}
-            sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
+            sx={{margin: 1, padding : 1, width:"150px"}} 
+            onChange={e => handleChange(e, index, "range")}
+
+            />
             ),
       
           bodycondition : (
@@ -301,7 +373,8 @@ import axios from "axios"
               value={elem.bodyCondition}
               disabled={editOn}
               sx={{margin: 1, padding: 1, width: "150px"}}
-              onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
+              onChange={e => handleChange(e, index, "bodyCondition")}
+
             >
               {bodycondition.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -314,14 +387,115 @@ import axios from "axios"
     
     
           rows.push(obj)
-    }
-        //   formData.bioMarkerType.push(((bioMarkerTypeDataFirst)));
-    
+      }
 
     })
-  
-  
 
+
+
+
+    function onCreate(){
+
+      let bioMarkerTypeDataFirst = {
+        gender: "",
+        ageGroupStartRange: "",
+        ageGroupEndRange: "",
+        ageGroupUnit: "",
+        range: "",
+        bodyCondition: "",
+      };
+
+    let obj = {
+      id : Date.now(),
+      delete : (
+          <MDButton variant="Contained" color="info" fontWeight="medium" onClick={()=>{deleteBioMarkerType(obj.id, "created")}}>
+              🗑️
+          </MDButton>
+      ),
+      gender : (
+        <TextField
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "100px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
+
+
+        >
+          {gender.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      ),
+  
+      agegroupstart : ( 
+        <TextField
+        id="filled-basic" label="" variant="filled" type="number"
+        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
+        ),
+  
+      agegroupend : (
+        <TextField
+        id="filled-basic" label="" variant="filled" type="number"
+        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
+      ),
+        
+      agegroupunit : (
+        <TextField
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          //helperText="Please select the age unit"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "150px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
+        >
+          {ageunit.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        ),
+        
+      range : (
+        <TextField
+        id="filled-basic" label="" variant="filled" type="text" value={bioMarkerTypeDataFirst.range}
+        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
+        ),
+  
+      bodycondition : (
+        <TextField
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          //helperText="Please select the body condition"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "150px"}}
+          onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
+        >
+          {bodycondition.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+        )
+    }
+
+    console.log(obj)
+      rows.push(obj)
+    //   console.log(rows)
+      setBioMarkerType((oldState)=> [...oldState, obj])
+      formstate.bioMarkerTypes.push(((obj)));
+    }
+  
   
     return (
       <>
@@ -400,11 +574,11 @@ import axios from "axios"
 
                           {/* <MDTypography variant="h6" color="white" py={1}>
                             Add Bio Markers Type
-                          </MDTypography>
+                          </MDTypography> */}
 
-                          <MDButton variant="outlined" color="white" onClick={onCreate}>
+                          <MDButton disabled={editOn} variant="outlined" color="white" onClick={onCreate}>
                             Add
-                          </MDButton> */}
+                          </MDButton>
                       </MDBox>
                       <MDBox pt={2}>
                           <DataTable
@@ -422,10 +596,11 @@ import axios from "axios"
         </MDBox>
 
         <MDBox mt={0.5} display="flex" alignItems="center">
-          <MDBox component="span" variant="button" fontWeight="light" fontSize="15px" color="text">Status</MDBox><Switch checked={Status === "Active"} label="Status"  value={Status} disabled={editOn} onChange={(e) => { setStatus(e.target.value)}} />
+          <MDBox component="span" variant="button" fontWeight="light" fontSize="15px" color="text">Status</MDBox>
+          <Switch checked={Status === "Active"} label="Status"  value={Status} disabled={editOn} onClick={() => setStatus(prevStatus => prevStatus === "Active" ? "Inactive" : "Active" )}  />
         </MDBox>
         </Box>
-
+        {console.log(Status)}
         {/* <Button autoFocus onClick={formSubmit}>
           Save
         </Button>

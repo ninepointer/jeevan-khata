@@ -80,6 +80,11 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
             ref: 'User',
             // required : true
         },
+        is_Deleted:{
+            type: Boolean,
+            default: false,
+            required : true
+        },
     }]
 })
 

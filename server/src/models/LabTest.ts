@@ -31,7 +31,7 @@ const labSchema = new mongoose.Schema({
     },
     lastModifiedOn:{
         type: Date,
-        default: Date.now(),
+        // default: Date.now(),
         // required : true
     },
     lastModifiedBy:{
@@ -42,6 +42,11 @@ const labSchema = new mongoose.Schema({
     isDeleted:{
         type: Boolean,
         default: false,
+        // required : true
+    },    
+    status:{
+        type: String,
+        default: 'Active',
         // required : true
     },
 
@@ -54,25 +59,48 @@ labSchema.pre('save', function (next) {
         this.uid = uuidv4();
         return next();
     };
+
+    // if(!this.lastModifiedBy){
+        // (this as any).lastModifiedOn = Date.now();
+        // console.log("this is lastmodified on",(this as any).lastModifiedOn)
+    //   }
     let data = Date.now();
     // this.lastModifiedOn = 2;
     next();
   });
 
-  labSchema.post('save', async function(doc, next){
+//   labSchema.post('save', async function(doc, next){
+//     if(!doc.createdBy){
+//         doc.createdBy = doc._id;
+//     }
+//     if(!doc.lastModifiedBy){
+//       doc.lastModifiedBy = doc._id;
+//     }
+//     (doc as any).lastModifiedOn = Date.now();
+//     console.log("this is lastmodified on",(this as any).lastModifiedOn)
+//     doc.save().then(() => {
+//       next();
+//     }).catch(err => {
+//       next(err);
+//     });
+//     // next();  
+//   });
+
+labSchema.post('save', function(doc, next){
     if(!doc.createdBy){
         doc.createdBy = doc._id;
     }
-    if(!doc.lastModifiedBy){
+    // if(!doc.lastModifiedBy){
       doc.lastModifiedBy = doc._id;
-    }
-    // doc.lastModifiedOn = doc.createdOn
+    // }
+    (doc as any).lastModifiedOn = Date.now();
+    console.log("labtest")
     doc.save().then(() => {
       next();
     }).catch(err => {
       next(err);
     });
-    next();  
+    // next();  
   });
 
 const labTest = mongoose.model("labTest", labSchema);

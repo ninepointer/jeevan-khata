@@ -75,6 +75,12 @@ const bioMarkerSchema = new mongoose.Schema({
             type: String,
             required : false
         },
+        is_Deleted:{
+            type: Boolean,
+            default: false,
+            // required : true
+        }
+        
     }]
 })
 
