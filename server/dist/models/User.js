@@ -81,7 +81,6 @@ const userSchema = new mongoose_1.default.Schema({
         type: String,
         required: false
     },
-    passwordConfirm: String,
     passwordChangedAt: {
         type: Date,
         required: false
@@ -93,6 +92,7 @@ const userSchema = new mongoose_1.default.Schema({
     role: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Role',
+        default: Object('63cc2464c60a8373837d3235'),
         required: false
     },
     createdOn: {
@@ -143,7 +143,6 @@ userSchema.methods.changedPasswordAfter = function (jwtTimeStamp) {
     }
     return false;
 };
-// 
 userSchema.pre('save', function (next) {
     if (!this.isModified('password') || this.isNew) {
         this.lastModifiedOn = Date.now();
@@ -178,22 +177,30 @@ userSchema.pre('save', function (next) {
     });
 });
 //Updating the createdBy field   
-userSchema.post('save', function (doc, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!doc.createdBy) {
-            doc.createdBy = doc._id;
-        }
-        if (!doc.lastModifiedBy) {
-            doc.lastModifiedBy = doc._id;
-        }
-        doc.lastModifiedOn = Date.now();
-        doc.save().then(() => {
-            next();
-        }).catch(err => {
-            next(err);
-        });
-        next();
-    });
-});
+// userSchema.pre('save', async function( next){
+//     if(!this.createdBy){
+//         this.createdBy = this._id;
+//     }
+//     if(!this.lastModifiedBy){
+//       this.lastModifiedBy = this._id;
+//     }
+//     (this as any).lastModifiedOn = Date.now();
+//     next();  
+//   });
+// userSchema.post('save', async function(doc, next){
+//     if(!doc.createdBy){
+//         doc.createdBy = doc._id;
+//     }
+//     if(!doc.lastModifiedBy){
+//         doc.lastModifiedBy = doc._id;
+//     }
+//     doc.lastModifiedOn = Date.now();
+//     // doc.save()
+//     // .then(() => )
+//     // .catch(err => next(err));
+//     next();
+// });
 const user = mongoose_1.default.model("User", userSchema);
 exports.default = user;
+// TODO : role not updating in role, modifiedby createdby not updating,
+// length for unit and biomarker, infinity loop in post middleware

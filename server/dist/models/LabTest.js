@@ -34,43 +34,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const uuid_1 = require("uuid");
-const roleSchema = new mongoose_1.default.Schema({
-    roleName: {
+const labSchema = new mongoose_1.default.Schema({
+    testName: {
         type: String,
         required: true
     },
-    reportAccess: {
-        type: Boolean,
-        default: false,
+    testScientificName: {
+        type: String,
         required: true
     },
-    userAccess: {
-        type: Boolean,
-        default: false,
-        required: true
+    bioMarkers: {
+        type: [String],
+        // required : true
     },
-    attributesAccess: {
-        type: Boolean,
-        default: false,
-        required: true
-    },
-    analyticsAccess: {
-        type: Boolean,
-        default: false,
-        required: true
+    uid: {
+        type: String,
+        // required : true
     },
     createdOn: {
         type: Date,
         default: Date.now(),
-        required: true
+        // required : true
     },
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        // required : true
     },
     lastModifiedOn: {
         type: Date,
+        // default: Date.now(),
         // required : true
     },
     lastModifiedBy: {
@@ -86,22 +79,21 @@ const roleSchema = new mongoose_1.default.Schema({
     status: {
         type: String,
         default: 'Active',
-        required: true
-    },
-    uid: {
-        type: String,
         // required : true
-    }
+    },
 });
-roleSchema.pre('save', function (next) {
+labSchema.pre('save', function (next) {
     if (!this.uid) {
+        // this.lastModifiedOn = Date.now();
         this.uid = (0, uuid_1.v4)();
         return next();
     }
     ;
+    let data = Date.now();
+    // this.lastModifiedOn = 2;
     next();
 });
-roleSchema.pre('save', function (next) {
+labSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!this.createdBy) {
             this.createdBy = this._id;
@@ -110,9 +102,8 @@ roleSchema.pre('save', function (next) {
             this.lastModifiedBy = this._id;
         }
         this.lastModifiedOn = Date.now();
-        console.log(this.lastModifiedOn);
         next();
     });
 });
-const role = mongoose_1.default.model("Role", roleSchema);
-exports.default = role;
+const labTest = mongoose_1.default.model("labTest", labSchema);
+exports.default = labTest;

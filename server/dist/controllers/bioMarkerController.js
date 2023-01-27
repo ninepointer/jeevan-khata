@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBioMarkers = exports.createBioMarker = void 0;
+exports.deleteBioMarkerType = exports.deleteBioMarker = exports.editBioMarker = exports.getBioMarkersName = exports.getBioMarkers = exports.createBioMarker = void 0;
 const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
 const BioMarker_1 = __importDefault(require("../models/BioMarker"));
 exports.createBioMarker = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, unit, alias, bioMarkerTypes } = req.body;
     //Check if biomarker name already exists
-    if (yield BioMarker_1.default.find({ name: name }))
+    if (yield BioMarker_1.default.findOne({ name: name }))
         return next((0, customError_1.createCustomError)('Bio Marker already exists. Edit the existing one.', 403));
     //Check if any of the aliases exist
     if (alias) {
@@ -32,6 +32,72 @@ exports.createBioMarker = (0, CatchAsync_1.default)((req, res, next) => __awaite
     res.status(201).json({ status: 'Success', message: 'Biomarker created.', data: newBioMarker });
 }));
 exports.getBioMarkers = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const bioMarkers = yield BioMarker_1.default.find();
+    const bioMarkers = yield BioMarker_1.default.find({
+        "$or": [
+            { "isDeleted": false },
+            { "bioMarkerTypes.is_Deleted": false }
+        ]
+    });
     res.status(200).json({ status: 'Success', results: bioMarkers.length, data: bioMarkers });
+}));
+exports.getBioMarkersName = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const bioMarkers = yield BioMarker_1.default.aggregate([
+        { $match: { isDeleted: false } },
+        {
+            $project: {
+                name: 1,
+                _id: 0
+            }
+        }
+    ]);
+    // const bioMarkers = await BioMarker.find({isDeleted: false});
+    res.status(200).json({ status: 'Success', results: bioMarkers.length, data: bioMarkers });
+}));
+exports.editBioMarker = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, unit, bioMarkerTypes, alias, status } = req.body;
+    const { id } = req.params;
+    const bioMarkerData = yield BioMarker_1.default.findOne({ _id: id });
+    console.log("user", bioMarkerData);
+    bioMarkerData.name = name,
+        bioMarkerData.unit = unit,
+        bioMarkerData.bioMarkerTypes = bioMarkerTypes,
+        bioMarkerData.alias = alias,
+        // bioMarkerData!.alias = alias,
+        bioMarkerData.status = status,
+        yield bioMarkerData.save();
+    res.status(201).json({ status: "Success", data: bioMarkerData });
+}));
+exports.deleteBioMarker = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const filter = { _id: id };
+    const update = { $set: { isDeleted: true } };
+    try {
+        const roleDetail = yield BioMarker_1.default.updateOne(filter, update);
+        res.status(201).json({ massage: "Bio Marker delete succesfully" });
+    }
+    catch (e) {
+        res.status(500).json({ error: "Failed to delete data" });
+    }
+}));
+exports.deleteBioMarkerType = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    // const filter = {bioMarkerTypes._id: type_id } 
+    // const update = { $set: { isDeleted: true } };
+    // try{
+    //     const roleDetail = await BioMarker.updateOne(filter, update);
+    //     res.status(201).json({massage : "Bio Marker delete succesfully"});
+    // } catch (e){
+    //     res.status(500).json({error:"Failed to delete data"});
+    // }  
+    console.log("type_id", id);
+    BioMarker_1.default.updateOne({ "bioMarkerTypes": { $elemMatch: { _id: id } } }, { $set: { "bioMarkerTypes.$.is_Deleted": true } }, (err, result) => {
+        if (err) {
+            // handle error
+        }
+        else {
+            res.status(201).json({ massage: "Bio Marker delete succesfully" });
+            console.log(result);
+        }
+    });
+    // console.log(biomarkertype) const biomarkertype = await 
 }));

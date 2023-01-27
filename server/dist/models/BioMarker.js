@@ -22,8 +22,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const uuid_1 = require("uuid");
 const bioMarkerSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
@@ -35,6 +45,7 @@ const bioMarkerSchema = new mongoose_1.default.Schema({
     },
     status: {
         type: String,
+        default: 'Active',
         // required : true
     },
     uid: {
@@ -53,6 +64,7 @@ const bioMarkerSchema = new mongoose_1.default.Schema({
     },
     lastModifiedOn: {
         type: Date,
+        default: Date.now(),
         // required : true
     },
     lastModifiedBy: {
@@ -63,6 +75,10 @@ const bioMarkerSchema = new mongoose_1.default.Schema({
     isDeleted: {
         type: Boolean,
         default: false,
+        // required : true
+    },
+    alias: {
+        type: [String],
         // required : true
     },
     bioMarkerTypes: [{
@@ -84,13 +100,43 @@ const bioMarkerSchema = new mongoose_1.default.Schema({
             },
             range: {
                 type: String,
-                required: true
+                required: false
             },
             bodyCondition: {
                 type: String,
                 required: false
             },
+            is_Deleted: {
+                type: Boolean,
+                default: false,
+                // required : true
+            }
         }]
+});
+bioMarkerSchema.pre('save', function (next) {
+    if (!this.uid) {
+        // this.lastModifiedOn = Date.now();
+        this.uid = (0, uuid_1.v4)();
+        return next();
+    }
+    ;
+    // this.lastModifiedOn = Date.now();
+    next();
+});
+bioMarkerSchema.pre('save', function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!this.createdBy) {
+            this.createdBy = this._id;
+        }
+        if (!this.lastModifiedBy) {
+            this.lastModifiedBy = this._id;
+        }
+        this.lastModifiedOn = Date.now();
+        next();
+    });
 });
 const bioMarker = mongoose_1.default.model("BioMarker", bioMarkerSchema);
 exports.default = bioMarker;
+// function uuidv4(): string | undefined {
+//     throw new Error("Function not implemented.");
+// }
