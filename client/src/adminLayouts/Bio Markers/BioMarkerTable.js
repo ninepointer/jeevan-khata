@@ -80,6 +80,10 @@ const BioMarkerTable = ({setCreateBio, setView, setEditData, reRender}) => {
     // if(elem.gender && elem.bodyCondition){
     //   length += 1;
     // }
+
+    let bioTypes = elem.bioMarkerTypes.filter((subelem)=>{
+                      return !subelem.is_Deleted
+                  })
      
 
     bioMarkerRow.view = (
@@ -99,7 +103,7 @@ const BioMarkerTable = ({setCreateBio, setView, setEditData, reRender}) => {
     );
     bioMarkerRow.bioMarkerTypeCount = (
       <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-        { elem.bioMarkerTypes.length}
+        { bioTypes.length}
       </MDTypography>
     );
     bioMarkerRow.createdOn = (

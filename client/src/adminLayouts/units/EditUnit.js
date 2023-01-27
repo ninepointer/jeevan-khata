@@ -142,7 +142,7 @@ import axios from "axios"
     unitFullName: "",
     unitId: "",
     status: "",
-    unitConversionData: []
+    unitConversion: []
   });
   
   // console.log(formstate);
@@ -257,11 +257,11 @@ import axios from "axios"
       setEditOn(false);
     }
 
-
+    console.log("UnitConversionData", UnitConversionData)
     UnitConversionData?.map((elem, index)=>{
 
       console.log("elem", elem)
-        if(elem.is_Deleted === false){
+        if(!elem.is_Deleted){
         let obj = {
           // id : Date.now(),
           delete : (
@@ -298,7 +298,6 @@ import axios from "axios"
         }
           rows.push(obj)
       }
-
     })
 
 
@@ -430,17 +429,9 @@ import axios from "axios"
           <Switch checked={Status === "Active"} label="Status"  value={Status} disabled={editOn} onClick={() => setStatus(prevStatus => prevStatus === "Active" ? "Inactive" : "Active" )}  />
         </MDBox>
         </Box>
-        {console.log(Status)}
-        {/* <Button autoFocus onClick={formSubmit}>
-          Save
-        </Button>
-        <Button onClick={handleClose} autoFocus>
-          Close
-        </Button> */}
         </MDBox>
       </>
     );
   }
 
 export default EditUnit
-

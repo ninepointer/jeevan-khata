@@ -9,14 +9,15 @@ interface LabTest{
     testName: string,
     testScientificName: string,
     bioMarkers: [string],
-    status: string
+    status: string,
+    lastModifiedOn: Date
 }
 
 export const createLabTest = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
     const {testName, testScientificName, bioMarkers}:LabTest = req.body;
 
     //Check if labtest name already exists
-    if(await LabTest.findOne({testName: testName})) return next(createCustomError('Lab Test already exists. Edit the existing one.', 403));
+    if(await LabTest.findOne({isDeleted: false, testName: testName})) return next(createCustomError('Lab Test already exists. Edit the existing one.', 403));
 
 
     const newLabTest = await LabTest.create({
@@ -27,7 +28,7 @@ export const createLabTest = CatchAsync(async(req:Request, res:Response, next:Ne
 });
 
 export const getLabTests = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
-    const labTests = await LabTest.find();
+    const labTests = await LabTest.find({isDeleted: false});
 
     res.status(200).json({status:'Success', results: labTests.length, data: labTests});
 });

@@ -75,10 +75,9 @@ const UnitTable = ({setCreateUnit, setView, setEditData}) => {
     const options1 = { year: 'numeric', month: 'short', day: 'numeric' };
     const createdOn = createdondate.toLocaleDateString('en-US', options1)
 
-    // let length = 0;
-    // if(elem.gender && elem.bodyCondition){
-    //   length += 1;
-    // }
+    let unitConversions = elem.unitConversion.filter((subelem)=>{
+      return !subelem.is_Deleted
+    })
      
 
     unitRow.view = (
@@ -98,7 +97,7 @@ const UnitTable = ({setCreateUnit, setView, setEditData}) => {
     );
     unitRow.unitConversion = (
         <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-          {elem.unitConversion?.length}
+          {unitConversions.length}
         </MDTypography>
       );
     unitRow.status = (

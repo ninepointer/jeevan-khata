@@ -102,25 +102,32 @@ unitSchema.pre('save', function (next) {
     next();
   });
 
-  unitSchema.post('save', async function(doc, next){
-    if(!doc.createdBy){
-        doc.createdBy = doc._id;
+//   roleSchema.pre('save', async function(next){
+//     if(!this.createdBy){
+//         this.createdBy = this._id;
+//     }
+//     if(!this.lastModifiedBy){
+//         this.lastModifiedBy = this._id;
+//     }
+//     (this as any).lastModifiedOn = Date.now();
+//     next();
+// });
+
+  unitSchema.pre('save', async function(next){
+    if(!this.createdBy){
+        this.createdBy = this._id;
     }
-    if(!doc.lastModifiedBy){
-      doc.lastModifiedBy = doc._id;
+    if(!this.lastModifiedBy){
+      this.lastModifiedBy = this._id;
     }
-    doc.lastModifiedOn = Date.now();
-    doc.unitConversion.map((elem: { created_By: unknown; lastModified_By: unknown; lastModified_On: any; created_On: any; })=>{
-        elem.created_By = doc._id;
-        elem.lastModified_By = doc._id;
+    this.lastModifiedOn = Date.now();
+    this.unitConversion.map((elem: { created_By: unknown; lastModified_By: unknown; lastModified_On: any; created_On: any; })=>{
+        elem.created_By = this._id;
+        elem.lastModified_By = this._id;
         elem.lastModified_On = elem.created_On;
     
     })
-    doc.save().then(() => {
-      next();
-    }).catch(err => {
-      next(err);
-    });
+
     next();  
   });
 

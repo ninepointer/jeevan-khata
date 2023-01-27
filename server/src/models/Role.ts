@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
 const roleSchema = new mongoose.Schema({
     roleName:{
@@ -54,14 +55,32 @@ const roleSchema = new mongoose.Schema({
         default: 'Active',
         required : true
     },
+    uid:{
+        type: String,
+        // required : true
+    }
 });
 
 
-// roleSchema.pre('save', async function(doc, next){
-//     if(!doc.lastModifiedOn){
-//         doc.lastModifiedOn = Date.now();
-//     }
-// });
+roleSchema.pre('save', function (next) {
+    if (!this.uid) {
+        this.uid = uuidv4();
+        return next();
+    };
+    next();
+  });
+
+roleSchema.pre('save', async function(next){
+    if(!this.createdBy){
+        this.createdBy = this._id;
+    }
+    if(!this.lastModifiedBy){
+        this.lastModifiedBy = this._id;
+    }
+    (this as any).lastModifiedOn = Date.now();
+    console.log((this as any).lastModifiedOn)
+    next();
+});
 
 
 

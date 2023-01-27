@@ -115,7 +115,7 @@ userSchema.methods.changedPasswordAfter = function (jwtTimeStamp: number) {
     return false;
   };
   
-// 
+
 userSchema.pre('save', function (next) {
     if (!this.isModified('password') || this.isNew) {
         this.lastModifiedOn = Date.now();
@@ -147,26 +147,33 @@ userSchema.pre('save', async function(next){
     next();
 })
 
-
 //Updating the createdBy field   
-userSchema.post('save', async function(doc, next){
-  if(!doc.createdBy){
-      doc.createdBy = doc._id;
-  }
-  if(!doc.lastModifiedBy){
-    doc.lastModifiedBy = doc._id;
-  }
-  doc.lastModifiedOn = Date.now();
-  console.log("users")
-//   doc.save().then(() => {
-//     next();
-//   }).catch(err => {
-//     next(err);
+// userSchema.pre('save', async function( next){
+//     if(!this.createdBy){
+//         this.createdBy = this._id;
+//     }
+//     if(!this.lastModifiedBy){
+//       this.lastModifiedBy = this._id;
+//     }
+//     (this as any).lastModifiedOn = Date.now();
+//     next();  
 //   });
-  next();  
-});
 
 
+// userSchema.post('save', async function(doc, next){
+//     if(!doc.createdBy){
+//         doc.createdBy = doc._id;
+//     }
+//     if(!doc.lastModifiedBy){
+//         doc.lastModifiedBy = doc._id;
+//     }
+//     doc.lastModifiedOn = Date.now();
+
+//     // doc.save()
+//     // .then(() => )
+//     // .catch(err => next(err));
+//     next();
+// });
 
 const user = mongoose.model("User", userSchema);
 export default user;

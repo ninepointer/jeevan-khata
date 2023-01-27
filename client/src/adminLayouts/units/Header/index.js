@@ -123,11 +123,11 @@ function UserHeader({ children }) {
             {isCreate || isView ?
 
             (isCreate ?
-            <TabPanel value={tabValue} index={0}>< CreateUnit setCreateBio={checkIsCreate}/> </TabPanel>
+            <TabPanel value={tabValue} index={0}>< CreateUnit setCreateUnit={checkIsCreate}/> </TabPanel>
             :
             <TabPanel value={tabValue} index={0}>< EditUnit Render={{reRender, setReRender}} setView={checkIsView} unitData={editData} id={getId}/> </TabPanel>)
               :
-            <TabPanel value={tabValue} index={0}>< UnitTable setEditData={setEditData} setView={{checkIsView, setGetId}} setCreateBio={checkIsCreate}/> </TabPanel>}
+            <TabPanel value={tabValue} index={0}>< UnitTable setEditData={setEditData} setView={{checkIsView, setGetId}} setCreateUnit={checkIsCreate}/> </TabPanel>}
 
 
             

@@ -14,6 +14,7 @@ import errorHandler from './middlewares/errorHandler';
 import bioMarkerRoutes from './routes/bioMarkerRoutes';
 import unitsRoutes from './routes/unitsRoutes';
 import labTestRoutes from "./routes/labTestRoutes"
+import uploadRoutes from './routes/uploadRoutes';
 
 const app = express();
 app.use(cookieParser());
@@ -43,6 +44,7 @@ app.use('/api/v1/roles', roleRoutes);
 app.use('/api/v1/bioMarkers', bioMarkerRoutes);
 app.use('/api/v1/units', unitsRoutes);
 app.use('/api/v1/labTests', labTestRoutes);
+app.use('/api/v1/uploads', uploadRoutes);
 
 
 app.use(errorHandler);

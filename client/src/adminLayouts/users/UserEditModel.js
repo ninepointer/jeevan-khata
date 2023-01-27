@@ -142,7 +142,7 @@ async function onSave() {
   formstate.city = City
   formstate.state = State
   formstate.aadhaarCardNumber = Aadhaar
-  formstate.role = Role
+  
   formstate.password = Password
 
     setformstate(formstate);
@@ -173,7 +173,7 @@ async function onSave() {
     }
 
     setEditOn(true);
-    setView(true);
+    setView(false);
     reRender ? setReRender(false) : setReRender(true)
 }
 
@@ -204,9 +204,14 @@ async function Ondelete(){
     setEditOn(false);
   }
 
-  // function onSave(){
-    
-  // }
+  function settingRole(e){
+    roleDetail.map((elem)=>{
+      if(elem.roleName === e.target.value){
+        setRole(e.target.value);
+        formstate.role = elem._id
+      }
+    })
+  }
 
 
   return (
@@ -306,7 +311,7 @@ async function Ondelete(){
           variant="filled" disabled={editOn}
           value={Role !== undefined && (Role.roleName ? Role?.roleName : Role)}
           sx={{margin: 4, padding: 2, width: "200px"}}
-          onChange={(e)=>{ setRole( e.target.value)}}
+          onChange={(e)=>{ settingRole(e)}}
         >
           {roleDetail.map((option) => (
             <MenuItem key={option.roleName} value={option.roleName}>

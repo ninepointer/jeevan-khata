@@ -16,7 +16,8 @@ interface User{
     password: string,
     mobile: string,
     city: string,
-    state:string
+    state:string,
+    role: string
 }
 
 export const createUser =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
@@ -26,7 +27,7 @@ export const createUser =CatchAsync(async (req:Request, res: Response, next:Next
     if(!(email ||password || mobile  || firstName || lastName || dateOfBirth || gender))return next(createCustomError('Enter all mandatory fields.', 401));
 
     //Check if user exists
-    if(await User.findOne({email})) return next(createCustomError('User with this email already exists. Please login with existing email.', 401));
+    if(await User.findOne({isDeleted: false, email})) return next(createCustomError('User with this email already exists. Please login with existing email.', 401));
     const user = await User.create({firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state });
 
     if(!user) return next(createCustomError('Couldn\'t create user', 400));
@@ -47,7 +48,7 @@ export const getUsers = CatchAsync(async (req: Request, res: Response, next: Nex
 
 
 export const editUser = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state }: User = req.body;
+    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, role }: User = req.body;
     const {id} = req.params;
     console.log("User :",(req as any).user)
     //Check for required fields 
@@ -66,7 +67,8 @@ export const editUser = CatchAsync(async (req:Request, res: Response, next:NextF
         userData!.password = password,
         userData!.mobile = mobile,
         userData!.city = city,
-        userData!.state = state
+        userData!.state = state,
+        userData!.role = role
 
     } 
     else {
@@ -77,7 +79,8 @@ export const editUser = CatchAsync(async (req:Request, res: Response, next:NextF
         userData!.email = email,
         userData!.mobile = mobile,
         userData!.city = city,
-        userData!.state = state
+        userData!.state = state,
+        userData!.role = role
     }
 
     await userData!.save();

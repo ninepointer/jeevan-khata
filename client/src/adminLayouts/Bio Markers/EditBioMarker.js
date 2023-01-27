@@ -25,6 +25,25 @@ import axios from "axios"
   const EditBioMarker = ({Render, setView, bioMarkerData, id}) => {
 
     const {columns, rows} = CreateBioMarkerTableData();
+    let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
+  
+    const {reRender, setReRender} = Render;
+    const[editData, setEditData] = useState(bioMarkerData);
+    const [unitDetail, setUnitDetail] = useState([]);
+    const [Name, setName] = useState();
+    const [Unit, setUnit] = useState("Unit");
+    const [BioMarkerType, setBioMarkerType] = useState([]);
+    const [Alias, setAlias] = useState([]);
+    const [Status, setStatus] = useState([]);
+    const [editOn, setEditOn] = useState(true);
+    const [formstate, setformstate] = useState({
+      name: "",
+      unit: "",
+      bioMarkerTypes: [],
+      alias: "",
+      status: "",
+    });
+    let lengthOfBioMarkerType = 0;
     const gender = [
       {
         value: 'Male',
@@ -98,8 +117,6 @@ import axios from "axios"
     };
 
 
-    const [unitDetail, setUnitDetail] = useState([]);
-
     useEffect(()=>{
         axios.get(`${baseUrl}api/v1/units`)
         .then((res)=>{
@@ -114,22 +131,7 @@ import axios from "axios"
     const handleClose = () => {
       setView(false);
     };
-  
-  
-  let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
-  let permissionId = useRef(0);
-  let date = new Date();
-  let lastModified = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
-  
-  const {reRender, setReRender} = Render;
-  const[editData, setEditData] = useState(bioMarkerData);
-  
-  const [Name, setName] = useState();
-  const [Unit, setUnit] = useState("Unit");
-  const [BioMarkerType, setBioMarkerType] = useState([]);
-  const [Alias, setAlias] = useState([]);
-  const [Status, setStatus] = useState([]);
-  
+
   
   useEffect(()=>{
     let updatedData = bioMarkerData.filter((elem)=>{
@@ -149,16 +151,10 @@ import axios from "axios"
     
   },[bioMarkerData, id])
   
-  const [formstate, setformstate] = useState({
-    name: "",
-    unit: "",
-    bioMarkerTypes: [],
-    alias: "",
-    status: "",
-  });
-  
-  // console.log(formstate);
-  
+
+  function onEdit(){
+    setEditOn(false);
+  }
   
   async function onSave() {
   
@@ -200,7 +196,6 @@ import axios from "axios"
   
       setEditOn(true);
       setView(false);
-      // reRender ? setReRender(false) : setReRender(true)
   }
   
   async function Ondelete(){
@@ -265,16 +260,13 @@ import axios from "axios"
     reRender ? setReRender(false) : setReRender(true)
   }
   
-    const [editOn, setEditOn] = useState(true);
-    function onEdit(){
-      setEditOn(false);
-    }
+
 
 
     BioMarkerType.map((elem, index)=>{
 
       console.log("elem", elem)
-        if(elem.is_Deleted === false){
+        if(!elem.is_Deleted){
         let obj = {
           // id : Date.now(),
           delete : (
@@ -391,9 +383,6 @@ import axios from "axios"
 
     })
 
-
-
-
     function onCreate(){
 
       let bioMarkerTypeDataFirst = {
@@ -463,11 +452,11 @@ import axios from "axios"
         </TextField>
         ),
         
-      range : (
-        <TextField
-        id="filled-basic" label="" variant="filled" type="text" value={bioMarkerTypeDataFirst.range}
-        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
-        ),
+      // range : (
+      //   <TextField
+      //   id="filled-basic" label="" variant="filled" type="number" 
+      //   sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
+      //   ),
   
       bodycondition : (
         <TextField

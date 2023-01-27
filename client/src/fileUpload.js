@@ -14,12 +14,14 @@ const FileUploader = () => {
       return;
     }
 
+    let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
+    
     try {
       const formData = new FormData();
-      formData.append(`${file.name}`, file);
+      formData.append('file', file);
       
       console.log(formData, file, file.name)
-      const { data } = await axios.post('/upload', formData, {
+      const { data } = await axios.post(`${baseUrl}api/v1/uploads`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
