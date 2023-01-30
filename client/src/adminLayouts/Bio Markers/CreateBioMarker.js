@@ -19,9 +19,6 @@ import Switch from "@mui/material/Switch";
 import axios from "axios"
 
 
-
-
-
   const CreateBioMarker = ({setCreateBio}) => {
 
     const gender = [
@@ -56,14 +53,25 @@ import axios from "axios"
         label: 'On Period',
       },
       {
-        value: 'Pregnency',
-        label: 'Pregency',
+        value: 'Pregnancy',
+        label: 'Pregnancy',
       },
       {
         value: 'Normal',
         label: 'Normal',
       },
 
+    ];
+
+    const inFant = [
+      {
+        value: 'child',
+        label: 'Child',
+      },
+      {
+        value: 'adult',
+        label: 'Adult',
+      }
     ];
 
 
@@ -75,12 +83,11 @@ import axios from "axios"
     const [render, serRender] = useState(true);
     const [row, setRow] = useState([
     ]);
-  const [id, setId] = useState(null);
+    const [id, setId] = useState(null);
 
-  function deleteItem(id){
-    //console.log(id)
-    setId(id);
-  }
+    function deleteItem(id){
+      setId(id);
+    }
 
     useEffect(() => {
       let update = row.filter((elem)=>{
@@ -102,16 +109,6 @@ import axios from "axios"
         console.log("Fail to fetch data")
       })
     },[])
-
-
-
-    let uId = uniqid();
-    let date = new Date();
-    let createdOn = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${(date.getFullYear())}`
-    let createdBy = "prateek";
-    let isDeleted = false;
-    let lastModifiedBy = createdBy;
-    let lastModifiedOn = createdOn
 
     let [formData, setFormData] = useState({
       name: "",
@@ -135,7 +132,8 @@ import axios from "axios"
       }
 
       setFormData(formData);
-      const { name , unit , status, bioMarkerType, alias} = formData;
+      console.log(formData)
+      const { name , unit , status, bioMarkerType, scientificName, alias} = formData;
       let aliasArr = alias.split(",");
       const res = await fetch(`${baseUrl}api/v1/bioMarkers`, {
         method: "POST",
@@ -145,7 +143,7 @@ import axios from "axios"
             "Access-Control-Allow-Credentials": true
         },
         body: JSON.stringify({
-          name , unit , status,  bioMarkerTypes: bioMarkerType, alias: aliasArr
+          name , unit , status,  bioMarkerTypes: bioMarkerType, alias: aliasArr, scientificName
         })
     });
     
@@ -159,6 +157,7 @@ import axios from "axios"
       setCreateBio(false);
     }
 
+    const [BodyCondition, setBodyCondition] = useState();
     function onCreate(){
 
       let bioMarkerTypeDataFirst = {
@@ -168,93 +167,159 @@ import axios from "axios"
         ageGroupUnit: "",
         range: "",
         bodyCondition: "",
+        infant: "",
       };
 
-    let obj = {
-      id : Date.now(),
-      delete : (
-          <MDButton variant="Contained" color="info" fontWeight="medium" onClick={()=>{deleteItem(obj.id)}}>
-              🗑️
-          </MDButton>
-      ),
-      gender : (
-        <TextField
-          id="filled-basic"
-          select
-          label=""
-          defaultValue=""
-          variant="filled"
-          sx={{margin: 1, padding: 1, width: "100px"}}
-          onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
-
-
-        >
-          {gender.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-      ),
-  
-      agegroupstart : ( 
-        <TextField
-        id="filled-basic" label="" variant="filled" type="number"
-        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
+      let obj = {
+        id : Date.now(),
+        delete : (
+            <MDButton variant="Contained" color="info" fontWeight="medium" onClick={()=>{deleteItem(obj.id)}}>
+                🗑️
+            </MDButton>
         ),
-  
-      agegroupend : (
-        <TextField
-        id="filled-basic" label="" variant="filled" type="number"
-        sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
-      ),
-        
-      agegroupunit : (
-        <TextField
-          id="filled-basic"
-          select
-          label=""
-          defaultValue=""
-          //helperText="Please select the age unit"
-          variant="filled"
-          sx={{margin: 1, padding: 1, width: "150px"}}
-          onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
-        >
-          {ageunit.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        ),
-        
-      range : (
-        <TextField
-        id="filled-basic" label="" variant="filled"
-        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
-        ),
-  
-      bodycondition : (
-        <TextField
-          id="filled-basic"
-          select
-          label=""
-          defaultValue=""
-          //helperText="Please select the body condition"
-          variant="filled"
-          sx={{margin: 1, padding: 1, width: "150px"}}
-          onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
-        >
-          {bodycondition.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        )
-    }
+        gender : (
+          <TextField
+            id="filled-basic"
+            select
+            label=""
+            defaultValue=""
+            variant="filled"
+            sx={{margin: 1, padding: 1, width: "100px"}}
+            onChange={(e)=>{bioMarkerTypeDataFirst.gender = e.target.value}}
 
 
+          >
+            {gender.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        ),
+    
+        agegroupstart : ( 
+          <TextField
+          id="filled-basic" label="" variant="filled" type="number"
+          sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupStartRange = e.target.value}}/>
+          ),
+    
+        agegroupend : (
+          <TextField
+          id="filled-basic" label="" variant="filled" type="number"
+          sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupEndRange = e.target.value}}/>
+        ),
+          
+        agegroupunit : (
+          <TextField
+            id="filled-basic"
+            select
+            label=""
+            defaultValue=""
+            //helperText="Please select the age unit"
+            variant="filled"
+            sx={{margin: 1, padding: 1, width: "150px"}}
+            onChange={(e)=>{bioMarkerTypeDataFirst.ageGroupUnit = e.target.value}}
+          >
+            {ageunit.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          ),
+          
+        range : (
+          <TextField
+          id="filled-basic" label="" variant="filled"
+          sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
+          ),
+    
+        bodycondition : (
+          <TextField
+            id="filled-basic"
+            select
+            label=""
+            defaultValue=""
+            //helperText="Please select the body condition"
+            variant="filled"
+            sx={{margin: 1, padding: 1, width: "150px"}}
+            onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = (e.target.value)}}
+          >
+            {bodycondition.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          ),
+
+          infant : (
+            <TextField
+              id="filled-basic"
+              select
+              label=""
+              defaultValue=""
+              //helperText="Please select the body condition"
+              variant="filled"
+              sx={{margin: 1, padding: 1, width: "150px"}}
+              onChange={(e)=>{bioMarkerTypeDataFirst.infant = (e.target.value)}}
+            >
+              {inFant.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+            ),
+
+      }
+
+      // if(BodyCondition === "Pregnancy"){
+      //   console.log("in if")
+      //   obj.bodycondition_month = (
+      //     <TextField
+      //       id="filled-basic"
+      //       select
+      //       label=""
+      //       defaultValue=""
+      //       //helperText="Please select the body condition"
+      //       variant="filled"
+      //       sx={{margin: 1, padding: 1, width: "150px"}}
+      //       onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
+      //     >
+      //       {bodycondition.map((option) => (
+      //         <MenuItem key={option.value} value={option.value}>
+      //           {option.label}
+      //         </MenuItem>
+      //       ))}
+      //     </TextField>
+      //     );
+      //   obj.bodycondition_week = (
+      //     <TextField
+      //       id="filled-basic"
+      //       select
+      //       label=""
+      //       defaultValue=""
+      //       //helperText="Please select the body condition"
+      //       variant="filled"
+      //       sx={{margin: 1, padding: 1, width: "150px"}}
+      //       onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
+      //     >
+      //       {bodycondition.map((option) => (
+      //         <MenuItem key={option.value} value={option.value}>
+      //           {option.label}
+      //         </MenuItem>
+      //       ))}
+      //     </TextField>
+      //     );
+      //   columns.push({ Header: "bodycondition_month", accessor: "bodycondition_month", align: "center" })
+      //   columns.push({ Header: "bodycondition_week", accessor: "bodycondition_week", align: "center" })
+
+      // } else{
+      //   console.log("in else")
+      // }
+
+    console.log(obj)
       setRow((oldState)=> [...oldState, obj])
       formData.bioMarkerType.push(((bioMarkerTypeDataFirst)));
     }
@@ -300,6 +365,11 @@ import axios from "axios"
         <TextField
         id="filled-basic" label="Alias" variant="filled"
         sx={{margin: 1, padding : 1, width:"300px"}} onChange={(e)=>{formData.alias = e.target.value}}/>
+
+        <TextField
+        id="filled-basic" label="Scientific Name" variant="filled"
+        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{formData.scientificName = e.target.value}}/>
+          
 
 
         <MDBox pt={3} pb={3}>

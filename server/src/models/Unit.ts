@@ -85,6 +85,10 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
             default: false,
             required : true
         },
+        bioMarkers:{
+            type: String,
+            required : true
+        }
     }]
 })
 

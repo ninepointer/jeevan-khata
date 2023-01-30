@@ -113,20 +113,14 @@ export default function App() {
 
     }).catch((err)=>{
       console.log("Fail to fetch data of user");
+      return;
 
-      ////console.log(err);
     })
             
   }, [])
 
-  // if(!getDetails.userDetails.role){
-  //   ////console.log(homeRoutes)
-  //   homeRoutes[0].route = "*"
-  // }
 
-
-
-  // Change the openConfigurator state  logindetail
+  // Change the openConfigurator state 
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
 
   // Setting the dir attribute for the body element
@@ -154,33 +148,6 @@ export default function App() {
       return null;
     });
 
-  // const configsButton = (
-  //   <MDBox
-  //     display="flex"
-  //     justifyContent="center"
-  //     alignItems="center"
-  //     width="3.25rem"
-  //     height="3.25rem"
-  //     bgColor="white"
-  //     shadow="sm"
-  //     borderRadius="50%"
-  //     position="fixed"
-  //     right="2rem"
-  //     bottom="2rem"
-  //     zIndex={99}
-  //     color="dark"
-  //     sx={{ cursor: "pointer" }}
-  //     onClick={handleConfiguratorOpen}
-  //   >
-  //     {/* <Icon fontSize="small" color="inherit">
-  //       settings
-  //     </Icon> */}
-  //     {/* <SettingsIcon/> */}
-  //   </MDBox>
-  // );
-
-  ////console.log(detailUser.role, getDetails.userDetails.role)
-  ////console.log(detailUser.role === "63cb5e30f6c8df05f26ada0a" || getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a")
 
   console.log("pathname", pathname)
   return direction === "rtl" ? (
@@ -229,18 +196,10 @@ export default function App() {
             {/* {configsButton} */}
           </>
         )}
-        {/* (getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") &&  */}
-        {/* {layout === "companyposition" && <Configurator />}
-        <Routes>
-        {getRoutes(routes)}
-        : getRoutes(homeRoutes)
-          <Route path="*" element={<BioMarkerLayout />} />
-          :
-          <Route path="*"  />
-        </Routes> */}
+
          {layout === "login" && <Configurator />}
         <Routes>
-        {((getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a") && getRoutes(routes) )}
+        {((getDetails.userDetails && (getDetails.userDetails.role === "63cb5e30f6c8df05f26ada0a")) && getRoutes(routes) )}
         {/* {getRoutes(routes)} */}
         {!cookieValue ? 
           <Route path="*" element={<SignIn />} />

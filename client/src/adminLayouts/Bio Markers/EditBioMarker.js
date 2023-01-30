@@ -2,16 +2,11 @@ import * as React from 'react';
 import {useContext, useState, useEffect, useRef} from "react";
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
-import uniqid from "uniqid";
 import CreateBioMarkerTableData from "./CreateBioMarkerTableData"
 import DataTable from "../../layoutComponents/Tables/DataTable";
 import MDBox from "../../components/MDBox";
-import MDTypography from "../../components/MDTypography";
 import MDButton from "../../components/MDButton";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -34,7 +29,8 @@ import axios from "axios"
     const [Unit, setUnit] = useState("Unit");
     const [BioMarkerType, setBioMarkerType] = useState([]);
     const [Alias, setAlias] = useState([]);
-    const [Status, setStatus] = useState([]);
+    const [Status, setStatus] = useState();
+    const [ScientificName, setScientificName] = useState();
     const [editOn, setEditOn] = useState(true);
     const [formstate, setformstate] = useState({
       name: "",
@@ -42,8 +38,8 @@ import axios from "axios"
       bioMarkerTypes: [],
       alias: "",
       status: "",
+      scientificName: "",
     });
-    let lengthOfBioMarkerType = 0;
     const gender = [
       {
         value: 'Male',
@@ -76,14 +72,25 @@ import axios from "axios"
         label: 'On Period',
       },
       {
-        value: 'Pregnency',
-        label: 'Pregency',
+        value: 'Pregnancy',
+        label: 'Pregnancy',
       },
       {
         value: 'Normal',
         label: 'Normal',
       },
 
+    ];
+
+    const inFant = [
+      {
+        value: 'child',
+        label: 'Child',
+      },
+      {
+        value: 'adult',
+        label: 'Adult',
+      }
     ];
 
 
@@ -146,6 +153,7 @@ import axios from "axios"
         setBioMarkerType(updatedData[0].bioMarkerTypes);
         setAlias(updatedData[0].alias);
         setStatus(updatedData[0].status)
+        setScientificName(updatedData[0].scientificName)
     }
 
     
@@ -163,11 +171,13 @@ import axios from "axios"
     formstate.bioMarkerTypes = BioMarkerType
     formstate.alias = Alias
     formstate.status = Status
+    formstate.status = Status
+    formstate.scientificName = ScientificName
 
   
       setformstate(formstate);
       console.log(formstate)
-      const {name, unit, bioMarkerTypes, alias, status} = formstate;
+      const {name, unit, bioMarkerTypes, alias, status, scientificName} = formstate;
   
   
       const res = await fetch(`${baseUrl}api/v1/bioMarkers/update/${id}`, {
@@ -177,7 +187,7 @@ import axios from "axios"
               "content-type": "application/json"
           },
           body: JSON.stringify({
-            name, unit, bioMarkerTypes, alias, status
+            name, unit, bioMarkerTypes, alias, status, scientificName
           })
       });
   
@@ -374,7 +384,29 @@ import axios from "axios"
                 </MenuItem>
               ))}
             </TextField>
-            )
+            ),
+            infant : (
+              <TextField
+                id="filled-basic"
+                select
+                label=""
+                defaultValue=""
+                //helperText="Please select the body condition"
+                variant="filled"
+                value={elem.infant}
+                disabled={editOn}
+                sx={{margin: 1, padding: 1, width: "150px"}}
+                onChange={e => handleChange(e, index, "infant")}
+  
+              >
+                {inFant.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+              )
+
         }
     
     
@@ -392,6 +424,7 @@ import axios from "axios"
         ageGroupUnit: "",
         range: "",
         bodyCondition: "",
+        infant: ""
       };
 
     let obj = {
@@ -451,12 +484,7 @@ import axios from "axios"
           ))}
         </TextField>
         ),
-        
-      // range : (
-      //   <TextField
-      //   id="filled-basic" label="" variant="filled" type="number" 
-      //   sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{bioMarkerTypeDataFirst.range = e.target.value}}/>
-      //   ),
+      
   
       bodycondition : (
         <TextField
@@ -475,7 +503,25 @@ import axios from "axios"
             </MenuItem>
           ))}
         </TextField>
-        )
+        ),
+        bodycondition : (
+          <TextField
+            id="filled-basic"
+            select
+            label=""
+            defaultValue=""
+            //helperText="Please select the body condition"
+            variant="filled"
+            sx={{margin: 1, padding: 1, width: "150px"}}
+            onChange={(e)=>{bioMarkerTypeDataFirst.infant = e.target.value}}
+          >
+            {inFant.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          )
     }
 
     console.log(obj)
@@ -541,6 +587,10 @@ import axios from "axios"
         <TextField
         id="filled-basic" label="Alias" variant="filled"
         sx={{margin: 1, padding : 1, width:"300px"}} value={Alias} disabled={editOn} onChange={(e)=>{ setAlias(e.target.value)}}/>
+
+        <TextField
+        id="filled-basic" label="Scientific Name" variant="filled"
+        sx={{margin: 1, padding : 1, width:"300px"}} value={ScientificName} disabled={editOn} onChange={(e)=>{ setScientificName(e.target.value)}}/>
 
 
         <MDBox pt={3} pb={3}>

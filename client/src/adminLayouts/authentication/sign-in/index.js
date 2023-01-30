@@ -59,36 +59,10 @@ function Basic() {
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
 
     const navigate = useNavigate();
-    let userData ;
-
-    // const userDetail = async ()=>{
-    //   try{
-    //       const res = await axios.get(`${baseUrl}api/v1/users/login`, {
-    //           withCredentials: true,
-    //           headers: {
-    //               Accept: "application/json",
-    //               "Content-Type": "application/json",
-    //               "Access-Control-Allow-Credentials": true
-    //           },
-    //       });
-                   
-    //       setDetails.setUserDetail(res.data);
-    //       userData = res.data;
-    //       //console.log("this is data of particular user", res.data);
-  
-    //       if(!res.status === 200){
-    //           throw new Error(res.error);
-    //       }
-    //   } catch(err){
-    //       //console.log("Fail to fetch data of user");
-    //       //console.log(err);
-    //   }
-    // }
-
+    let [invalidDetail, setInvalidDetail] = useState();
 
     async function logInButton(e){
         e.preventDefault();
-        //console.log(email, pass);
         
         const res = await fetch(`${baseUrl}api/v1/users/login`, {
             method: "POST",
@@ -103,24 +77,17 @@ function Basic() {
         });
         
         const data = await res.json();
-        //console.log(data);
         setDetails.setUserDetail(data.data);
         if(data.error || !data){
-            window.alert(data.error);
+            // window.alert(data.error);
+            setInvalidDetail(data.error);
             console.log("Invalid User Details");
         }else{
-            window.alert("Login Succesfull");
+            // window.alert("Login Succesfull");
             console.log("Entry Succesfull");
 
-            // this function is extracting data of user who is logged in
-            // await userDetail();
 
             navigate("/adminDashboard");
-            // if(userData.role === "admin"){
-            //   navigate("/adminDashboard");
-            // } else if(userData.role === "user"){
-            //   navigate("/Position");
-            // }
             
         }
     }
@@ -171,16 +138,12 @@ function Basic() {
             <MDBox mb={2}>
               <MDInput type="password" label="Password" onChange={handlePasswordChange} fullWidth />
             </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                onClick={handleSetRememberMe}
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-              >
-                &nbsp;&nbsp;Remember me
+
+
+            <MDBox mt={3} mb={1} textAlign="center">
+              <MDTypography variant="button" color={invalidDetail && "error"}>
+              {invalidDetail && invalidDetail}
+
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>

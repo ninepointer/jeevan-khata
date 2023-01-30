@@ -80,6 +80,8 @@ import axios from "axios"
           break;
         case "value":
           values[index].value = e.target.value;
+        case "bioMarker":
+          values[index].bioMarkers = e.target.value;          
           break;
         default:
           // code block
@@ -90,11 +92,22 @@ import axios from "axios"
 
 
     const [unitDetail, setUnitDetail] = useState([]);
+    const [bioMarkerArr, setBioMarkers] = useState([]);
+
 
     useEffect(()=>{
         axios.get(`${baseUrl}api/v1/units`)
         .then((res)=>{
           setUnitDetail(res.data.data)
+          console.log("res.data.data", res.data.data)
+        })
+        .catch(()=>{
+          console.log("Fail to fetch data")
+        })
+
+        axios.get(`${baseUrl}api/v1/bioMarkers`)
+        .then((res)=>{
+          setBioMarkers(res.data.data)
           console.log("res.data.data", res.data.data)
         })
         .catch(()=>{
@@ -108,10 +121,6 @@ import axios from "axios"
   
   
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
-  let permissionId = useRef(0);
-  let date = new Date();
-  let lastModified = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
-  
   const {reRender, setReRender} = Render;
   const[editData, setEditData] = useState(unitData);
   
@@ -145,7 +154,6 @@ import axios from "axios"
     unitConversion: []
   });
   
-  // console.log(formstate);
   
   
   async function onSave() {
@@ -186,8 +194,7 @@ import axios from "axios"
       }
   
       setEditOn(true);
-      setView(false);
-      // reRender ? setReRender(false) : setReRender(true)
+      // setView(false);
   }
   
   async function Ondelete(){
@@ -265,7 +272,7 @@ import axios from "axios"
         let obj = {
           // id : Date.now(),
           delete : (
-              <MDButton variant="Contained" color="info" fontWeight="medium" onClick={()=>{deleteUnitConversionData(elem._id, elem.id , "database")}}>
+              <MDButton disabled={editOn} variant="Contained" color="info" fontWeight="medium" onClick={()=>{deleteUnitConversionData(elem._id, elem.id , "database")}}>
                   🗑️
               </MDButton>
           ),
@@ -294,7 +301,29 @@ import axios from "axios"
             onChange={e => handleChange(e, index, "value")}
             value={elem.value} 
             />
-          )
+          ),
+
+          bioMarkers : (
+            <TextField
+              id="filled-basic"
+              select
+              label=""
+              defaultValue=""
+              helperText="Please select bio marker"
+              variant="filled"
+              sx={{margin: 1, padding: 1, width: "150px"}}
+              value={elem.bioMarkers} 
+              disabled={editOn}
+              onChange={e => handleChange(e, index, "bioMarker")}
+            >
+              {bioMarkerArr.map((option) => (
+                <MenuItem key={option.name} value={option.name}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            )
+
         }
           rows.push(obj)
       }
@@ -309,6 +338,7 @@ import axios from "axios"
         unitConversionFullName: "",
         unitConversionId: "",
         value: "",
+        bioMarkers: ""
         };
 
     let obj = {
@@ -335,6 +365,25 @@ import axios from "axios"
         id="filled-basic" label="" variant="filled" type="number"
         sx={{margin: 1, padding : 1, width:"100px"}} onChange={(e)=>{unitConversionData.value = e.target.value}}/>
       ),
+
+      bioMarkers: (
+        <TextField
+          id="filled-basic"
+          select
+          label=""
+          defaultValue=""
+          helperText="Please select bio marker"
+          variant="filled"
+          sx={{margin: 1, padding: 1, width: "150px"}}
+          onChange={(e)=>{unitConversionData.bioMarkers = e.target.value}}
+        >
+          {bioMarkerArr.map((option) => (
+            <MenuItem key={option.name} value={option.name}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </TextField>
+        )
         
     }
 

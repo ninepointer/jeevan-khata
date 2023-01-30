@@ -16,75 +16,39 @@ import MDButton from "../../components/MDButton";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-
+import axios from "axios";
 
   const CreateUnit = ({setCreateUnit}) => {
-    // const {reRender, setReRender} = Render
-    let unitConversionDataFirst = {
-      unitConversionFullName: "",
-      unitConversionId: "",
-      value: "",
-    }
-    // let obj = {
-    //   id : (
-    //     <MDTypography component="a" variant="caption">
-    //       {Date.now()}
-    //     </MDTypography>
-    //   ),
-    //   delete : (
-    //     <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(id)=>{deleteItem(obj.id.props.children)}}>
-    //       🗑️
-    //     </MDButton>
-    //   ),
-  
-    //   cunitfullname : ( 
-    //     <TextField
-    //     id="filled-basic" label="" variant="filled"
-    //     sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionDataFirst.unitConversionFullName = e.target.value}}/>
-    //     ),
-  
-    //   cunitid : (
-    //     <TextField
-    //     id="filled-basic" label="" variant="filled"
-    //     sx={{margin: 1, padding : 1, width:"200px"}} onChange={(e)=>{unitConversionDataFirst.unitConversionId = e.target.value}}/>
-    //   ),
-        
-    //   value : (
-    //     <TextField
-    //     id="filled-basic" label="" variant="filled" type="number"
-    //     sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{unitConversionDataFirst.value = e.target.value}}/>
-    //     ),
-    // }
+
     const {columns, rows} = CreateUnitTableData();
-    const [row, setRow] = useState([
-      // obj
-    ]);
+    const [row, setRow] = useState([]);
 
-
-
-    let uId = uniqid();
-    let date = new Date();
-    let createdOn = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${(date.getFullYear())}`
-    let createdBy = "prateek";
-    let isDeleted = false;
-    let lastModifiedBy = createdBy;
-    let lastModifiedOn = createdOn
 
     let [formData, setFormData] = useState({
       unitFullName: "",
       unitId: "",
       status: "",
-      unitConversionData: [
-        
-      ]
+      unitConversionData: []
     });
 
 
 
     let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
     const [render, setRender] = useState(true);
+    const [bioMarkerArr, setBioMarkers] = useState([]);
+
+    useEffect(()=>{
+      axios.get(`${baseUrl}api/v1/bioMarkers`)
+      .then((res)=>{
+        setBioMarkers(res.data.data)
+        console.log("res.data.data", res.data.data)
+      })
+      .catch(()=>{
+        console.log("Fail to fetch data")
+      })
+    },[])
+
+    // console.log(bioMarkers)
   
     const handleClose = () => {
       setCreateUnit(false);
@@ -124,31 +88,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
     }
     
     function deleteItem(id){
-      // if(row.length !== 1){
-        let update = row.filter((elem)=>{
-          console.log(elem.id.props.children , id)
-          return elem.id.props.children !== id;
-        })
-        setRow(update);
-      // }
+      let update = row.filter((elem)=>{
+        console.log(elem.id.props.children , id)
+        return elem.id.props.children !== id;
+      })
+      setRow(update);
     }
-
-    console.log("row outer", row)
-
-    // function actionButton(id){
-    //   let update = row.filter((elem)=>{
-    //     // console.log(elem.id.props.children , id)
-    //     return elem.id.props.children === id;
-    //   })
-    //   // let tempArr = tempArr.push(update[0]); 
-    //   console.log(update[0])
-    //   setUnitConversionData(unitConversionData);
-    //   formData.unit.push(JSON.parse(JSON.stringify(unitConversionData)));
-    //   // setAddedBio(tempArr);
-    //   // deleteItem(id);
-    //   // console.log(formData)
-    // }
-
 
     function onCreate(){
       let obj = {};
@@ -157,6 +102,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
       unitConversionFullName: "",
       unitConversionId: "",
       value: "",
+      bioMarkers: ""
       };
 
 
@@ -165,8 +111,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
           {Date.now()}
         </MDTypography>
       );
-
-      // console.log("id", obj.id)
 
       obj.delete = (
         <MDButton variant="Contained" color="info" fontWeight="medium" onClick={(e)=>{deleteItem(obj.id.props.children)}}>
@@ -189,13 +133,30 @@ import FormControlLabel from '@mui/material/FormControlLabel';
       obj.value = (
         <TextField
         id="filled-basic" label="" variant="filled" type="number"
-        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{unitConversionData.value = e.target.value}}/>);
+        sx={{margin: 1, padding : 1, width:"150px"}} onChange={(e)=>{unitConversionData.value = e.target.value}}/>
+        );
 
-        // tempRow.push(obj);
+        obj.bioMarkers = (
+          <TextField
+            id="filled-basic"
+            select
+            label=""
+            defaultValue=""
+            helperText="Please select bio marker"
+            variant="filled"
+            sx={{margin: 1, padding: 1, width: "150px"}}
+            onChange={(e)=>{unitConversionData.bioMarkers = e.target.value}}
+          >
+            {bioMarkerArr.map((option) => (
+              <MenuItem key={option.name} value={option.name}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          );
+
       setRow((oldState)=> [...oldState, obj])
       formData.unitConversionData.push(unitConversionData);
-
-
       render ? setRender(false):setRender(true)
     }
 

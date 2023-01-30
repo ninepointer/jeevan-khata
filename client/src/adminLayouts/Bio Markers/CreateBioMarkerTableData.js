@@ -6,6 +6,7 @@ export default function CreateBioMarkerTableData() {
       columns: [
           { Header: "Delete", accessor: "delete", align: "center" },
           { Header: "Gender", accessor: "gender", align: "center" },
+          { Header: "InFant", accessor: "infant", align: "center" },
           { Header: "Body Condition", accessor: "bodycondition", align: "center" },
           { Header: "Age Group Unit", accessor: "agegroupunit", align: "center" }, 
           { Header: "Age Group Start", accessor: "agegroupstart", align: "center" },

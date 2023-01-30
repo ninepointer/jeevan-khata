@@ -48,32 +48,13 @@ const UserModel = ({setCreate}) => {
     aadhaarCardNumber: "",
     password: "",
     role: "",
+    address: "",
   });
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
     
   const getDetails = useContext(userContext);
 
-  const [reRender, setReRender] = useState(true);
   const [roleDetail, setRoleDetail] = useState([]);
-
-
-  // useEffect(async ()=>{
-  //   const res = await fetch(`${baseUrl}api/v1/roles`, {
-  //     method: "GET",
-  //     credentials:"include",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //       "Access-Control-Allow-Credentials": true
-  //     }
-  //   })
-
-  //   const data = await res.json();
-          
-  //   console.log("role", data);
-  //   setRoleDetail(data.data)
-
-  // }, [])
 
   useEffect(()=>{
     axios.get(`${baseUrl}api/v1/roles`)
@@ -96,7 +77,7 @@ const UserModel = ({setCreate}) => {
     setformstate(formstate);
     console.log(formstate)
 
-    const { firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, password, role} = formstate;
+    const { firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, password, role, address} = formstate;
 
       const res = await fetch(`${baseUrl}api/v1/users`, {
         method: "POST",
@@ -107,13 +88,10 @@ const UserModel = ({setCreate}) => {
           "Access-Control-Allow-Credentials": true
       },
       body: JSON.stringify({
-        firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, password, role })
+        firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, password, role, address })
       })
-  // });
   
   const data = await res.json();
-           
-    // const data = res.data;
     console.log(data);
     if(data.status === 422 || data.error || !data){ 
         window.alert(data.error);
@@ -123,8 +101,16 @@ const UserModel = ({setCreate}) => {
         console.log("entry succesfull");
     }
     setCreate(false);
-    // reRender ? setReRender(false) : setReRender(true)
 
+}
+
+function settingRole(e){
+  roleDetail.map((elem)=>{
+    if(elem.roleName === e.target.value){
+      // setRole(e.target.value);
+      formstate.role = elem._id
+    }
+  })
 }
 
   return (
@@ -197,10 +183,7 @@ const UserModel = ({setCreate}) => {
         <TextField
           id="filled-basic" label="Password" variant="filled" 
           sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{formstate.password = e.target.value}}/>
-        {/* roleDetail */}
-        {/* <TextField
-          id="filled-basic" label="Role" variant="filled" 
-          sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{formstate.role = e.target.value}}/> */}
+        
         <TextField
           id="filled-basic"
           select
@@ -209,7 +192,7 @@ const UserModel = ({setCreate}) => {
           helperText="Please select role"
           variant="filled"
           sx={{margin: 4, padding: 2, width: "200px"}}
-          onChange={(e)=>{formstate.role = e.target.value}}
+          onChange={(e)=>{settingRole(e)}}
         >
           {roleDetail.map((option) => (
             <MenuItem key={option.roleName} value={option.roleName}>
@@ -220,8 +203,8 @@ const UserModel = ({setCreate}) => {
 
 
         <TextField
-          disabled id="filled-basic" label="JeevanKhata ID" variant="filled" 
-          sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{formstate.jeevanKhataId = e.target.value}}/>
+          id="filled-basic" label="Address" variant="filled" 
+          sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{formstate.address = e.target.value}}/>
       </Box>
       <Button autoFocus onClick={formSubmit}>
         Save

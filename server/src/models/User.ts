@@ -93,6 +93,10 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
         type: String,
         // required : true
     },
+    address:{
+        type: String,
+        // required : true
+    },
 });
 
 //check password

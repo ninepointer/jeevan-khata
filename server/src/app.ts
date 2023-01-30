@@ -1,13 +1,10 @@
 import express, {Request, Response} from 'express';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
-// import xss from 'xss-clean';
 import hpp from 'hpp';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
-
-
 import userRoutes from './routes/userRoutes';
 import roleRoutes from './routes/roleRoutes';
 import errorHandler from './middlewares/errorHandler';
@@ -15,6 +12,7 @@ import bioMarkerRoutes from './routes/bioMarkerRoutes';
 import unitsRoutes from './routes/unitsRoutes';
 import labTestRoutes from "./routes/labTestRoutes"
 import uploadRoutes from './routes/uploadRoutes';
+
 
 const app = express();
 app.use(cookieParser());
@@ -35,7 +33,6 @@ app.use('/api', limiter);
 
 app.use(express.json({limit:'25kb'}));
 app.use(mongoSanitize());
-// app.use(xss());
 app.get('/', (req:Request,res:Response)=>{
     res.send('Jeevan Khata');
 });

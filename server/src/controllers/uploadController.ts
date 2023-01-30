@@ -1,35 +1,32 @@
 import express, {Request, Response, NextFunction} from 'express';
 import { createCustomError } from '../errors/customError';
 import CatchAsync from '../middlewares/CatchAsync';
-// import Upload from '../models/';
+import aws from "aws-sdk";
 
-// import express from 'express';
-import multer from 'multer';
-
-// const app = express();
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/');
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.originalname);
-//   }
-// });
-// const upload = multer({ storage: storage });
-
-// app.post('/upload', upload.single('file'), (req, res) => {
-
-// });
-
-// // app.listen(3000, () => {
-// //   console.log('Server started on port 3000.');
-// // });
+const s3 = new aws.S3();
 
 export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-      }
-      res.send('File uploaded successfully.');
+  const file = req.file;
+  if (!file) {
+    return res.status(400).send({ error: 'Please provide a file' });
+  }
+
+  // configure the parameters for the S3 upload
+  const params = {
+    Bucket: '<Your bucket name>',
+    Key: file.originalname,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+    ACL: 'public-read',
+  };
+
+  // upload the file to S3
+  s3.upload(params, (error: any, data: any) => {
+    if (error) {
+      return res.status(500).send({ error });
+    }
+    res.send({ data });
+  });
 });
 
 // export const fileData = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {

@@ -79,6 +79,7 @@ const [State, setState] = useState();
 const [Aadhaar, setAadhaar] = useState();
 const [Password, setPassword] = useState();
 const [Role, setRole] = useState();
+const [Address, setAddress] = useState();
 
     useEffect(()=>{
 
@@ -101,7 +102,7 @@ const [Role, setRole] = useState();
         setCity(editData[0].city)
         setState(editData[0].state)
         setAadhaar(editData[0].aadhaarCardNumber)
-        // setPassword(editData[0].)
+        setAddress(editData[0].address)
         setRole(editData[0].role)
 
         const dobdate = (editData[0].dateOfBirth).split("T");
@@ -112,8 +113,6 @@ const [Role, setRole] = useState();
 
 
 
-    console.log(Role, Gender);
-//     console.log(editData[0].name, name);
     const [formstate, setformstate] = useState({
       firstName: "",
       lastName: "",
@@ -125,10 +124,9 @@ const [Role, setRole] = useState();
       state: "",
       aadhaarCardNumber: "",
       role: "",
-      password: ""
+      password: "",
+      address: ""
     });
-
-// console.log(formstate);
 
 
 async function onSave() {
@@ -142,11 +140,22 @@ async function onSave() {
   formstate.city = City
   formstate.state = State
   formstate.aadhaarCardNumber = Aadhaar
-  
+  formstate.address = Address
   formstate.password = Password
 
+  if(!formstate.role){
+    console.log("in if")
+    roleDetail.map((elem)=>{
+      console.log(elem, Role)
+      if(elem.roleName === Role.roleName){
+        formstate.role = elem._id
+      }
+    })
+  }
+
     setformstate(formstate);
-    const {firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, role} = formstate;
+    console.log(formstate)
+    const {firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, role, address} = formstate;
 
     const res = await fetch(`${baseUrl}api/v1/users/update/${id}`, {
         method: "PUT",
@@ -155,7 +164,7 @@ async function onSave() {
             "content-type": "application/json"
         },
         body: JSON.stringify({
-          firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, role
+          firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, role, address
         })
     });
 
@@ -298,10 +307,7 @@ async function Ondelete(){
         <TextField
           id="filled-basic" label="Password" variant="filled" disabled={editOn} 
           sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{ setPassword( e.target.value)}}/>
-        {/* roleDetail */}
-        {/* <TextField
-          id="filled-basic" label="Role" variant="filled" disabled={editOn} value={} 
-          sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{ ( e.target.value)}}/> */}
+
         <TextField
           id="filled-basic"
           select
@@ -320,13 +326,13 @@ async function Ondelete(){
           ))}
         </TextField>
 
+        <TextField
+          id="filled-basic" label="Address" variant="filled" disabled={editOn} value={Address} 
+          sx={{ margin: 4, padding: 2, width: "200px"}} onChange={(e)=>{ setAddress( e.target.value)}}/>
+
+
       </Box>
-      {/* <Button autoFocus onClick={formSubmit}>
-        Save
-      </Button>
-      <Button onClick={handleClose} autoFocus>
-        Close
-      </Button> */}
+
     </div>
   );
 }

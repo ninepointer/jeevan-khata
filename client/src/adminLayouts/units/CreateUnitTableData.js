@@ -8,6 +8,7 @@ export default function CreateUnitTableData() {
           { Header: "Conversion Unit FullName", accessor: "cunitfullname", align: "center" },
           { Header: "Conversion Unit Id", accessor: "cunitid", align: "center" },
           { Header: "Value", accessor: "value", align: "center" },    
+          { Header: "Bio Marker", accessor: "bioMarkers", align: "center" },    
         ],
   
         rows: []

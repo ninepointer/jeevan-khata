@@ -24,7 +24,7 @@ export const login = async (req: Request, res:Response, next: NextFunction) =>{
 
     if (!user || !(await user.correctPassword(password, user.password))) {
         return next(
-        createCustomError('Incorrect email or username or password', 401)
+        createCustomError('Incorrect email or password', 401)
         );
     }
     const token = signToken(String(user._id));

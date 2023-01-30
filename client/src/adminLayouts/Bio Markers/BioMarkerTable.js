@@ -76,11 +76,6 @@ const BioMarkerTable = ({setCreateBio, setView, setEditData, reRender}) => {
     const options1 = { year: 'numeric', month: 'short', day: 'numeric' };
     const createdOn = createdondate.toLocaleDateString('en-US', options1)
 
-    // let length = 0;
-    // if(elem.gender && elem.bodyCondition){
-    //   length += 1;
-    // }
-
     let bioTypes = elem.bioMarkerTypes.filter((subelem)=>{
                       return !subelem.is_Deleted
                   })
@@ -99,6 +94,11 @@ const BioMarkerTable = ({setCreateBio, setView, setEditData, reRender}) => {
     bioMarkerRow.unit = (
       <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
         {elem.unit}
+      </MDTypography>
+    );
+    bioMarkerRow.scientificName = (
+      <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+        { elem.scientificName}
       </MDTypography>
     );
     bioMarkerRow.bioMarkerTypeCount = (

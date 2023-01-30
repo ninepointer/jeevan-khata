@@ -10,14 +10,15 @@ interface BioMarker{
     unit: string,
     alias?: [string],
     bioMarkerTypes:MyArray,
-    status: string
+    status: string,
+    scientificName: string
 }
 
 export const createBioMarker = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
-    const {name, unit, alias, bioMarkerTypes}:BioMarker = req.body;
+    const {name, unit, alias, bioMarkerTypes, scientificName}:BioMarker = req.body;
 
     //Check if biomarker name already exists
-    if(await BioMarker.findOne({name: name})) return next(createCustomError('Bio Marker already exists. Edit the existing one.', 403));
+    if(await BioMarker.findOne({name: name, isDeleted: false})) return next(createCustomError('Bio Marker already exists. Edit the existing one.', 403));
 
     //Check if any of the aliases exist
     if(alias){
@@ -25,7 +26,7 @@ export const createBioMarker = CatchAsync(async(req:Request, res:Response, next:
     }
 
     const newBioMarker = await BioMarker.create({
-        name, unit, alias, bioMarkerTypes
+        name, unit, alias, bioMarkerTypes, scientificName
     });
 
     res.status(201).json({status: 'Success', message: 'Biomarker created.', data: newBioMarker});
@@ -58,7 +59,7 @@ export const getBioMarkersName = CatchAsync(async(req:Request, res:Response, nex
 });
 
 export const editBioMarker = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    const{ name, unit, bioMarkerTypes, alias, status }:BioMarker = req.body;
+    const{ name, unit, bioMarkerTypes, alias, status, scientificName }:BioMarker = req.body;
     const {id} = req.params;
 
     const bioMarkerData = await BioMarker.findOne({_id: id})
@@ -68,8 +69,9 @@ export const editBioMarker = CatchAsync(async (req:Request, res: Response, next:
     bioMarkerData!.unit = unit,
     (bioMarkerData as any).bioMarkerTypes = bioMarkerTypes,
     (bioMarkerData as any).alias = alias,
-    // bioMarkerData!.alias = alias,
+    // bioMarkerData!.alias = alias, scientificName
     bioMarkerData!.status = status,
+    bioMarkerData!.scientificName = scientificName
 
     await bioMarkerData!.save();
     res.status(201).json({status: "Success", data:bioMarkerData});

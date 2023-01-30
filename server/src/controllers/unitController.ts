@@ -16,7 +16,7 @@ export const createUnit = CatchAsync(async(req:Request, res:Response, next:NextF
     const {unitFullName, unitId, unitConversion}:Unit = req.body;
 
     //Check if biomarker name already exists
-    if(await Unit.findOne({unitFullName: unitFullName, })) return next(createCustomError('Unit already exists. Edit the existing one.', 403));
+    if(await Unit.findOne({isDeleted: false, unitFullName: unitFullName })) return next(createCustomError('Unit already exists. Edit the existing one.', 403));
 
 
 

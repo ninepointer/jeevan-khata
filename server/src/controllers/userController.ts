@@ -16,19 +16,20 @@ interface User{
     password: string,
     mobile: string,
     city: string,
-    state:string,
-    role: string
+    state: string,
+    role: string,
+    address: string
 }
 
 export const createUser =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state }: User = req.body;
+    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, address }: User = req.body;
     console.log("User :",(req as any).user)
     //Check for required fields 
     if(!(email ||password || mobile  || firstName || lastName || dateOfBirth || gender))return next(createCustomError('Enter all mandatory fields.', 401));
 
     //Check if user exists
     if(await User.findOne({isDeleted: false, email})) return next(createCustomError('User with this email already exists. Please login with existing email.', 401));
-    const user = await User.create({firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state });
+    const user = await User.create({firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, address });
 
     if(!user) return next(createCustomError('Couldn\'t create user', 400));
 
@@ -48,13 +49,11 @@ export const getUsers = CatchAsync(async (req: Request, res: Response, next: Nex
 
 
 export const editUser = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, role }: User = req.body;
+    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, role, address }: User = req.body;
     const {id} = req.params;
     console.log("User :",(req as any).user)
-    //Check for required fields 
-    // if(!(email ||password || mobile  || firstName || lastName || dateOfBirth || gender))return next(createCustomError('Enter all mandatory fields.', 401));
 
-    //Check if user exists
+    //Finding user
     const userData = await User.findOne({_id: id})
     console.log("user", userData)
 
@@ -68,7 +67,8 @@ export const editUser = CatchAsync(async (req:Request, res: Response, next:NextF
         userData!.mobile = mobile,
         userData!.city = city,
         userData!.state = state,
-        userData!.role = role
+        userData!.role = role,
+        userData!.address = address
 
     } 
     else {
@@ -80,6 +80,7 @@ export const editUser = CatchAsync(async (req:Request, res: Response, next:NextF
         userData!.mobile = mobile,
         userData!.city = city,
         userData!.state = state,
+        userData!.address = address,
         userData!.role = role
     }
 
