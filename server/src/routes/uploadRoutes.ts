@@ -7,8 +7,8 @@ const router = express.Router();
 
 // configure the AWS SDK with your S3 credentials
 aws.config.update({
-  accessKeyId: 'AKIASR77BQMICZATCLPV',
-  secretAccessKey: 'o/tvWjERwm4VXgHU7kp38cajCS4aNgT4s/Cg3ddV',
+  accessKeyId: process.env.AWS_S3_ACCESS_ID,
+  secretAccessKey: process.env.AWS_S3_ACCESS_KEY,
 });
 
 

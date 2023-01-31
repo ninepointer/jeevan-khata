@@ -13,7 +13,7 @@ export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextF
 
   // configure the parameters for the S3 upload
   const params = {
-    Bucket: '<Your bucket name>',
+    Bucket: 'jeevan-khata-test',
     Key: file.originalname,
     Body: file.buffer,
     ContentType: file.mimetype,
