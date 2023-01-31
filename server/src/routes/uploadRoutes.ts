@@ -7,8 +7,11 @@ const router = express.Router();
 
 // configure the AWS SDK with your S3 credentials
 aws.config.update({
-  accessKeyId: process.env.AWS_S3_ACCESS_ID,
-  secretAccessKey: process.env.AWS_S3_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  // accessKeyId: "AKIASR77BQMICZATCLPV",
+  // secretAccessKey: "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",
+
 });
 
 
@@ -19,7 +22,9 @@ const s3 = new aws.S3();
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: function(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    console.log("file", file)
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|pdf)$/)) {
+      console.log("file not found")
       return;
       // return cb(new Error('Only image files are allowed!'), false);
     }

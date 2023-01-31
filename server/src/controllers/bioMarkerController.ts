@@ -33,12 +33,7 @@ export const createBioMarker = CatchAsync(async(req:Request, res:Response, next:
 });
 
 export const getBioMarkers = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
-    const bioMarkers = await BioMarker.find({
-        "$or": [
-            {"isDeleted": false},
-            {"bioMarkerTypes.is_Deleted": false}
-        ]
-    })
+    const bioMarkers = await BioMarker.find({isDeleted: false})
 
     res.status(200).json({status:'Success', results: bioMarkers.length, data: bioMarkers});
 });

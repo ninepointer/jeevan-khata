@@ -13,7 +13,7 @@ export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextF
 
   // configure the parameters for the S3 upload
   const params = {
-    Bucket: 'jeevan-khata-test',
+    Bucket: process.env.AWS_BUCKET_NAME!,
     Key: file.originalname,
     Body: file.buffer,
     ContentType: file.mimetype,
@@ -25,6 +25,7 @@ export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextF
     if (error) {
       return res.status(500).send({ error });
     }
+    console.log("data", data)
     res.send({ data });
   });
 });
