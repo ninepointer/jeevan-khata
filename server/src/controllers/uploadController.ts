@@ -44,4 +44,7 @@ export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextF
 export const textDetection = async() =>{
   let result = await detectText(path.resolve(__dirname, '../../uploads/dc3f1b80aecfff20f0c68be78a461119.jpg'));
   console.log(result);
+
+
+  
 } 

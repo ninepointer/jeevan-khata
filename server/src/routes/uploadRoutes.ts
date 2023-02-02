@@ -9,6 +9,7 @@ const router = express.Router();
 aws.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: "ap-1-south",
   // accessKeyId: "AKIASR77BQMICZATCLPV",
   // secretAccessKey: "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",
 
