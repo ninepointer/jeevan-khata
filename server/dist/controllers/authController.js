@@ -27,7 +27,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         email: email
     });
     if (!user || !(yield user.correctPassword(password, user.password))) {
-        return next((0, customError_1.createCustomError)('Incorrect email or username or password', 401));
+        return next((0, customError_1.createCustomError)('Incorrect email or password', 401));
     }
     const token = (0, authUtil_1.signToken)(String(user._id));
     res.cookie('jwt', token, {

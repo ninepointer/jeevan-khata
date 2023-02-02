@@ -20,7 +20,7 @@ const Unit_1 = __importDefault(require("../models/Unit"));
 exports.createUnit = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { unitFullName, unitId, unitConversion } = req.body;
     //Check if biomarker name already exists
-    if (yield Unit_1.default.findOne({ unitFullName: unitFullName, }))
+    if (yield Unit_1.default.findOne({ isDeleted: false, unitFullName: unitFullName }))
         return next((0, customError_1.createCustomError)('Unit already exists. Edit the existing one.', 403));
     const newUnit = yield Unit_1.default.create({
         unitFullName, unitId, unitConversion

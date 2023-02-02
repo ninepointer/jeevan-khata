@@ -17,7 +17,7 @@ const User_1 = __importDefault(require("../models/User"));
 const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
 exports.createUser = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state } = req.body;
+    const { firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, address } = req.body;
     console.log("User :", req.user);
     //Check for required fields 
     if (!(email || password || mobile || firstName || lastName || dateOfBirth || gender))
@@ -25,7 +25,7 @@ exports.createUser = (0, CatchAsync_1.default)((req, res, next) => __awaiter(voi
     //Check if user exists
     if (yield User_1.default.findOne({ isDeleted: false, email }))
         return next((0, customError_1.createCustomError)('User with this email already exists. Please login with existing email.', 401));
-    const user = yield User_1.default.create({ firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state });
+    const user = yield User_1.default.create({ firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, address });
     if (!user)
         return next((0, customError_1.createCustomError)('Couldn\'t create user', 400));
     res.status(201).json({ status: "Success", data: user });
@@ -38,12 +38,10 @@ exports.getUsers = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 
     res.status(200).json({ status: "Success", data: users, results: users.length });
 }));
 exports.editUser = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, role } = req.body;
+    const { firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, role, address } = req.body;
     const { id } = req.params;
     console.log("User :", req.user);
-    //Check for required fields 
-    // if(!(email ||password || mobile  || firstName || lastName || dateOfBirth || gender))return next(createCustomError('Enter all mandatory fields.', 401));
-    //Check if user exists
+    //Finding user
     const userData = yield User_1.default.findOne({ _id: id });
     console.log("user", userData);
     if (password) {
@@ -56,7 +54,8 @@ exports.editUser = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 
             userData.mobile = mobile,
             userData.city = city,
             userData.state = state,
-            userData.role = role;
+            userData.role = role,
+            userData.address = address;
     }
     else {
         userData.firstName = firstName;
@@ -67,6 +66,7 @@ exports.editUser = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 
             userData.mobile = mobile,
             userData.city = city,
             userData.state = state,
+            userData.address = address,
             userData.role = role;
     }
     yield userData.save();

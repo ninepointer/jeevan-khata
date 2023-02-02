@@ -12,28 +12,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUploads = void 0;
+exports.textDetection = exports.getUploads = void 0;
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
-// const app = express();
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/');
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.originalname);
-//   }
-// });
-// const upload = multer({ storage: storage });
-// app.post('/upload', upload.single('file'), (req, res) => {
-// });
-// // app.listen(3000, () => {
-// //   console.log('Server started on port 3000.');
-// // });
+const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const googleOcr_1 = __importDefault(require("../services/googleOcr"));
+const path_1 = __importDefault(require("path"));
+const s3 = new aws_sdk_1.default.S3();
 exports.getUploads = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
+    const file = req.file;
+    if (!file) {
+        return res.status(400).send({ error: 'Please provide a file' });
     }
-    res.send('File uploaded successfully.');
+    // configure the parameters for the S3 upload
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        ACL: 'public-read',
+    };
+    // upload the file to S3
+    s3.upload(params, (error, data) => {
+        if (error) {
+            return res.status(500).send({ error });
+        }
+        console.log("data", data);
+        res.send({ data });
+    });
 }));
 // export const fileData = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
 //     const upload = multer({ dest: "uploads/" });
@@ -41,3 +46,8 @@ exports.getUploads = (0, CatchAsync_1.default)((req, res, next) => __awaiter(voi
 //     return upload.single('file');
 //     next();
 // });
+const textDetection = () => __awaiter(void 0, void 0, void 0, function* () {
+    let result = yield (0, googleOcr_1.default)(path_1.default.resolve(__dirname, '../../uploads/dc3f1b80aecfff20f0c68be78a461119.jpg'));
+    console.log(result);
+});
+exports.textDetection = textDetection;

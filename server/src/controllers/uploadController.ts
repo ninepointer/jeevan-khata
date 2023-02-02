@@ -2,6 +2,8 @@ import express, {Request, Response, NextFunction} from 'express';
 import { createCustomError } from '../errors/customError';
 import CatchAsync from '../middlewares/CatchAsync';
 import aws from "aws-sdk";
+import detectText from '../services/googleOcr';
+import path from 'path';
 
 const s3 = new aws.S3();
 
@@ -37,3 +39,9 @@ export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextF
 //     return upload.single('file');
 //     next();
 // });
+
+
+export const textDetection = async() =>{
+  let result = await detectText(path.resolve(__dirname, '../../uploads/dc3f1b80aecfff20f0c68be78a461119.jpg'));
+  console.log(result);
+} 

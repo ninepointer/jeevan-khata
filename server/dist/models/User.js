@@ -128,6 +128,10 @@ const userSchema = new mongoose_1.default.Schema({
         type: String,
         // required : true
     },
+    address: {
+        type: String,
+        // required : true
+    },
 });
 //check password
 userSchema.methods.correctPassword = function (candidatePassword, userPassword) {

@@ -79,7 +79,10 @@ const bioMarkerSchema = new mongoose_1.default.Schema({
     },
     alias: {
         type: [String],
-        // required : true
+    },
+    scientificName: {
+        type: String,
+        required: true
     },
     bioMarkerTypes: [{
             gender: {
@@ -109,6 +112,10 @@ const bioMarkerSchema = new mongoose_1.default.Schema({
             is_Deleted: {
                 type: Boolean,
                 default: false,
+                // required : true
+            },
+            infant: {
+                type: String,
                 // required : true
             }
         }]

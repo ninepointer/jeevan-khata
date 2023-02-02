@@ -117,6 +117,10 @@ const unitSchema = new mongoose_1.default.Schema({
                 default: false,
                 required: true
             },
+            bioMarkers: {
+                type: String,
+                required: true
+            }
         }]
 });
 unitSchema.pre('save', function (next) {

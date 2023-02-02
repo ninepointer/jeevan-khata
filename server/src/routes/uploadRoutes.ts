@@ -1,5 +1,5 @@
 import express, {Router} from 'express';
-import { getUploads} from '../controllers/uploadController';
+import { getUploads, textDetection} from '../controllers/uploadController';
 import multer from 'multer';
 import aws from "aws-sdk";
 
@@ -36,7 +36,9 @@ const upload = multer({
 
 console.log("upload", upload)
 
-router.route('/').post(upload.single('file'), getUploads)
+router.route('/').post(upload.single('file'), getUploads);
+
+router.route('/test').get(textDetection);
 
 
 // router.route('/update/:id').put(editLabTest);

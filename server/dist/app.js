@@ -32,7 +32,6 @@ app.use((0, helmet_1.default)());
 app.use('/api', limiter);
 app.use(express_1.default.json({ limit: '25kb' }));
 app.use((0, express_mongo_sanitize_1.default)());
-// app.use(xss());
 app.get('/', (req, res) => {
     res.send('Jeevan Khata');
 });
