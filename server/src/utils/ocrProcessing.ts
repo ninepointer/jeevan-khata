@@ -1,10 +1,15 @@
 import { NextFunction } from "express";
 import CatchAsync from "../middlewares/CatchAsync";
+import TestName from "../models/LabTest"
+import BioMarker from "../models/BioMarker";
 
 
 export const ocrProccesing = async(ocrData: any) => {
 
-    // console.log("ocrData", ocrData)
+
+  const testName = await TestName.find({isDeleted: false});
+  const bioMarker = await BioMarker.find({isDeleted: false})
+    // console.log("testName", (testName as any), (bioMarker as any).data)
     let ocrObj: any = {};
     
     //SORT THE OCR DATA BY Y COORDINATE- By default average of coordinates
@@ -92,7 +97,7 @@ export const ocrProccesing = async(ocrData: any) => {
     
     
       function extractOcrData(possibleArr: string | any[], objName: string, x_coordGap: number, y_coordGap: number){
-    
+        console.log("possibleArr", possibleArr)
         data = [];
         for(let i = 0; i<possibleArr.length; i++){
           if(fullText.description.toLowerCase().includes(possibleArr[i])){
@@ -136,10 +141,47 @@ export const ocrProccesing = async(ocrData: any) => {
       }
       
       
-      function extractOcrDataBiomarker(possibleArr: string | any[], resultArr: string | any[]){
+      function extractOcrDataBiomarker(possibleArr: string | any[], resultArr: any, unitsArr: any, rangesArr: any){
+        console.log("testName", testName, bioMarker)
+
+        let testNameArr = testName.map((elem)=>{
+          return (elem.testName).toLowerCase().split(" ").concat(elem.testScientificName.toLowerCase().split(" "))
+        })
+
+
+
+        console.log("testNameArr", testNameArr)
+        testNameArr.map((elem)=>{
+          extractOcrData(elem, "testName", 150, 10)
+        })
+
+         
+        let bioMarkerDataAdmin: string | any[] = [];
+        for(let i = 0; i < testName.length; i++){
+          if((testName[i].testName).toLowerCase().includes((ocrObj.testName).toLowerCase())){
+            bioMarkerDataAdmin = testName[i].bioMarkers;
+            break;
+          }
+        }
+
+        let bioMarkerDataAdminArr: any = [];
+        bioMarkerDataAdmin.map((elem: string)=>{
+          console.log("elem", elem)
+          let matchedBioMarker = bioMarker.filter((subElem)=>{
+            console.log("subElem", subElem)
+            return subElem.name === elem;
+          })
+          console.log("matchedBioMarker", matchedBioMarker)
+          let tempArr = (matchedBioMarker[0].name).toLowerCase().split(" ").concat(matchedBioMarker[0].alias)
+          console.log("tempArr", tempArr)
+          bioMarkerDataAdminArr = bioMarkerDataAdminArr.concat(tempArr)
+
+        })
+
+        console.log("bioMarkerDataAdmin", bioMarkerDataAdminArr)
+
     
         data = [];
-        
         for(let i = 0; i<resultArr.length; i++){
           if(fullText.description.toLowerCase().includes(resultArr[i])){
               // ////console.log(namesArr[i], fullText.description.toLowerCase().indexOf(namesArr[i].toLowerCase());
@@ -160,45 +202,55 @@ export const ocrProccesing = async(ocrData: any) => {
         Math.abs(averageCoord(obj.boundingPoly,'y') - resultY) <= 10
         );
     
-    console.log(withinResultY); 
+    // console.log(withinResultY); 
     
-    // for(let i = 0; i < rangesArr; i++){
-      let range = withinResultY.filter((item)=>item.description.toLowerCase() ==  ('range'));
-      console.log("range", range); 
-      let rangeX = averageCoord(range[0].boundingPoly,'x');
-    // }
+    let rangeX;
+    for(let i = 0; i < rangesArr.length; i++){
+      let range = withinResultY.filter((item)=>item.description.toLowerCase() ==  rangesArr[i]);
+      // console.log("range", range); 
+      rangeX = averageCoord(range[0]?.boundingPoly,'x');
+      if(range.length){
+        break;
+      }
+    }
 
     
     
     // getting unit
     
-    let unit = withinResultY.filter((item)=>item.description.toLowerCase() == 'units');
-    // //console.log("range", range);
-    
     let unitX;
-    if(unit.length){
-        unitX = averageCoord(unit[0].boundingPoly,'x');
+    for(let i = 0; i < unitsArr.length; i++){
+      let unit = withinResultY.filter((item)=>item.description.toLowerCase() == unitsArr[i]);
+      // //console.log("range", range);
+      unitX = averageCoord(unit[0]?.boundingPoly,'x');
+      
+      if(unit.length){
+         break;
+      }
     }
     
     
     //console.log("unitX", unitX); 
-    
-    let result = withinResultY.filter((item)=>item.description.toLowerCase() == 'result');
-    ////console.log("result", result); 'result' || observation
-    
-    let resultX = averageCoord(result[0].boundingPoly,'x');
+    let resultX
+    for(let i = 0; i < resultArr.length; i++){
+      let result = withinResultY.filter((item)=>item.description.toLowerCase() == resultArr[i]);
+      ////console.log("result", result); 'result' || observation
+      
+      resultX = averageCoord(result[0].boundingPoly,'x');
+      if(result.length){
+        break;
+      }
+    }
     
     
     
       
         data = [];
     
-      for(let i=0;i<possibleArr.length; i++){
-          if(fullText.description.toLowerCase().includes(possibleArr[i].toLowerCase())){
-              // ////console.log("possibleArr in ocr", possibleArr[i], fullText.description.toLowerCase().indexOf(possibleArr[i].toLowerCase()));
-              //Get the vertices of the match
+      for(let i=0;i<bioMarkerDataAdminArr.length; i++){
+          if(fullText.description.toLowerCase().includes((bioMarkerDataAdminArr[i] as any).toLowerCase()) || (bioMarkerDataAdminArr[i] as any).toLowerCase().includes(fullText.description.toLowerCase())){
               let dat = sortedData.filter((data, index)=>{
-                  return data.description.toLowerCase() === possibleArr[i].toLowerCase()    
+                  return data.description.toLowerCase() === (bioMarkerDataAdminArr[i] as any).toLowerCase()    
               });
               data.push(dat);
           }
@@ -225,7 +277,7 @@ export const ocrProccesing = async(ocrData: any) => {
             // ////console.log(withinY.length);
             console.log(rangeX, averageCoord(withinY[j].boundingPoly, 'x'), withinY[j].boundingPoly.vertices[1].x)
             //     , withinY[j].boundingPoly.vertices[2].x, withinY[j].boundingPoly.vertices[3].x));
-            if(Math.abs(averageCoord(withinY[j].boundingPoly, 'x') - rangeX) <= 50){
+            if(Math.abs(averageCoord(withinY[j].boundingPoly, 'x') - (rangeX as any)) <= 50){
                     console.log(`range for ${data[i][0].description} is ${withinY[j].description}`);
 
                     if(mapForRange.has(data[i][0].description)){
@@ -235,7 +287,7 @@ export const ocrProccesing = async(ocrData: any) => {
                       mapForRange.set(data[i][0].description, [withinY[j].description])
                     }
             }
-            if(Math.abs(averageCoord(withinY[j].boundingPoly, 'x') - resultX) <= 50){
+            if(Math.abs(averageCoord(withinY[j].boundingPoly, 'x') - (resultX as any)) <= 50){
                     // //console.log(`result for ${data[i][0].description} is ${withinY[j].description}`);
                     if(mapForResult.has(data[i][0].description)){
                       let rangeArr = mapForResult.get(data[i][0].description);
@@ -291,7 +343,7 @@ export const ocrProccesing = async(ocrData: any) => {
     
     
       let rangesArr = ['range'];
-      let unitsArr = ['unit']
+      let unitsArr = ['units']
       let resultArr = ['result', 'observation'];
       let bioMarkersArr = ['Hemoglobin', "RBC", "HCT", "MCV", "MCH", "MCHC", "RDW-CV", "RDW-SD", "WBC", "NEU", "LYM", "MON", "EOS", "BAS", "LYM", "GRA", "PLT", "ESR"]
       let labs = ['labs', 'labrotories', 'hospital', 'diagnostics', 'lab '];
@@ -305,7 +357,7 @@ export const ocrProccesing = async(ocrData: any) => {
       extractOcrData(namesArr, "name", 150, 10)
       extractOcrData(ageArr, "age", 100, 10)
     
-      extractOcrDataBiomarker(bioMarkersArr, resultArr)
+      extractOcrDataBiomarker(bioMarkersArr, resultArr, unitsArr, rangesArr)
     
       console.log(ocrObj)
       console.log(ocrObj.bioMarker)
