@@ -167,12 +167,14 @@ export const ocrProccesing = async(ocrData: any) => {
         let bioMarkerDataAdminArr: any = [];
         bioMarkerDataAdmin.map((elem: string)=>{
           console.log("elem", elem)
-          let matchedBioMarker = bioMarker.filter((subElem)=>{
+          let matchedBioMarker: any = bioMarker.filter((subElem)=>{
             console.log("subElem", subElem)
             return subElem.name === elem;
           })
           console.log("matchedBioMarker", matchedBioMarker)
-          let tempArr = (matchedBioMarker[0].name).toLowerCase().split(" ").concat(matchedBioMarker[0].alias)
+          let tempArr = matchedBioMarker[0].alias[0].split(",");
+          tempArr.push((matchedBioMarker[0].name).toLowerCase())
+          // let tempArr = (matchedBioMarker[0].name).toLowerCase().concat(matchedBioMarker[0].alias)
           console.log("tempArr", tempArr)
           bioMarkerDataAdminArr = bioMarkerDataAdminArr.concat(tempArr)
 
@@ -248,9 +250,9 @@ export const ocrProccesing = async(ocrData: any) => {
         data = [];
     
       for(let i=0;i<bioMarkerDataAdminArr.length; i++){
-          if(fullText.description.toLowerCase().includes((bioMarkerDataAdminArr[i] as any).toLowerCase()) || (bioMarkerDataAdminArr[i] as any).toLowerCase().includes(fullText.description.toLowerCase())){
+          if(fullText.description.toLowerCase().includes(((bioMarkerDataAdminArr[i] as any).toLowerCase()).trim()) || (bioMarkerDataAdminArr[i] as any).toLowerCase().trim().includes(fullText.description.toLowerCase())){
               let dat = sortedData.filter((data, index)=>{
-                  return data.description.toLowerCase() === (bioMarkerDataAdminArr[i] as any).toLowerCase()    
+                  return data.description.toLowerCase() === (bioMarkerDataAdminArr[i] as any).toLowerCase().trim()   
               });
               data.push(dat);
           }
