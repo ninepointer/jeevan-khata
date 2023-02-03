@@ -4,11 +4,13 @@ import CatchAsync from '../middlewares/CatchAsync';
 import aws from "aws-sdk";
 import detectText from '../services/googleOcr';
 import path from 'path';
-
+import {ocrProccesing} from "../utils/ocrProcessing";
+// CatchAsync
 const s3 = new aws.S3();
 
-export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
+export const getUploads = (async(req:Request, res:Response, next:NextFunction) => {
   const file = req.file;
+  console.log("file in upload", file)
   if (!file) {
     return res.status(400).send({ error: 'Please provide a file' });
   }
@@ -25,26 +27,17 @@ export const getUploads = CatchAsync(async(req:Request, res:Response, next:NextF
   // upload the file to S3
   s3.upload(params, (error: any, data: any) => {
     if (error) {
-      return res.status(500).send({ error });
+      return res.status(502).send({ error });
     }
     console.log("data", data)
     res.send({ data });
   });
+
+  let result = await detectText(file.buffer);
+  // console.log(result);
+  let ocrData = await ocrProccesing(result);
+  console.log(ocrData);
 });
 
-// export const fileData = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
-//     const upload = multer({ dest: "uploads/" });
-
-//     console.log("upload", upload)
-//     return upload.single('file');
-//     next();
-// });
 
 
-export const textDetection = async() =>{
-  let result = await detectText(path.resolve(__dirname, '../../uploads/dc3f1b80aecfff20f0c68be78a461119.jpg'));
-  console.log(result);
-
-
-  
-} 
