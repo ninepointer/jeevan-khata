@@ -162,11 +162,12 @@ export const ocrProccesing = async(ocrData: any) => {
     
     console.log(withinResultY); 
     
-    let range = withinResultY.filter((item)=>item.description.toLowerCase() ==  ('ref'));
-    console.log("range", range); 
-    // if(range){ 'range' || 'interval' || 
-        let rangeX = averageCoord(range[0].boundingPoly,'x');
+    // for(let i = 0; i < rangesArr; i++){
+      let range = withinResultY.filter((item)=>item.description.toLowerCase() ==  ('range'));
+      console.log("range", range); 
+      let rangeX = averageCoord(range[0].boundingPoly,'x');
     // }
+
     
     
     // getting unit
@@ -182,8 +183,8 @@ export const ocrProccesing = async(ocrData: any) => {
     
     //console.log("unitX", unitX); 
     
-    let result = withinResultY.filter((item)=>item.description.toLowerCase() == 'observation');
-    ////console.log("result", result); 'result' || 
+    let result = withinResultY.filter((item)=>item.description.toLowerCase() == 'result');
+    ////console.log("result", result); 'result' || observation
     
     let resultX = averageCoord(result[0].boundingPoly,'x');
     
@@ -289,7 +290,8 @@ export const ocrProccesing = async(ocrData: any) => {
       }
     
     
-    
+      let rangesArr = ['range'];
+      let unitsArr = ['unit']
       let resultArr = ['result', 'observation'];
       let bioMarkersArr = ['Hemoglobin', "RBC", "HCT", "MCV", "MCH", "MCHC", "RDW-CV", "RDW-SD", "WBC", "NEU", "LYM", "MON", "EOS", "BAS", "LYM", "GRA", "PLT", "ESR"]
       let labs = ['labs', 'labrotories', 'hospital', 'diagnostics', 'lab '];
@@ -298,10 +300,10 @@ export const ocrProccesing = async(ocrData: any) => {
       let genderArr = ['gender', 'sex'];
     
     
-    //   extractOcrData(genderArr, "gender", 50, 10)
+      extractOcrData(genderArr, "gender", 50, 10)
       extractOcrData(labs, "lab", 150, 10)
       extractOcrData(namesArr, "name", 150, 10)
-    //   extractOcrData(ageArr, "age", 100, 10)
+      extractOcrData(ageArr, "age", 100, 10)
     
       extractOcrDataBiomarker(bioMarkersArr, resultArr)
     
