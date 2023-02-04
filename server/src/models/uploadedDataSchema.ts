@@ -13,11 +13,11 @@ interface BioMarkerData {
 const uploadedDataSchema = new mongoose.Schema({
     name:{
         type: String,
-        required: true
+        // required: true
     },
     age:{
         type: String,
-        required : true
+        // required : true
     },
     gender:{
         type: String,
