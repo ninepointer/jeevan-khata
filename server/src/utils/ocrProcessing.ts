@@ -25,8 +25,11 @@ export const ocrProccesing = async(ocrData: any) => {
     
     
     sortedData.sort(function(a, b) {
-        return a.boundingPoly.vertices[0].y + a.boundingPoly.vertices[1].y + a.boundingPoly.vertices[2].y + a.boundingPoly.vertices[3].y  - b.boundingPoly.vertices[0].y+  b.boundingPoly.vertices[1].y+  b.boundingPoly.vertices[2].y+  b.boundingPoly.vertices[3].y;
-      });
+        return averageCoord(a.boundingPoly, 'y') - averageCoord(b.boundingPoly, 'y'); 
+    });
+    
+      
+    // sortedData.map((elem)=>{console.log(elem.description, averageCoord(elem.boundingPoly, 'y'))});  
     //GET THE LAB NAME
     
     //Search for labs, diagnostics, Pvt. Ltd., Hospital, labrotory
@@ -405,13 +408,13 @@ export const ocrProccesing = async(ocrData: any) => {
         // console.log("bioMarkerDataAdmin", bioMarkerDataAdminArr)
 
  
-function findElementsInSameLine(searchStrings: string[]): Data[] {
-  let result: Data[] = [];
+function findElementsInSameLine(searchStrings: string[]): any[] {
+  let result: any[] = [];
 
   for (const string of searchStrings) {
       for (const data of sortedData) {
           if (data.description.toLowerCase() === string) {
-              let lineData: Data[] = [];
+              let lineData: any[] = [];
               const y = averageCoord(data.boundingPoly, 'y');
               for (const d of sortedData) {
                   if (Math.abs(averageCoord(d.boundingPoly, 'y') - y) <= 10) {
@@ -431,9 +434,9 @@ const result = findElementsInSameLine(searchStrings);
 
 console.log('result', result);
 
-const rangeVals: string[] = ['range', 'ref', 'interval', 'biological', 'value', 'reference'];
+let rangeVals: string[] = ['range', 'ref', 'interval', 'biological', 'value', 'reference'];
 
-function hasMatch(objectsArray: Data[], searchStrings: string[]): boolean {
+function hasMatch(objectsArray: any[], searchStrings: string[]): boolean {
   for (const data of objectsArray) {
     if (searchStrings.includes(data.description.toLowerCase())) {
       return true;
@@ -443,11 +446,11 @@ function hasMatch(objectsArray: Data[], searchStrings: string[]): boolean {
 }
 if (hasMatch(result, rangeVals)) console.log('Right line');
 
-rangeVals = ['range', 'ref', 'interval', 'biological'];
+rangeVals = ['range', 'ref', 'interval', 'reference', 'biological'];
 const resultVals: string[] = ['result', 'observation', 'value'];
 const unitVals: string[] = ['units', 'unit'];
 
-const findMatchedIndex = (arr: Data[], searchArr: string[]): number[] => {
+const findMatchedIndex = (arr: any[], searchArr: string[]): number[] => {
   const matchedIndex: number[] = [];
   for (let i = 0; i < arr.length; i++) {
     if (searchArr.includes(arr[i].description.toLowerCase())) {
@@ -466,14 +469,14 @@ const unitMatches = findMatchedIndex(result, unitVals);
       console.log("Unit matches:", unitMatches.join());
       
       interface Order {
-        range?: number;
-        result?: number;
-        unit?: number;
+        range?: any;
+        result?: any;
+        unit?: any;
       }
       
       const orderObj: Order = {} ;
       if(rangeMatches.length > 0){
-        (orderObj as any).range = parseInt(rangeMatches.join(), 10)
+        orderObj.range = parseInt(rangeMatches.join(), 10)
       }
       if(resultMatches.length > 0){
         orderObj.result = parseInt(resultMatches.join(), 10)
@@ -485,11 +488,11 @@ const unitMatches = findMatchedIndex(result, unitVals);
       console.log(orderObj);
       const sortedObj = Object.entries(orderObj).sort((a, b) => a[1] - b[1]).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
       console.log(sortedObj);
-      let lineOrder = Object.keys(sortedObj).sort((a, b) => sortedObj[a] - sortedObj[b]);
+      let lineOrder = Object.keys(sortedObj);
       console.log(lineOrder);
       
       
-      // let bioMarkersArr = ['Hemoglobin', "RBC", "HCT", "MCV", "MCH", "MCHC", "RDW-CV", "RDW-SD", "WBC", "NEU", "LYM", "MON", "EOS", "BAS", "LYM", "GRA", "PLT", "ESR"]
+      let bioMarkersArr = ['Hemoglobin', "RBC", "HCT", "MCV", "MCH", "MCHC", "RDW-CV", "RDW-SD", "WBC", "NEU", "LYM", "MON", "EOS", "BAS", "LYM", "GRA", "PLT", "ESR"]
       
       let data = [];
       
