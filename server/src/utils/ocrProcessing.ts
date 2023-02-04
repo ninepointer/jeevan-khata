@@ -362,11 +362,15 @@ export const ocrProccesing = async(ocrData: any) => {
          
         let bioMarkerDataAdmin: string | any[] = [];
         for(let i = 0; i < testName.length; i++){
-          if((testName[i].testName).toLowerCase().includes((ocrObj.testName).toLowerCase())){
+          console.log(bioMarkerDataAdmin , testName[i].bioMarkers, testName[i].testName, ocrObj.testName)
+          if((testName[i].testName).toLowerCase().includes(ocrObj.testName.toLowerCase())){
             bioMarkerDataAdmin = testName[i].bioMarkers;
+            
             break;
           }
         }
+
+        console.log("bioMarkerDataAdmin", bioMarkerDataAdmin)
 
         let bioMarkerDataAdminArr: any = [];
         bioMarkerDataAdmin.map((elem: string)=>{

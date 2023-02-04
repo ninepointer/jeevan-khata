@@ -5,7 +5,7 @@ import LabTest from "./adminLayouts/labTests/labTestLayout";
 import AdminDashboard from "./adminLayouts/adminDashboard";
 import Units from "./adminLayouts/units/unitLayout";
 import BioMarkerLayout from "./adminLayouts/Bio Markers/bioMarkerLayout";
-import FileUploader from "./fileUpload";
+import FileUploader from "./adminLayouts/fileUpload/uploadLayout";
 
 // @mui icons
 import PersonIcon from '@mui/icons-material/Person';
