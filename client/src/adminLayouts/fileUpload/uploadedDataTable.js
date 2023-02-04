@@ -22,6 +22,7 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
   const {columns, rows} = FileUploadTableData();
   const [ocrData, setOcrData] = useState([]);
+  const [render, setRender] = useState(true);
 
   useEffect(()=>{
     axios.get(`${baseUrl}api/v1/ocrData`)
@@ -31,14 +32,12 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
     .catch(()=>{
       console.log("Fail to fetch data")
     })
-  },[])
+  },[render])
 
   const {checkIsView, setGetId} = setView
 
 
   function setViewFunc(id, bioMarker){
-
-    // isView.checking = true;
     setGetId(id);
     checkIsView(true)
     setBioData(bioMarker)
@@ -46,7 +45,6 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
   }
 
 
-//   console.log("labTestData", labTestData)
     ocrData.map((elem)=>{
     let ocrDataObj = {}
     // const createdondate = new Date(elem.createdOn);
@@ -95,7 +93,7 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
 
     return (
         <>
-        <FileUploader />
+        <FileUploader Render = {{render, setRender}}/>
             <MDBox pt={6} pb={3}>
                 <Grid container spacing={6}>
                     <Grid item xs={12} md={12} lg={12}>

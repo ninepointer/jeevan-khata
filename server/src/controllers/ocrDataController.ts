@@ -35,7 +35,7 @@ export const saveOcrData = async(ocrData: any)=>{
 };
 
 export const getOCRData = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
-    const uploadedData = await UploadedData.find({isDeleted: false});
+    const uploadedData = await UploadedData.find({isDeleted: false}).sort({_id: -1});
 
     if(!uploadedData) return next(createCustomError('Can\'t get roles', 404 ));
 

@@ -21,74 +21,40 @@ const DetailTable = ({setView, bioData, id}) => {
 
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
   const {columns, rows} = DetailData();
-  // const [ocrBioData, setOcrBioData] = useState([]);
 
-  // useEffect(()=>{
-  //   axios.get(`${baseUrl}api/v1/ocrData`)
-  //   .then((res)=>{
-  //     setOcrData(res.data.data)
-  //   })
-  //   .catch(()=>{
-  //     console.log("Fail to fetch data")
-  //   })
-  // },[])
-
-  // const {checkIsView, setGetId} = setView
-
-
-  // function setViewFunc(id, bioMarker){
-
-  //   // isView.checking = true;
-  //   setGetId(id);
-  //   checkIsView(true)
-  //   setBioData(bioMarker)
-  //   console.log("in view func")
-  // }
-
-
-//   console.log("labTestData", labTestData)
-  bioData.map((elem)=>{
+  const onClose = ()=>{
+    setView(false)
+  }
+  bioData.map((elem, index)=>{
     let ocrDataObj = {}
     // const createdondate = new Date(elem.createdOn);
     // const options1 = { year: 'numeric', month: 'short', day: 'numeric' };
     // const createdOn = createdondate.toLocaleDateString('en-US', options1)
 
+    const key = Object.keys(elem)[0];
 
-      ocrDataObj.name = (
+      ocrDataObj.bioMarkerName = (
         <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-          {elem.name}
+          {key}
         </MDTypography>
       );
-    ocrDataObj.gender = (
+    ocrDataObj.range = (
       <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-        {elem.gender}
+        {elem[key].range}
       </MDTypography>
     );
-    ocrDataObj.age = (
+    ocrDataObj.result = (
         <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-          {elem.age}
+          {elem[key].result}
         </MDTypography>
       );
 
-    ocrDataObj.testName = (
+    ocrDataObj.unit = (
       <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-        {elem.testName}
+        {elem[key].unit}
       </MDTypography>
     );
 
-    ocrDataObj.hospital = (
-        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-          {elem.lab}
-        </MDTypography>
-      );
-
-
-    // ocrDataObj.details = (
-    //     <MDButton variant="Contained" color="info" fontWeight="medium">
-    //       <ModeTwoToneIcon onClick={(e)=>{setViewFunc(elem._id, elem.bioMarker)}}/>
-    //     </MDButton>
-    //   );
-   
     rows.push(ocrDataObj)
     })
 
@@ -99,6 +65,8 @@ const DetailTable = ({setView, bioData, id}) => {
             <MDBox pt={6} pb={3}>
                 <Grid container spacing={6}>
                     <Grid item xs={12} md={12} lg={12}>
+
+
                       
                         <Card>
                             <MDBox
@@ -115,14 +83,12 @@ const DetailTable = ({setView, bioData, id}) => {
                                     justifyContent: "space-between",
                                 }}>
 
-                                {/* <MDTypography variant="h6" color="white" py={1}>
-                                    Lab Tests
-                                </MDTypography> */}
 
-                                {/* <MDButton variant="outlined" color="white" onClick={onCreate}>
-                                  Create Lab Test
-                                </MDButton> */}
+                               
                             </MDBox>
+                            <MDButton color="blue" onClick={onClose}>
+                              Close
+                            </MDButton>
                             <MDBox pt={3}>
                                 <DataTable
                                     table={{ columns, rows }}
@@ -132,6 +98,7 @@ const DetailTable = ({setView, bioData, id}) => {
                                     noEndBorder
                                 />
                             </MDBox>
+
                         </Card>
                     </Grid>
                 </Grid>

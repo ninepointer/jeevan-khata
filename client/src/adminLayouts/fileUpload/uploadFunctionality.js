@@ -7,9 +7,9 @@ import MDBox from '../../components/MDBox';
 import TextField from '@mui/material/TextField';
 
 
-const FileUploader = () => {
+const FileUploader = ({Render}) => {
   const [file, setFile] = useState(null);
-
+  const {render, setRender} = Render
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
@@ -38,6 +38,7 @@ const FileUploader = () => {
       console.log(error);
       alert('File upload failed');
     }
+    render ? setRender(false) : setRender(true);
   };
 
   return (

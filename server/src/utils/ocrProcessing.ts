@@ -406,7 +406,10 @@ export const ocrProccesing = async(ocrData: any) => {
           bioMarkerDataAdminArr = bioMarkerDataAdminArr.concat(tempArr)
 
         })
-
+        bioMarkerDataAdminArr = bioMarkerDataAdminArr.map((elem: string)=>{
+          return elem.toLowerCase().trim();
+        })
+        bioMarkerDataAdminArr = [...new Set(bioMarkerDataAdminArr)]
         console.log("bioMarkerDataAdmin", bioMarkerDataAdminArr)
 
         function findElementsInSameLine(searchStrings: string[]): any {
@@ -508,7 +511,7 @@ export const ocrProccesing = async(ocrData: any) => {
             let xavg = averageCoord(data[i][0].boundingPoly,'x');     
             
             const withinY = sortedData.filter(obj =>
-              Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 7
+              Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10
               );
               
               console.log(`within y for ${data[i][0].description}`,withinY);
@@ -517,11 +520,12 @@ export const ocrProccesing = async(ocrData: any) => {
               let temp = '';
               let coord = [];
               let bioMarkersVal:any = {};
-              let elemNum =0;     
-              for(let j = 1; j<withinY.length; j++){
-                if (j === 1 && (withinY[1].description === '%' || withinY[1].description === '#')) {
-                  continue;
-              }
+              let elemNum =0; 
+              let isFirst = true;    
+              for(let j = 0; j<withinY.length; j++){
+              //   if (j === 0 && (withinY[1].description === '%' || withinY[1].description === '#')) {
+              //     continue;
+              // }
                  console.log('coord.length', coord.length, 'elem', withinY[j].description);
                 if(coord.length>0){
                   if(withinY[j].boundingPoly.vertices[0].x - coord[1].x <= 5){
@@ -530,12 +534,23 @@ export const ocrProccesing = async(ocrData: any) => {
                     coord = withinY[j].boundingPoly.vertices;
                   }
                   else{
-                    innerObj[lineOrder[elemNum]] = temp;
+                    
+                    if(!isFirst){
+                      innerObj[lineOrder[elemNum]] = temp;
+                      console.log(`${lineOrder[elemNum]}: ${temp}`);
+                      temp = withinY[j].description;
+                      coord = withinY[j].boundingPoly.vertices;
+
+                      elemNum++;
+                    } else{
+                      temp = withinY[j].description;
+                      coord = withinY[j].boundingPoly.vertices;
+                      isFirst = false;
+                    }
+                    // innerObj[lineOrder[elemNum]] = temp;
                     // innerObj[]
-                    console.log(`${lineOrder[elemNum]}: ${temp}`);
-                    temp = withinY[j].description;
-                    coord = withinY[j].boundingPoly.vertices;
-                    ++elemNum;
+
+
                   }
                 }else{
                   console.log(`setting temp ${withinY[j].description}`);
