@@ -5,6 +5,7 @@ import aws from "aws-sdk";
 import detectText from '../services/googleOcr';
 import path from 'path';
 import {ocrProccesing} from "../utils/ocrProcessing";
+import {saveOcrData} from "../controllers/ocrDataController"
 // CatchAsync
 const s3 = new aws.S3();
 
@@ -36,7 +37,10 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   let result = await detectText(file.buffer);
   // console.log(result);
   let ocrData = await ocrProccesing(result);
-  console.log(ocrData);
+  
+  // console.log(ocrData);
+  saveOcrData(ocrData)
+  return ocrData;
 });
 
 

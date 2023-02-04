@@ -14,40 +14,40 @@ import MDButton from "../../components/MDButton";
 
 // Material Dashboard 2 React example components
 import DataTable from "../../layoutComponents/Tables/DataTable";
-import FileUploadTableData from './data/fileUploadTableData';
+import DetailData from './data/detailTableData';
 import FileUploader from './uploadFunctionality';
 
-const UploadedDataTable = ({setCreate, setView, setBioData}) => {
+const DetailTable = ({setView, bioData, id}) => {
 
   let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
-  const {columns, rows} = FileUploadTableData();
-  const [ocrData, setOcrData] = useState([]);
+  const {columns, rows} = DetailData();
+  // const [ocrBioData, setOcrBioData] = useState([]);
 
-  useEffect(()=>{
-    axios.get(`${baseUrl}api/v1/ocrData`)
-    .then((res)=>{
-      setOcrData(res.data.data)
-    })
-    .catch(()=>{
-      console.log("Fail to fetch data")
-    })
-  },[])
+  // useEffect(()=>{
+  //   axios.get(`${baseUrl}api/v1/ocrData`)
+  //   .then((res)=>{
+  //     setOcrData(res.data.data)
+  //   })
+  //   .catch(()=>{
+  //     console.log("Fail to fetch data")
+  //   })
+  // },[])
 
-  const {checkIsView, setGetId} = setView
+  // const {checkIsView, setGetId} = setView
 
 
-  function setViewFunc(id, bioMarker){
+  // function setViewFunc(id, bioMarker){
 
-    // isView.checking = true;
-    setGetId(id);
-    checkIsView(true)
-    setBioData(bioMarker)
-    console.log("in view func")
-  }
+  //   // isView.checking = true;
+  //   setGetId(id);
+  //   checkIsView(true)
+  //   setBioData(bioMarker)
+  //   console.log("in view func")
+  // }
 
 
 //   console.log("labTestData", labTestData)
-    ocrData.map((elem)=>{
+  bioData.map((elem)=>{
     let ocrDataObj = {}
     // const createdondate = new Date(elem.createdOn);
     // const options1 = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -83,11 +83,11 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
       );
 
 
-    ocrDataObj.details = (
-        <MDButton variant="Contained" color="info" fontWeight="medium">
-          <ModeTwoToneIcon onClick={(e)=>{setViewFunc(elem._id, elem.bioMarker)}}/>
-        </MDButton>
-      );
+    // ocrDataObj.details = (
+    //     <MDButton variant="Contained" color="info" fontWeight="medium">
+    //       <ModeTwoToneIcon onClick={(e)=>{setViewFunc(elem._id, elem.bioMarker)}}/>
+    //     </MDButton>
+    //   );
    
     rows.push(ocrDataObj)
     })
@@ -140,4 +140,4 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
     )
 }
 
-export default UploadedDataTable
+export default DetailTable

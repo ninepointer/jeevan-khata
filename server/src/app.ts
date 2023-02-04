@@ -12,6 +12,7 @@ import bioMarkerRoutes from './routes/bioMarkerRoutes';
 import unitsRoutes from './routes/unitsRoutes';
 import labTestRoutes from "./routes/labTestRoutes"
 import uploadRoutes from './routes/uploadRoutes';
+import ocrDataRoutes from "./routes/ocrDataRoutes";
 
 
 const app = express();
@@ -42,6 +43,7 @@ app.use('/api/v1/bioMarkers', bioMarkerRoutes);
 app.use('/api/v1/units', unitsRoutes);
 app.use('/api/v1/labTests', labTestRoutes);
 app.use('/api/v1/uploads', uploadRoutes);
+app.use('/api/v1/ocrData', ocrDataRoutes);
 
 
 app.use(errorHandler);

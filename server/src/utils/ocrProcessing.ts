@@ -9,7 +9,7 @@ export const ocrProccesing = async(ocrData: any) => {
 
   const testName = await TestName.find({isDeleted: false});
   const bioMarker = await BioMarker.find({isDeleted: false})
-    // console.log("testName", (testName as any), (bioMarker as any).data)
+    console.log("testName", (testName as any), (bioMarker as any).data)
     let ocrObj: any = {};
     
     //SORT THE OCR DATA BY Y COORDINATE- By default average of coordinates
@@ -346,37 +346,56 @@ export const ocrProccesing = async(ocrData: any) => {
 
       // approach 2
 
-      function extractOcrDataBioMarkerNew(possibleArr: string | any[], resultArr: string | any[]){
+      function extractOcrDataBioMarkerNew(propertyName: string){
     
+        let tempArr: any = [];
         let testNameArr = testName.map((elem)=>{
-          return (elem.testName).toLowerCase().split(" ").concat(elem.testScientificName.toLowerCase().split(" "))
+          tempArr.push((elem.testName).toLowerCase())
+          return tempArr.concat(elem.testScientificName.toLowerCase().split(" "))
         })
 
 
 
         console.log("testNameArr", testNameArr)
-        testNameArr.map((elem)=>{
-          extractOcrData(elem, "testName", 150, 10)
-        })
 
-         
         let bioMarkerDataAdmin: string | any[] = [];
-        for(let i = 0; i < testName.length; i++){
-          console.log(bioMarkerDataAdmin , testName[i].bioMarkers, testName[i].testName, ocrObj.testName)
-          if((testName[i].testName).toLowerCase().includes(ocrObj.testName.toLowerCase())){
-            bioMarkerDataAdmin = testName[i].bioMarkers;
-            
-            break;
+        for(let i = 0; i < testNameArr.length; i++){
+          for(let j = 0; j < testNameArr[i].length; j++){
+            if(fullText.description.toLowerCase().includes(testNameArr[i][j].toLowerCase())){
+              testName.map((elem)=>{
+                if(elem.testName.toLowerCase() === testNameArr[i][j].toLowerCase()){
+                  bioMarkerDataAdmin = elem.bioMarkers
+                }
+                  
+              })
+              
+            }
           }
         }
+        
+        // testNameArr.map((elem)=>{
+        //   extractOcrData(elem, "testName", 150, 10)
+        // })
+
+         
+        // let bioMarkerDataAdmin: string | any[] = [];
+        // for(let i = 0; i < testName.length; i++){
+        //   console.log(bioMarkerDataAdmin , testName[i].bioMarkers, testName[i].testName, ocrObj.testName)
+        //   if((testName[i].testName.toLowerCase()).includes(ocrObj.testName.toLowerCase())){
+        //     console.log("in if condition", testName[i].bioMarkers)
+        //     bioMarkerDataAdmin = testName[i].bioMarkers;
+            
+        //     break;
+        //   }
+        // }
 
         console.log("bioMarkerDataAdmin", bioMarkerDataAdmin)
 
         let bioMarkerDataAdminArr: any = [];
         bioMarkerDataAdmin.map((elem: string)=>{
-          console.log("elem", elem)
+          // console.log("elem", elem)
           let matchedBioMarker: any = bioMarker.filter((subElem)=>{
-            console.log("subElem", subElem)
+            // console.log("subElem", subElem)
             return subElem.name === elem;
           })
           console.log("matchedBioMarker", matchedBioMarker)
@@ -489,7 +508,7 @@ export const ocrProccesing = async(ocrData: any) => {
             let xavg = averageCoord(data[i][0].boundingPoly,'x');     
             
             const withinY = sortedData.filter(obj =>
-              Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10
+              Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 7
               );
               
               console.log(`within y for ${data[i][0].description}`,withinY);
@@ -538,15 +557,9 @@ export const ocrProccesing = async(ocrData: any) => {
               
       }
         }  
-
-        // let removeDuplicate = [...new Set(bioMarkerDataArr)]
-
-        // const uniqueArray = [...new Set((bioMarkerDataArr as any).map(JSON.stringify))].map(JSON.parse);
-        // const uniqueArray = [...new Set((bioMarkerDataArr as any).map(JSON.stringify))].map((x: string) => JSON.parse(x));
-        // const uniqueArray = Array.from((new Set((bioMarkerDataArr as any).map(JSON.stringify))) as any).map(JSON.parse);
-
         
         console.log("bioMarkerDataArr", bioMarkerDataArr)
+        ocrObj[propertyName] = bioMarkerDataArr;
       }
     
     
@@ -567,7 +580,7 @@ export const ocrProccesing = async(ocrData: any) => {
     
       // extractOcrDataBiomarker(bioMarkersArr, resultArr, unitsArr, rangesArr)
 
-      extractOcrDataBioMarkerNew(bioMarkersArr, bioMarkersArr)
+      extractOcrDataBioMarkerNew("bioMarker")
     
       console.log(ocrObj)
       console.log(ocrObj.bioMarker)

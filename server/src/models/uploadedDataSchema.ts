@@ -21,7 +21,6 @@ const uploadedDataSchema = new mongoose.Schema({
     },
     gender:{
         type: String,
-        default: 'Active',
         // required : true
     },
     uid:{
@@ -54,18 +53,24 @@ const uploadedDataSchema = new mongoose.Schema({
         // required : true
     },
     testName:{
-        type: [String],
-    },
-    hospitalName:{
         type: String,
+    },
+    lab:{
+        type: String,
+        // required : true
+    },
+    status:{
+        type: String,
+        default: 'Active',
         required : true
     },
-    bioMarkers: [{
+    bioMarker: [{
         type: Object,
-        required: true
-      }] as Array<BioMarkerData>
+        // required: true
+    }] as unknown as Array<BioMarkerData>
 
 })
+
 
 
 uploadedDataSchema.pre('save', function (next) {
@@ -94,6 +99,3 @@ uploadedDataSchema.pre('save', function (next) {
 const upload = mongoose.model("uploadedData", uploadedDataSchema);
 export default upload;
 
-// function uuidv4(): string | undefined {
-//     throw new Error("Function not implemented.");
-// }

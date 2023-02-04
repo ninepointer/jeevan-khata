@@ -29,7 +29,7 @@ import burceMars from "../../../assets/images/bruce-mars.jpg";
 import backgroundImage from "../../../assets/images/loginpageimage.jpeg";
 import UploadedDataTable from "../uploadedDataTable";
 import CreateLabTest from "../CreateLabTest";
-import EditLabTest from "../EditLabTest"
+import DetailTable from "../detailTable"
 
 
 function UploadHeader({ children }) {
@@ -39,7 +39,7 @@ function UploadHeader({ children }) {
   const [isView, checkIsView] = useState(false);
   const [getId, setGetId] = useState("");
   const [reRender, setReRender] = useState(false);
-  const [editData, setEditData] = useState([]);
+  const [bioData, setBioData] = useState([]);
 
 
   useEffect(() => {
@@ -113,15 +113,12 @@ function UploadHeader({ children }) {
               </Tabs>
             </AppBar> 
 
-          {/* {isCreate || isView ?
+          {isView ?
 
-          (isCreate ?
-          <TabPanel value={tabValue} index={0}>< CreateLabTest setCreate={checkIsCreate}/> </TabPanel>
-          :
-          <TabPanel value={tabValue} index={0}>< EditLabTest Render={{reRender, setReRender}} setView={checkIsView} labTestData={editData} id={getId}/> </TabPanel>)
-            : */}
-          <TabPanel value={tabValue} index={0}>< UploadedDataTable setEditData={setEditData} setView={{checkIsView, setGetId}} setCreate={checkIsCreate}/> </TabPanel>
-          {/* } */}
+          <TabPanel value={tabValue} index={0}>< DetailTable Render={{reRender, setReRender}} setView={checkIsView} bioData={bioData} id={getId}/> </TabPanel>
+            :
+          <TabPanel value={tabValue} index={0}>< UploadedDataTable setBioData={setBioData} setView={{checkIsView, setGetId}} setCreate={checkIsCreate}/> </TabPanel>
+          }
 
 
             
