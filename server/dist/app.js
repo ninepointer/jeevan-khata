@@ -16,6 +16,7 @@ const bioMarkerRoutes_1 = __importDefault(require("./routes/bioMarkerRoutes"));
 const unitsRoutes_1 = __importDefault(require("./routes/unitsRoutes"));
 const labTestRoutes_1 = __importDefault(require("./routes/labTestRoutes"));
 const uploadRoutes_1 = __importDefault(require("./routes/uploadRoutes"));
+const ocrDataRoutes_1 = __importDefault(require("./routes/ocrDataRoutes"));
 const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
 const limiter = (0, express_rate_limit_1.default)({
@@ -41,5 +42,6 @@ app.use('/api/v1/bioMarkers', bioMarkerRoutes_1.default);
 app.use('/api/v1/units', unitsRoutes_1.default);
 app.use('/api/v1/labTests', labTestRoutes_1.default);
 app.use('/api/v1/uploads', uploadRoutes_1.default);
+app.use('/api/v1/ocrData', ocrDataRoutes_1.default);
 app.use(errorHandler_1.default);
 exports.default = app;
