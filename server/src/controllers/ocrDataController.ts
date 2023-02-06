@@ -16,9 +16,10 @@ interface UploadInterface{
     bioMarker: MyArray
 
 }
-export const saveOcrData = async(ocrData: any)=>{
+export const saveOcrData = async(ocrData: any, link: any)=>{
     console.log("in save data func", ocrData)
     const{name, age, gender, testName, lab, bioMarker } = ocrData;
+    console.log("bioMarker", bioMarker);
     //check if role exisits
     // if(await UploadedData.findOne({roleName})) return next(createCustomError('Role already exists. Please edit the existing role.', 401));
 
@@ -28,7 +29,8 @@ export const saveOcrData = async(ocrData: any)=>{
         gender: gender,
         testName: testName,
         lab: lab,
-        bioMarker: bioMarker
+        bioMarker: bioMarker,
+        link: link
     });
     console.log("this is ocr", ocr)
     // res.status(201).json({status: 'Success', message: 'Role created', data: ocr});

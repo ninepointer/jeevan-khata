@@ -314,7 +314,7 @@ export const ocrProccesing = async(ocrData: any) => {
       //TODO: Set property name of the biomarker by the name from the DB and not the name in the document
       // approach 2
 
-      function extractOcrDataBioMarkerNew(propertyName: string){
+      async function extractOcrDataBioMarkerNew(propertyName: string){
         
         //creating an array with all the possible test names that could appear in the document
         let tempArr: any = [];
@@ -325,7 +325,7 @@ export const ocrProccesing = async(ocrData: any) => {
 
 
 
-        console.log("testNameArr", testNameArr)
+        // console.log("testNameArr", testNameArr)
 
         //Finding matches for the test name in our document from the possible list of test names and then storing their biomarkers in an array
         let bioMarkerDataAdmin: string | any[] = [];
@@ -333,10 +333,10 @@ export const ocrProccesing = async(ocrData: any) => {
           for(let j = 0; j < testNameArr[i].length; j++){
             if(fullText.description.toLowerCase().includes(testNameArr[i][j].toLowerCase())){
               testName.map((elem)=>{
-                console.log(elem.testName.toLowerCase() , testNameArr[i][j].toLowerCase())
+                // console.log(elem.testName.toLowerCase() , testNameArr[i][j].toLowerCase())
 
                 if(elem.testName.toLowerCase() === testNameArr[i][j].toLowerCase() || elem.testScientificName.toLowerCase() === testNameArr[i][j].toLowerCase()){
-                  console.log(elem.testName.toLowerCase() , testNameArr[i][j].toLowerCase())
+                  // console.log(elem.testName.toLowerCase() , testNameArr[i][j].toLowerCase())
                   bioMarkerDataAdmin = elem.bioMarkers
                 }
                   
@@ -345,8 +345,19 @@ export const ocrProccesing = async(ocrData: any) => {
             }
           }
         }
-        
 
+
+
+        const filter = {
+          name: { $in: bioMarkerDataAdmin },
+          isDeleted: false
+        };
+      
+        const bioMarker = await BioMarker.find(filter);
+
+        // const result = await collection.find(filter).toArray(); .toArray();
+        
+        // console.log("matchedBioMarker", matchedBioMarker)
         // console.log("bioMarkerDataAdmin", bioMarkerDataAdmin)
         let bioMarkerDataAdminArr: any = [];
         bioMarkerDataAdmin.map((elem: string)=>{
@@ -355,7 +366,7 @@ export const ocrProccesing = async(ocrData: any) => {
             // //console.log("subElem", subElem)
             return subElem.name === elem;
           })
-          //console.log("matchedBioMarker", matchedBioMarker)
+         
           let tempArr = matchedBioMarker[0].alias[0].split(",");
           tempArr.push((matchedBioMarker[0].name).toLowerCase())
           // let tempArr = (matchedBioMarker[0].name).toLowerCase().concat(matchedBioMarker[0].alias)
@@ -367,7 +378,7 @@ export const ocrProccesing = async(ocrData: any) => {
           return elem.toLowerCase().trim();
         })
         bioMarkerDataAdminArr = [...new Set(bioMarkerDataAdminArr)]
-        // console.log("bioMarkerDataAdmin", bioMarkerDataAdminArr)
+        // console.log("bioMarkerDataAdminArr", bioMarkerDataAdminArr)
 
 
 //function for finding elements in the same line        
@@ -475,7 +486,7 @@ const unitMatches = findMatchedIndex(result, unitVals);
       
 
         let bioMarkerDataArr = [];
-        
+        console.log("match", matches)
         for(let i = 0; i < matches.length; i++){
 
           let bioMarkerDataObj: any = {};
@@ -551,8 +562,9 @@ const unitMatches = findMatchedIndex(result, unitVals);
       }
         }  
         
-        //console.log("bioMarkerDataArr", bioMarkerDataArr)
+        // console.log("bioMarkerDataArr", bioMarkerDataArr)
         ocrObj[propertyName] = bioMarkerDataArr;
+        // console.log("ocrObj", ocrObj)
       }
     
     
@@ -575,7 +587,7 @@ const unitMatches = findMatchedIndex(result, unitVals);
     
       // extractOcrDataBiomarker(bioMarkersArr, resultArr, unitsArr, rangesArr)
 
-      extractOcrDataBioMarkerNew("bioMarker")
+      await extractOcrDataBioMarkerNew("bioMarker")
     
       console.log(ocrObj)
       console.log(ocrObj.bioMarker)
