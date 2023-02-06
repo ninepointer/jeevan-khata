@@ -5,7 +5,8 @@ import aws from "aws-sdk";
 import detectText from '../services/googleOcr';
 import path from 'path';
 import {ocrProccesing} from "../utils/ocrProcessing";
-import {saveOcrData} from "../controllers/ocrDataController"
+import {convertPdfToImageBuffer} from '../utils/imageUtil';
+
 // CatchAsync
 const s3 = new aws.S3();
 
@@ -26,21 +27,29 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   };
 
   // upload the file to S3
-  s3.upload(params, (error: any, data: any) => {
+ s3.upload(params, (error: any, data: any) => {
     if (error) {
       return res.status(502).send({ error });
     }
     console.log("data", data)
-    res.send({ data });
+    res.send({  data });
   });
+  let fileType;
+  let buffer;
+  if(file.mimetype == 'application/pdf' ){
+    fileType = 'pdf/tiff';
+    console.log('pdf');
+    buffer = await convertPdfToImageBuffer(file.buffer);
+  }else{
+    fileType = 'image/jpeg';
+    buffer = file.buffer;
+  }
+  console.log('buffer is', buffer);
 
-  let result = await detectText(file.buffer);
-  // console.log(result);
+  let result = await detectText(buffer, fileType);
+  console.log(result);
   let ocrData = await ocrProccesing(result);
-  
-  // console.log(ocrData);
-  saveOcrData(ocrData)
-  return ocrData;
+  console.log(ocrData);
 });
 
 
