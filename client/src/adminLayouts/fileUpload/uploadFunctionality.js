@@ -9,7 +9,14 @@ import TextField from '@mui/material/TextField';
 
 const FileUploader = ({Render}) => {
   const [file, setFile] = useState(null);
-  const {render, setRender} = Render
+  console.log("Render", Render)
+
+  let render;
+  let setRender;
+  if(Render){
+    render = Render.render
+    setRender = Render.setRender
+  }
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
@@ -27,7 +34,10 @@ const FileUploader = ({Render}) => {
       formData.append('file', file);
       
       console.log(formData, file, file.name)
-      const { data } = await axios.post(`${baseUrl}api/v1/uploads`, formData, {
+      const { data } = await axios.post(`${baseUrl}api/v1/uploads`, formData, 
+      
+      {
+        withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data'
         }
