@@ -2,6 +2,7 @@ import { NextFunction } from "express";
 import CatchAsync from "../middlewares/CatchAsync";
 import TestName from "../models/LabTest"
 import BioMarker from "../models/BioMarker";
+import { Data } from "aws-sdk/clients/firehose";
 
 
 export const ocrProccesing = async(ocrData: any) => {
