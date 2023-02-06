@@ -12,14 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.textDetection = exports.getUploads = void 0;
-const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
+exports.getUploads = void 0;
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const googleOcr_1 = __importDefault(require("../services/googleOcr"));
-const path_1 = __importDefault(require("path"));
+const ocrProcessing_1 = require("../utils/ocrProcessing");
+const ocrDataController_1 = require("../controllers/ocrDataController");
+// CatchAsync
 const s3 = new aws_sdk_1.default.S3();
-exports.getUploads = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getUploads = ((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const file = req.file;
+    console.log("file in upload", file);
     if (!file) {
         return res.status(400).send({ error: 'Please provide a file' });
     }
@@ -34,20 +36,15 @@ exports.getUploads = (0, CatchAsync_1.default)((req, res, next) => __awaiter(voi
     // upload the file to S3
     s3.upload(params, (error, data) => {
         if (error) {
-            return res.status(500).send({ error });
+            return res.status(502).send({ error });
         }
         console.log("data", data);
         res.send({ data });
     });
+    let result = yield (0, googleOcr_1.default)(file.buffer);
+    // console.log(result);
+    let ocrData = yield (0, ocrProcessing_1.ocrProccesing)(result);
+    // console.log(ocrData);
+    (0, ocrDataController_1.saveOcrData)(ocrData);
+    return ocrData;
 }));
-// export const fileData = CatchAsync(async(req:Request, res:Response, next:NextFunction) => {
-//     const upload = multer({ dest: "uploads/" });
-//     console.log("upload", upload)
-//     return upload.single('file');
-//     next();
-// });
-const textDetection = () => __awaiter(void 0, void 0, void 0, function* () {
-    let result = yield (0, googleOcr_1.default)(path_1.default.resolve(__dirname, '../../uploads/dc3f1b80aecfff20f0c68be78a461119.jpg'));
-    console.log(result);
-});
-exports.textDetection = textDetection;

@@ -11,6 +11,7 @@ const dB:string|undefined = process.env.DEV_DB?.replace('<password>',process.env
 
 const PORT = process.env.PORT || 8081;
 
+
 console.log(dB);
 mongoose.connect(dB!).then(()=>{
     console.log('Database Connected!');

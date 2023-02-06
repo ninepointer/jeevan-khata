@@ -27,10 +27,15 @@ const CONFIGX = {
 const client = new vision.ImageAnnotatorClient(CONFIGX);
 
 
-const detectText = async(filePath: any) => {
-    const result = await client.textDetection(filePath);
-    console.log(result.length);
-    return result;
+const detectText = async(filePath: any, fileType: string) => {
+    let result;
+    try{
+        result = await client.textDetection(filePath);
+        console.log(result.length);
+        return result;
+    }catch(err){
+        console.log(err);
+    } 
 }
 
 
