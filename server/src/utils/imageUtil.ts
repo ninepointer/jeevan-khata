@@ -7,6 +7,8 @@ import rimraf from 'rimraf';
 import { mkdirSync } from 'fs';
 import gm from "gm";
 const im = gm.subClass({ imageMagick: true });
+// import Jimp from 'jimp';
+import {PDFDocument} from 'pdf-lib';
 
 export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
     console.log('recieved buffer', pdfBuffer);
@@ -16,8 +18,8 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
     
     const outputDirectory = `${path.resolve(__dirname, 'outputs')}`;
     console.log(outputDirectory)
-    rimraf.sync(outputDirectory);
-    mkdirSync(outputDirectory);
+    // rimraf.sync(outputDirectory);
+    // mkdirSync(outputDirectory);
 
     const options = {
         density: 100,
@@ -42,3 +44,39 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
   return data;
   
   }
+
+
+  export const imageBufferToPdfBuffer = async (inputImageBuffer: Buffer) => {
+    console.log('inputbuffer',inputImageBuffer);
+    // const pdfBuffer = await sharp(inputImageBuffer).toFormat('pdf')
+    //   .toBuffer();
+    //   fs.writeFile(`${path.resolve(__dirname, `output.pdf`)}`, pdfBuffer, (error) => {
+    //     if (error) {
+    //       console.error(error);
+    //     } else {
+    //       console.log('PDF file written');
+    //     }
+    //   });
+    // return pdfBuffer;
+  const image = sharp(inputImageBuffer);
+  const { width, height } = await image.metadata();
+  const pdfDoc = await PDFDocument.create();
+  const pdfImage = await pdfDoc.embedJpg(await image.jpeg().toBuffer());
+  const pdfPage = pdfDoc.addPage([width!, height!]);
+  pdfPage.drawImage(pdfImage, {
+    x: 0,
+    y: 0,
+    width: pdfImage.width,
+    height: pdfImage.height
+  });
+    const pdfBuffer = Buffer.from(await pdfDoc.save());
+    console.log(pdfBuffer);
+    fs.writeFile(`${path.resolve(__dirname, `output.pdf`)}`, pdfBuffer, (error) => {
+            if (error) {
+              console.error(error);
+            } else {
+              console.log('PDF file written');
+            }
+          });
+    return pdfBuffer;
+  };
