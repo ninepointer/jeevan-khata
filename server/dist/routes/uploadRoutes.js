@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const uploadController_1 = require("../controllers/uploadController");
 const multer_1 = __importDefault(require("multer"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const authController_1 = require("../controllers/authController");
 const router = express_1.default.Router();
 // configure the AWS SDK with your S3 credentials
 aws_sdk_1.default.config.update({
@@ -34,7 +35,7 @@ const upload = (0, multer_1.default)({
 });
 const uploadInLocal = (0, multer_1.default)({ dest: "uploads/" });
 console.log("upload", upload, uploadInLocal);
-router.route('/').post(upload.single('file'), uploadController_1.getUploads);
+router.route('/').post(upload.single('file'), authController_1.protect, uploadController_1.getUploads);
 // router.route('/update/:id').put(editLabTest); , uploadInLocal.single('file')
 // router.route('/delete/:id').patch(deleteLabTest);
 exports.default = router;

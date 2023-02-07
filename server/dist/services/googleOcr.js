@@ -56,9 +56,15 @@ const CONFIGX = {
     }
 };
 const client = new vision.ImageAnnotatorClient(CONFIGX);
-const detectText = (filePath) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield client.textDetection(filePath);
-    console.log(result.length);
-    return result;
+const detectText = (filePath, fileType) => __awaiter(void 0, void 0, void 0, function* () {
+    let result;
+    try {
+        result = yield client.textDetection(filePath);
+        console.log(result.length);
+        return result;
+    }
+    catch (err) {
+        console.log(err);
+    }
 });
 exports.default = detectText;
