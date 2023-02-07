@@ -89,7 +89,7 @@ export const ocrProccesing = async(ocrData: any) => {
       //////console.log('withiny',withinY);
       //Getting the elements that is in proximity to the same line item match
       let withinXY = withinY.filter(obj =>
-            (averageCoord(obj.boundingPoly,'x') - xavg) <= x_coordGap && (averageCoord(obj.boundingPoly,'x') > xavg) 
+            (averageCoord(obj.boundingPoly,'x') - xavg) <= x_coordGap && (averageCoord(obj.boundingPoly,'x') >= xavg) 
           );
       
       //Get the adjacent elements and adding it to the object property as a string    
@@ -493,7 +493,6 @@ export const ocrProccesing = async(ocrData: any) => {
       
 
         let bioMarkerDataArr = [];
-        console.log("match", matches)
         
         for(let i = 0; i < matches.length; i++){
 
@@ -512,7 +511,6 @@ export const ocrProccesing = async(ocrData: any) => {
                 return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x')
               })
               // console.log(`within y for ${data[i][0].description}`,withinY);
-              console.log("mappingObj--------lineOrder[elemNum]", mappingObj[matches[i][0].description])
 
               if(mappingObj[matches[i][0].description]){
                 bioMarkerDataObj[mappingObj[matches[i][0].description]] = innerObj;
