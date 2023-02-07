@@ -47,15 +47,15 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
     unitConversion:[{
         unitConversionFullName : { 
             type: String,
-            required : true
+            // required : true
         },
         unitConversionId : { 
             type: String,
-            required : true
+            // required : true
         },
         value : { 
             type: Number,
-            required : true
+            // required : true
         },
         id : { 
             type: String,
@@ -64,7 +64,7 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
         created_On:{
             type: Date,
             default: Date.now(),
-            required : true
+            // required : true
         },
         created_By:{
             type: Schema.Types.ObjectId,
@@ -83,11 +83,11 @@ const unitSchema: mongoose.Schema = new mongoose.Schema({
         is_Deleted:{
             type: Boolean,
             default: false,
-            required : true
+            // required : true
         },
         bioMarkers:{
             type: String,
-            required : true
+            // required : true
         }
     }]
 })
