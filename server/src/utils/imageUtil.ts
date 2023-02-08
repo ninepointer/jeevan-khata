@@ -18,8 +18,8 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
     
     const outputDirectory = `${path.resolve(__dirname, 'outputs')}`;
     console.log(outputDirectory)
-    // rimraf.sync(outputDirectory);
-    // mkdirSync(outputDirectory);
+    rimraf.sync(outputDirectory);
+    mkdirSync(outputDirectory);
 
     const options = {
         density: 100,
