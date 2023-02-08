@@ -5,7 +5,7 @@ import aws from "aws-sdk";
 import detectText from '../services/googleOcr';
 import path from 'path';
 import {ocrProccesing} from "../utils/ocrProcessing";
-import {convertPdfToImageBuffer} from '../utils/imageUtil';
+import { convertPdfToImageBuffer,imageBufferToPdfBuffer} from '../utils/imageUtil';
 
 // CatchAsync
 const s3 = new aws.S3();
@@ -17,12 +17,17 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
     return res.status(400).send({ error: 'Please provide a file' });
   }
 
+  let bucketBuffer = file.buffer;
+  if(file.mimetype != 'application/pdf'){
+    let bucketBuffer = await imageBufferToPdfBuffer(file.buffer);
+    console.log('converted buffer', bucketBuffer);
+  }
   // configure the parameters for the S3 upload
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME!,
-    Key: file.originalname,
-    Body: file.buffer,
-    ContentType: file.mimetype,
+    Key: file.originalname+'.pdf',
+    Body: bucketBuffer,
+    ContentType: 'application/pdf',
     ACL: 'public-read',
   };
 
