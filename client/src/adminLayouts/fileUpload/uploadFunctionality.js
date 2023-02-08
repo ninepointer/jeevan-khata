@@ -5,6 +5,7 @@ import MDBox from '../../components/MDBox';
 // import MDButton from '../../components/MDButton';
 
 import TextField from '@mui/material/TextField';
+import { Input } from '@mui/material';
 
 
 const FileUploader = ({Render}) => {
@@ -18,7 +19,7 @@ const FileUploader = ({Render}) => {
     setRender = Render.setRender
   }
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    setFile(event.target.files);
   };
 
   const handleUpload = async () => {
@@ -30,8 +31,13 @@ const FileUploader = ({Render}) => {
     let baseUrl = process.env.NODE_ENV === "production" ? "/" : "http://localhost:8080/"
     
     try {
+      
       const formData = new FormData();
-      formData.append('file', file);
+
+      for (let i = 0; i < file.length; i++) {
+        formData.append("file", file[i]);
+      }
+      // formData.append('file', file);
       
       console.log(formData, file, file.name)
       const { data } = await axios.post(`${baseUrl}api/v1/uploads`, formData, 
@@ -55,9 +61,21 @@ const FileUploader = ({Render}) => {
     <>
       <MDBox mt={0.5} display="flex" alignItems="center">
         <TextField
-          id="filled-basic" label="Uploaad File" variant="filled" type="file" onChange={handleFileChange}
+          id="filled-basic"
+          label="Uploaad File" 
+          variant="filled" 
+          type="file" 
+          multiple
+          onChange={handleFileChange}
           sx={{margin: 1, padding: 1, width: "250px"}}
-        />        
+        />  
+
+        {/* <input
+        id="filled-basic"
+        label="Uploaad File" 
+        variant="filled" 
+        sx={{margin: 1, padding: 1, width: "250px"}}
+         type="file" multiple onChange={handleFileChange} />  */}
 
         <Button onClick={handleUpload} autoFocus backGround="red">
           Upload

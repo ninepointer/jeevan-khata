@@ -76,6 +76,4 @@ data {
   Key: 'cbc1.jpeg',
   Bucket: 'jeevan-khata-test'
 }
-
 */
-

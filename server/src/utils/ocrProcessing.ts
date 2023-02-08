@@ -3,7 +3,7 @@ import { NextFunction } from "express";
 import TestName from "../models/LabTest"
 import BioMarker from "../models/BioMarker";
 import { Data } from "aws-sdk/clients/firehose";
-import tempOcrData from "./tempOcrData"
+// import tempOcrData from "./tempOcrData"
 
 
 export const ocrProccesing = async(ocrData: any) => {
@@ -84,7 +84,7 @@ export const ocrProccesing = async(ocrData: any) => {
       
       //Getting the elements in the same line of the match
       let withinY = sortedData.filter(obj =>
-          Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= y_coordGap
+          Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= y_coordGap && obj.description !== ":" && obj.description.toLowerCase() !== "mr." && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "mrs."
           );
 
           withinY.sort(function(a, b) {

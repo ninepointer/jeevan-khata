@@ -32,8 +32,18 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
   console.log('Error is not here');
 //   console.log(await pdf2image.convertPDF(tempFile));
   const convert = fromBuffer(pdfBuffer, options);
-  let res = await convert(1);
-  console.log(res);
+  console.log("this is convert", convert)
+
+  let res;
+  try{
+
+    res = await convert(4);
+    console.log("this is convert res",res);
+
+  } catch(err){
+    console.log("this is convert err",err);
+  }
+
   console.log('Error is here?');
 
   fs.promises.unlink(tempFile);
