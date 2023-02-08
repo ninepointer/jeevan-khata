@@ -86,7 +86,11 @@ export const ocrProccesing = async(ocrData: any) => {
       let withinY = sortedData.filter(obj =>
           Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= y_coordGap
           );
-      //////console.log('withiny',withinY);
+
+          withinY.sort(function(a, b) {
+            return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x'); 
+        });
+      console.log('withiny',withinY);
       //Getting the elements that is in proximity to the same line item match
       let withinXY = withinY.filter(obj =>
             (averageCoord(obj.boundingPoly,'x') - xavg) <= x_coordGap && (averageCoord(obj.boundingPoly,'x') >= xavg) 
