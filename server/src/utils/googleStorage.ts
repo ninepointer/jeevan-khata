@@ -1,11 +1,4 @@
-import * as vision from '@google-cloud/vision';
-
-// const CONFIG= {
-//     credentials: {
-//         private_key: JSON.parse(process.env.GCV_PRIVATE_KEY!),
-//         client_email: JSON.parse(process.env.GCV_CLIENT_EMAIL!),
-//     }
-// }
+import { Storage } from '@google-cloud/storage';
 
 const credentilsNew = JSON.parse(JSON.stringify({"type": "service_account",
 "project_id": "bamboo-century-376510",
@@ -24,31 +17,32 @@ const CONFIGX = {
         client_email: credentilsNew.client_email,
     }
 }
-const client = new vision.ImageAnnotatorClient(CONFIGX);
+
+const storage = new Storage(CONFIGX);
+
+const bucket = storage.bucket('jk-test-docs');
 
 
-export const detectText = async(filePath: any, fileType: string) => {
-    let result;
-    try{
-        result = await client.textDetection(filePath);
-        console.log(result.length);
-        return result;
-    }catch(err){
-        console.log(err);
-    } 
+export const uploadToGCS = async(file: any) =>{
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const options = {
+        destination: fileName,
+        resumable: false,
+        metadata: {
+          contentType: file.mimetype
+        }
+      };
+    await bucket.upload(file.buffer, options);
+
+    // Get the URL of the uploaded file
+    const [url] = await bucket.file(fileName).getSignedUrl({
+    action: 'read',
+    expires: '03-09-2491'
+  });
+  // Delete the file from GCS
+//   await bucket.file(fileName).delete();
+
+  // Return the URL to the client
+  return url;
+
 }
-
-export const detectTextFromUrl = async(filePath: any, fileType: string) => {
-    let result;
-    try{
-        result = await client.textDetection(filePath);
-        console.log(result.length);
-        return result;
-    }catch(err){
-        console.log(err);
-    } 
-}
-
-
-
-// export default {detectText, detectTextFromUrl};

@@ -2,11 +2,12 @@ import express, {Request, Response, NextFunction} from 'express';
 import { createCustomError } from '../errors/customError';
 import CatchAsync from '../middlewares/CatchAsync';
 import aws from "aws-sdk";
-import detectText from '../services/googleOcr';
+import {detectText, detectTextFromUrl} from '../services/googleOcr';
 import path from 'path';
 import {ocrProccesing} from "../utils/ocrProcessing";
 import {convertPdfToImageBuffer} from '../utils/imageUtil';
-import {saveOcrData} from "../controllers/ocrDataController"
+import {saveOcrData} from "../controllers/ocrDataController";
+import {uploadToGCS} from "../utils/googleStorage";
 
 // CatchAsync
 const s3 = new aws.S3();
@@ -45,18 +46,20 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
     res.send({  dataFromS3 });
   });
   let fileType;
-  let buffer;
+  let url;
   if(file.mimetype == 'application/pdf' ){
     fileType = 'pdf/tiff';
     console.log('pdf');
-    buffer = await convertPdfToImageBuffer(file.buffer);
+    url = await uploadToGCS(file.buffer)
+    // buffer = await convertPdfToImageBuffer(file.buffer);
   }else{
     fileType = 'image/jpeg';
-    buffer = file.buffer;
+    url = file.buffer;
   }
-  console.log('buffer is', buffer);
+  console.log('buffer is', url);
 
-  let result = await detectText(buffer, fileType);
+  let result = await detectTextFromUrl(url, fileType);
+  // let result = await detectText(buffer, fileType);
   console.log(result);
   let ocrData = await ocrProccesing(result);
   console.log(ocrData, (dataFromS3 as any).Location);
