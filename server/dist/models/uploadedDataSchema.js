@@ -88,6 +88,9 @@ const uploadedDataSchema = new mongoose_1.default.Schema({
         default: 'Active',
         required: true
     },
+    link: {
+        type: String,
+    },
     bioMarker: [{
             type: Object,
             // required: true

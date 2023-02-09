@@ -2,6 +2,7 @@ import express, {Router} from 'express';
 import { getUploads} from '../controllers/uploadController';
 import multer from 'multer';
 import aws from "aws-sdk";
+import {protect} from "../controllers/authController";
 
 const router = express.Router();
 
@@ -42,7 +43,7 @@ const uploadInLocal = multer({ dest: "uploads/" });
 
 console.log("upload", upload, uploadInLocal)
 
-router.route('/').post(upload.single('file'), getUploads);
+router.route('/').post(upload.single('file'), protect, getUploads);
 
 
 

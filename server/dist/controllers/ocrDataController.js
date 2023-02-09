@@ -16,9 +16,10 @@ exports.getOCRData = exports.saveOcrData = void 0;
 const uploadedDataSchema_1 = __importDefault(require("../models/uploadedDataSchema"));
 const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
-const saveOcrData = (ocrData) => __awaiter(void 0, void 0, void 0, function* () {
+const saveOcrData = (ocrData, link) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("in save data func", ocrData);
     const { name, age, gender, testName, lab, bioMarker } = ocrData;
+    console.log("bioMarker", bioMarker);
     //check if role exisits
     // if(await UploadedData.findOne({roleName})) return next(createCustomError('Role already exists. Please edit the existing role.', 401));
     const ocr = yield uploadedDataSchema_1.default.create({
@@ -27,7 +28,8 @@ const saveOcrData = (ocrData) => __awaiter(void 0, void 0, void 0, function* () 
         gender: gender,
         testName: testName,
         lab: lab,
-        bioMarker: bioMarker
+        bioMarker: bioMarker,
+        link: link
     });
     console.log("this is ocr", ocr);
     // res.status(201).json({status: 'Success', message: 'Role created', data: ocr});

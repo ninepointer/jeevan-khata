@@ -63,7 +63,7 @@ const RolesModel = ({setCreate}) => {
       body: JSON.stringify({
         roleName, reportAccess, userAccess, attributesAccess, analyticsAccess, status
       })
-  });
+    });
   
     const data = await res.json();
            

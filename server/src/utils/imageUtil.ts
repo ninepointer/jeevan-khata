@@ -7,8 +7,9 @@ import rimraf from 'rimraf';
 import { mkdirSync } from 'fs';
 import gm from "gm";
 const im = gm.subClass({ imageMagick: true });
-import Jimp from 'jimp';
+// import Jimp from 'jimp';
 import {PDFDocument} from 'pdf-lib';
+import PDF from 'pdf-parse';
 
 export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
     console.log('recieved buffer', pdfBuffer);
@@ -31,6 +32,9 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
       };
   console.log('Error is not here');
 //   console.log(await pdf2image.convertPDF(tempFile));
+  const pdf = await PDF(pdfBuffer);
+  const numPages = pdf.numpages;
+  console.log('total pages',numPages);
   const convert = fromBuffer(pdfBuffer, options);
   let res = await convert(1);
   console.log(res);
