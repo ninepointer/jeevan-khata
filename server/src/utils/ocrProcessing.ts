@@ -3,14 +3,14 @@ import { NextFunction } from "express";
 import TestName from "../models/LabTest"
 import BioMarker from "../models/BioMarker";
 import { Data } from "aws-sdk/clients/firehose";
-import tempOcrData from "./tempOcrData"
+// import tempOcrData from "./tempOcrData"
 
 
 export const ocrProccesing = async(ocrData: any) => {
 
   //CONFIRMING THE RESPONSE FROM GOOGLE OCR HAS SOME DATA
   // console.log("ocrData", ocrData.length)
-  console.log(ocrData);
+  // console.log(ocrData);
   if(!ocrData.length) return;
 
   //FIND ALL THE TESTS FROM DB
@@ -84,12 +84,13 @@ export const ocrProccesing = async(ocrData: any) => {
       
       //Getting the elements in the same line of the match
       let withinY = sortedData.filter(obj =>
-          Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= y_coordGap
+          Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= y_coordGap && obj.description !== ":" && obj.description.toLowerCase() !== "mr." && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms."
           );
-          withinY.sort((a,b)=>{
-            return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x')
-          });    
-      //////console.log('withiny',withinY);
+
+          withinY.sort(function(a, b) {
+            return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x'); 
+        });
+      console.log('withiny',withinY);
       //Getting the elements that is in proximity to the same line item match
       let withinXY = withinY.filter(obj =>
             (averageCoord(obj.boundingPoly,'x') - xavg) <= x_coordGap && (averageCoord(obj.boundingPoly,'x') >= xavg) 
@@ -610,6 +611,6 @@ export const ocrProccesing = async(ocrData: any) => {
       // console.log(ocrObj)
       // console.log(ocrObj.bioMarker)
 
-      // console.log('Time Elapsed:', performance.now()-time);
+      console.log('Time Elapsed:', performance.now()-time);
       return ocrObj
 }

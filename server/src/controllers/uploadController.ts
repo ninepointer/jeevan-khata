@@ -7,6 +7,7 @@ import path from 'path';
 import {ocrProccesing} from "../utils/ocrProcessing";
 import { convertPdfToImageBuffer,imageBufferToPdfBuffer} from '../utils/imageUtil';
 import {saveOcrData} from "../controllers/ocrDataController"
+import fs from 'fs';
 
 // CatchAsync
 const s3 = new aws.S3();
@@ -57,8 +58,8 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   console.log('buffer is', buffer);
 
   let result = await detectText(buffer, fileType);
-  console.log(result);
   let ocrData = await ocrProccesing(result);
+  // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
   console.log(ocrData, (dataFromS3 as any).Location);
   await saveOcrData(ocrData, (dataFromS3 as any).Location)
   return ocrData;
@@ -76,6 +77,4 @@ data {
   Key: 'cbc1.jpeg',
   Bucket: 'jeevan-khata-test'
 }
-
 */
-

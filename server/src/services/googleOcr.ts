@@ -37,6 +37,16 @@ const detectText = async(filePath: any, fileType: string) => {
         console.log(err);
     } 
 }
+const detectDocumentText = async(url: any, fileType: string) => {
+    let result;
+    try{
+        result = await client.documentTextDetection(url);
+        console.log(result.length);
+        return result;
+    }catch(err){
+        console.log(err);
+    } 
+}
 
 
 

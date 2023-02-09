@@ -17,6 +17,8 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const sharp_1 = __importDefault(require("sharp"));
 const pdf2pic_1 = require("pdf2pic");
+const rimraf_1 = __importDefault(require("rimraf"));
+const fs_2 = require("fs");
 const gm_1 = __importDefault(require("gm"));
 const im = gm_1.default.subClass({ imageMagick: true });
 // import Jimp from 'jimp';
@@ -29,8 +31,8 @@ function convertPdfToImageBuffer(pdfBuffer) {
         yield fs_1.default.promises.writeFile(tempFile, pdfBuffer);
         const outputDirectory = `${path_1.default.resolve(__dirname, 'outputs')}`;
         console.log(outputDirectory);
-        // rimraf.sync(outputDirectory);
-        // mkdirSync(outputDirectory);
+        rimraf_1.default.sync(outputDirectory);
+        (0, fs_2.mkdirSync)(outputDirectory);
         const options = {
             density: 100,
             saveFilename: `${Date.now()}`,

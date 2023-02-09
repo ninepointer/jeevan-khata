@@ -20,7 +20,7 @@ const CONFIGX = {
 
 const storage = new Storage(CONFIGX);
 
-const bucket = storage.bucket('your-bucket-name');
+const bucket = storage.bucket('jk-test-docs');
 
 
 export const uploadToGCS = async(file: any) =>{
@@ -40,9 +40,13 @@ export const uploadToGCS = async(file: any) =>{
     expires: '03-09-2491'
   });
   // Delete the file from GCS
-  await bucket.file(fileName).delete();
+//   await bucket.file(fileName).delete();
 
   // Return the URL to the client
   return url;
 
+}
+
+export const deleteFileFromGCS = async(fileName:string|any) =>{
+    await bucket.file(fileName).delete();   
 }

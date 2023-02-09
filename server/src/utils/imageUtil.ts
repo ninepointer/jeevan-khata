@@ -19,8 +19,8 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
     
     const outputDirectory = `${path.resolve(__dirname, 'outputs')}`;
     console.log(outputDirectory)
-    // rimraf.sync(outputDirectory);
-    // mkdirSync(outputDirectory);
+    rimraf.sync(outputDirectory);
+    mkdirSync(outputDirectory);
 
     const options = {
         density: 100,
@@ -36,8 +36,18 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
   const numPages = pdf.numpages;
   console.log('total pages',numPages);
   const convert = fromBuffer(pdfBuffer, options);
-  let res = await convert(1);
-  console.log(res);
+  console.log("this is convert", convert)
+
+  let res;
+  try{
+
+    res = await convert(1);
+    console.log("this is convert res",res);
+
+  } catch(err){
+    console.log("this is convert err",err);
+  }
+
   console.log('Error is here?');
 
   fs.promises.unlink(tempFile);

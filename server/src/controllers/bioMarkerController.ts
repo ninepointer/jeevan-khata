@@ -66,7 +66,7 @@ export const editBioMarker = CatchAsync(async (req:Request, res: Response, next:
     (bioMarkerData as any).alias = alias,
     // bioMarkerData!.alias = alias, scientificName
     bioMarkerData!.status = status,
-    bioMarkerData!.scientificName = scientificName
+    bioMarkerData!.scientificName = scientificName;
 
     await bioMarkerData!.save();
     res.status(201).json({status: "Success", data:bioMarkerData});
