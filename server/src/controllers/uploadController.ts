@@ -2,19 +2,20 @@ import express, {Request, Response, NextFunction} from 'express';
 import { createCustomError } from '../errors/customError';
 import CatchAsync from '../middlewares/CatchAsync';
 import aws from "aws-sdk";
-import detectText from '../services/googleOcr';
+import {detectText, detectDocumentText} from '../services/googleOcr';
 import path from 'path';
 import {ocrProccesing} from "../utils/ocrProcessing";
 import { convertPdfToImageBuffer,imageBufferToPdfBuffer} from '../utils/imageUtil';
 import {saveOcrData} from "../controllers/ocrDataController"
 import fs from 'fs';
+import { uploadToGCS } from '../services/googleStorage';
 
 // CatchAsync
 const s3 = new aws.S3();
 
 export const getUploads = (async(req:Request, res:Response, next:NextFunction) => {
   const file = req.file;
-  console.log("file in upload", file, (req as any).user)
+  // console.log("file in upload", file, (req as any).user)
   if (!file) {
     return res.status(400).send({ error: 'Please provide a file' });
   }
@@ -50,19 +51,23 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   if(file.mimetype == 'application/pdf' ){
     fileType = 'pdf/tiff';
     console.log('pdf');
-    buffer = await convertPdfToImageBuffer(file.buffer);
+    // buffer = await convertPdfToImageBuffer(file.buffer);
+    let url =  await uploadToGCS(file);
+    let result = await detectDocumentText(url, fileType);
+    console.log(result);
+
   }else{
     fileType = 'image/png';
     buffer = file.buffer;
   }
-  console.log('buffer is', buffer);
+  // console.log('buffer is', buffer);
 
-  let result = await detectText(buffer, fileType);
-  let ocrData = await ocrProccesing(result);
-  // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
-  console.log(ocrData, (dataFromS3 as any).Location);
-  await saveOcrData(ocrData, (dataFromS3 as any).Location)
-  return ocrData;
+  // let result = await detectText(buffer, fileType);
+  // let ocrData = await ocrProccesing(result);
+  // // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
+  // console.log(ocrData, (dataFromS3 as any).Location);
+  // await saveOcrData(ocrData, (dataFromS3 as any).Location)
+  // return ocrData;
 });
 
 

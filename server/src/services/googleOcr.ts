@@ -50,4 +50,4 @@ const detectDocumentText = async(url: any, fileType: string) => {
 
 
 
-export default detectText;
+export {detectText, detectDocumentText};

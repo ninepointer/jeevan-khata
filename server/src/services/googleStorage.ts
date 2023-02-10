@@ -24,6 +24,7 @@ const bucket = storage.bucket('jk-test-docs');
 
 
 export const uploadToGCS = async(file: any) =>{
+    console.log('inside func gcs');
     const fileName = `${Date.now()}-${file.originalname}`;
     const options = {
         destination: fileName,
@@ -32,13 +33,18 @@ export const uploadToGCS = async(file: any) =>{
           contentType: file.mimetype
         }
       };
-    await bucket.upload(file.buffer, options);
+      console.log('error?');
+    // await bucket.upload(file.buffer, options);
+    await bucket.file(fileName).save(file.buffer, {contentType:file.mimetype});
+    console.log(`uploaded`);
 
     // Get the URL of the uploaded file
+    // let fileRef = storage.bucket(bucketName).file(fileName);
     const [url] = await bucket.file(fileName).getSignedUrl({
     action: 'read',
     expires: '03-09-2491'
   });
+  console.log(url);
   // Delete the file from GCS
 //   await bucket.file(fileName).delete();
 
