@@ -46,19 +46,19 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
     res.send({  dataFromS3 });
   });
   let fileType;
-  let url;
+  let buffer;
   if(file.mimetype == 'application/pdf' ){
     fileType = 'pdf/tiff';
     console.log('pdf');
-    url = await uploadToGCS(file.buffer)
-    // buffer = await convertPdfToImageBuffer(file.buffer);
+    // url = await uploadToGCS(file.buffer)
+    buffer = await convertPdfToImageBuffer(file.buffer);
   }else{
     fileType = 'image/jpeg';
-    url = file.buffer;
+    buffer = file.buffer;
   }
-  console.log('buffer is', url);
+  console.log('buffer is', buffer);
 
-  let result = await detectTextFromUrl(url, fileType);
+  let result = await detectTextFromUrl(buffer, fileType);
   // let result = await detectText(buffer, fileType);
   console.log(result);
   let ocrData = await ocrProccesing(result);
