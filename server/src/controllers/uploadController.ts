@@ -52,22 +52,25 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
     fileType = 'pdf/tiff';
     console.log('pdf');
     // buffer = await convertPdfToImageBuffer(file.buffer);
-    let url =  await uploadToGCS(file);
-    let result = await detectDocumentText(url, fileType);
-    console.log(result);
+    let filename =  await uploadToGCS(file);
+    console.log(filename);
+    // let result = await detectDocumentText(filename, fileType);
+    // console.log('result', result);
+    // fs.writeFileSync('./pdf-data.json', JSON.stringify(result, null, 2) , 'utf-8');
+
 
   }else{
     fileType = 'image/png';
     buffer = file.buffer;
   }
-  // console.log('buffer is', buffer);
+  console.log('buffer is', buffer);
 
-  // let result = await detectText(buffer, fileType);
-  // let ocrData = await ocrProccesing(result);
-  // // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
-  // console.log(ocrData, (dataFromS3 as any).Location);
-  // await saveOcrData(ocrData, (dataFromS3 as any).Location)
-  // return ocrData;
+  let result = await detectText(buffer, fileType);
+  let ocrData = await ocrProccesing(result);
+  fs.writeFileSync('./data1.json', JSON.stringify(result, null, 2) , 'utf-8');
+  console.log(ocrData, (dataFromS3 as any).Location);
+  await saveOcrData(ocrData, (dataFromS3 as any).Location)
+  return ocrData;
 });
 
 

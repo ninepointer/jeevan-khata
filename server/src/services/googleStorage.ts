@@ -44,15 +44,25 @@ export const uploadToGCS = async(file: any) =>{
     action: 'read',
     expires: '03-09-2491'
   });
-  console.log(url);
+//   console.log(url);
   // Delete the file from GCS
 //   await bucket.file(fileName).delete();
 
   // Return the URL to the client
-  return url;
+  return fileName;
 
 }
 
 export const deleteFileFromGCS = async(fileName:string|any) =>{
     await bucket.file(fileName).delete();   
 }
+
+export const getJsonDataFromGCS = async(fileName:string, bucketName:string) =>{
+  const file = bucket.file(`results/output-1-to-1.json`);
+  const contents = await file.download();
+  console.log('contents', contents);
+  const data = JSON.parse(contents.toString());
+  console.log(data);
+  return data;
+}
+
