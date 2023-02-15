@@ -21,7 +21,7 @@ export const createBioMarker = CatchAsync(async(req:Request, res:Response, next:
     if(await BioMarker.findOne({name: name, isDeleted: false})) return next(createCustomError('Bio Marker already exists. Edit the existing one.', 403));
 
     //Check if any of the aliases exist
-    if(alias){
+    if(alias && alias.length > 1){
         if(await BioMarker.findOne({alias: {$in: [...alias!, name]}})) return next(createCustomError('Bio Marker already exists. Edit the existing one.', 403));
     }
 

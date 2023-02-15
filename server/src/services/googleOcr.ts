@@ -27,7 +27,18 @@ const CONFIGX = {
 const client = new vision.ImageAnnotatorClient(CONFIGX);
 
 
-const detectText = async(filePath: any, fileType: string) => {
+export const detectText = async(filePath: any, fileType: string) => {
+    let result;
+    try{
+        result = await client.textDetection(filePath);
+        console.log(result.length);
+        return result;
+    }catch(err){
+        console.log(err);
+    } 
+}
+
+export const detectTextFromUrl = async(filePath: any, fileType: string) => {
     let result;
     try{
         result = await client.textDetection(filePath);
@@ -50,4 +61,4 @@ const detectDocumentText = async(url: any, fileType: string) => {
 
 
 
-export default detectText;
+// export default {detectText, detectTextFromUrl};
