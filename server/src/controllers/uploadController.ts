@@ -2,7 +2,7 @@ import express, {Request, Response, NextFunction} from 'express';
 import { createCustomError } from '../errors/customError';
 import CatchAsync from '../middlewares/CatchAsync';
 import aws from "aws-sdk";
-import {detectText, detectDocumentText} from '../services/googleOcr';
+import {detectText} from '../services/googleOcr';
 import path from 'path';
 import {ocrProccesing} from "../utils/ocrProcessing";
 import { convertPdfToImageBuffer,imageBufferToPdfBuffer, convertMultiPdfToImageBuffer,convertPdfMultiToImageBuffer, deskewImage} from '../utils/imageUtil';

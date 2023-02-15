@@ -417,7 +417,7 @@ export const ocrProccesing = async(ocrData: any) => {
 
               let withinY = sortedData.filter(obj =>
                 // Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 
-                Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 && obj.description !== ":" && obj.description.toLowerCase() !== "mr." && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms."
+                Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 && averageCoord(obj.boundingPoly,'x') >= xavg  && obj.description !== ":" && obj.description.toLowerCase() !== "mr." && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms."
                 );
       
                 withinY.sort(function(a, b) {
@@ -458,7 +458,6 @@ export const ocrProccesing = async(ocrData: any) => {
                       coord = withinY[j].boundingPoly.vertices;
                       return;
                       // elemNum++;
-                      break;
                     } else{
                       temp = ` ${withinY[j].description}`;
                       coord = withinY[j].boundingPoly.vertices;
@@ -485,7 +484,7 @@ export const ocrProccesing = async(ocrData: any) => {
               // ////console.log(bioMarkerDataObj.data[i][0].description, bioMarkerDataObj[data[i][0].description], )
               // if(bioMarkerDataObj.data[i][0].description.lineOrder[0]){
                 // //console.log("temp", temp)
-                bioMarkerDataArr.push(bioMarkerDataObj);
+                // bioMarkerDataArr.push(bioMarkerDataObj);
               // }
               
               
