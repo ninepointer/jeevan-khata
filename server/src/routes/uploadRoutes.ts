@@ -1,5 +1,5 @@
 import express, {Router} from 'express';
-import { getUploads} from '../controllers/uploadController';
+import { getUploads, uploadTest, deskewTest} from '../controllers/uploadController';
 import multer from 'multer';
 import aws from "aws-sdk";
 import {protect} from "../controllers/authController";
@@ -45,6 +45,8 @@ console.log("upload", upload, uploadInLocal)
 
 router.route('/').post(upload.single('file'), protect, getUploads);
 
+router.route('/test').get(uploadTest);
+router.route('/deskewTest/').get(deskewTest);
 
 
 // router.route('/update/:id').put(editLabTest); , uploadInLocal.single('file')

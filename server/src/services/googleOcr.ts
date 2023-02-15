@@ -28,7 +28,7 @@ const CONFIGX = {
 const client = new vision.ImageAnnotatorClient(CONFIGX);
 
 
-const detectText = async(filePath: any, fileType: string) => {
+export const detectText = async(filePath: any, fileType: string) => {
     let result;
     try{
         result = await client.textDetection(filePath);
@@ -38,7 +38,18 @@ const detectText = async(filePath: any, fileType: string) => {
         console.log(err);
     } 
 }
-const detectDocumentText = async(fileName: any, fileType: string) => {
+
+export const detectTextFromUrl = async(filePath: any, fileType: string) => {
+    let result;
+    try{
+        result = await client.textDetection(filePath);
+        console.log(result.length);
+        return result;
+    }catch(err){
+        console.log(err);
+    } 
+}
+export const detectDocumentText = async(fileName: any, fileType: string) => {
    // Imports the Google Cloud client libraries
 
 // Creates a client
@@ -92,4 +103,4 @@ return data;
 
 
 
-export {detectText, detectDocumentText};
+// export default {detectText, detectTextFromUrl};
