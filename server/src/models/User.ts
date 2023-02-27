@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 
 const userSchema: mongoose.Schema = new mongoose.Schema({
     firstName:{
@@ -13,12 +14,13 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
     },
     email:{
         type: String,
-        required : true
+        // required : true
     },
     mobile:{
         type: String,
-        required : true
+        // required : true
     },
+    authId: String,
     gender:{
         type: String,
         // required : true
@@ -65,6 +67,7 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
         default: Date.now(),
         // required : true
     },
+    profilePhoto: String,
     createdBy:{
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -89,6 +92,11 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
         // default: false,
         // required : true
     },
+    referralCode: String,
+    referredBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
     jeevanKhataId:{
         type: String,
         // required : true
@@ -97,6 +105,18 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
         type: String,
         // required : true
     },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    documents: [{type:Schema.Types.ObjectId, ref: 'uploadedData'}],
+    familyTree: [{
+        relation: {
+          type: String,
+        },
+        profile: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        }
+      }],
 });
 
 //check password
@@ -130,6 +150,11 @@ userSchema.pre('save', function (next) {
     this.passwordChangedAt = Date.now() - 1000;
     next();
   });
+
+userSchema.pre('findOneAndUpdate', function(next){
+    this.set({lastModifiedOn: Date.now()});
+    next();
+});
 
 //Hashing user password  
 userSchema.pre('save', async function (next) {
@@ -178,6 +203,21 @@ userSchema.pre('save', async function(next){
 //     // .catch(err => next(err));
 //     next();
 // });
+
+userSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+  
+    this.passwordResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+  
+    // console.log({ resetToken }, this.passwordResetToken);
+  
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  
+    return resetToken;
+  };
 
 const user = mongoose.model("User", userSchema);
 export default user;

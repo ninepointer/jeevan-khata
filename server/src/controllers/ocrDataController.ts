@@ -4,6 +4,7 @@ import {createCustomError} from '../errors/customError';
 import {promisifiedVerify, signToken} from '../utils/authUtil';
 import CatchAsync from '../middlewares/CatchAsync';
 import {getUploads} from "../controllers/uploadController"
+import User from '../models/User';
 
 interface MyArray extends Array<Record<string, any>> {}
 
@@ -16,14 +17,14 @@ interface UploadInterface{
     bioMarker: MyArray
 
 }
-export const saveOcrData = async(ocrData: any, link: any)=>{
+export const saveOcrData = async(ocrData: any, userReq: any, link: any)=>{
     console.log("in save data func", ocrData)
     const{name, age, gender, testName, lab, bioMarker } = ocrData;
     console.log("bioMarker", bioMarker);
     //check if role exisits
     // if(await UploadedData.findOne({roleName})) return next(createCustomError('Role already exists. Please edit the existing role.', 401));
 
-    const ocr = await UploadedData.create({
+    const doc = await UploadedData.create({
         name: name,
         age: age,
         gender: gender,
@@ -32,7 +33,11 @@ export const saveOcrData = async(ocrData: any, link: any)=>{
         bioMarker: bioMarker,
         link: link
     });
-    console.log("this is ocr", ocr)
+
+    const user = await User.findById(userReq._id);
+    user!.documents = [...user!.documents, doc._id];
+    await user!.save({validateBeforeSave: false});
+    console.log("this is ocr", doc);
     // res.status(201).json({status: 'Success', message: 'Role created', data: ocr});
 };
 

@@ -1,16 +1,21 @@
 import express, {Router} from 'express';
-import {login, signup, protect, logout, getUserDetailAfterRefresh} from '../controllers/authController';
-import {createUser, getUsers, editUser, deleteUser} from '../controllers/userController';
+import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid, phoneLogin, forgotPassword, resetPassword, externalLogin, googleLogin} from '../controllers/authController';
+import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe} from '../controllers/userController';
 
 const router:Router = express.Router();
 
-
-router.route('/').post(protect, createUser).get( getUsers);
+router.post('/forgotPassword', forgotPassword);
+router.patch('/resetPassword/:token', resetPassword);
+router.route('/').post(protect, createUser).get(protect, getUsers);
+router.route('/me').get(protect, getUser).patch(protect, editMe).delete(protect, deleteMe);
 router.route('/login').post(login);
 router.route('/logout').get(logout);
 router.route('/signup').post(signup);
-router.route('/update/:id').put(editUser);
-router.route('/delete/:id').patch(deleteUser);
+router.route('/:id').put(editUser).delete(deleteUser);
+router.route('/isTokenValid').get(isTokenValid);
+router.route('/phoneLogin').post(phoneLogin);
+router.route('/loginExternal').post(externalLogin);
+router.route('/googleLogin').post(googleLogin);
 
 
 router.route('/logindetail').get(protect, getUserDetailAfterRefresh);

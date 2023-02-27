@@ -10,7 +10,7 @@ export const ocrProccesing = async(ocrData: any) => {
 
   //CONFIRMING THE RESPONSE FROM GOOGLE OCR HAS SOME DATA
   // //console.log("ocrData", ocrData.length)
-  console.log(ocrData);
+  // console.log(ocrData);
   if(!ocrData.length) return;
 
   //FIND ALL THE TESTS FROM DB
@@ -19,20 +19,17 @@ export const ocrProccesing = async(ocrData: any) => {
   //FIND ALL BIO MARKERS
   //TODO: FOR @Vijay; We only need the biomarkers after the test name matches. 
   const bioMarker = await BioMarker.find({isDeleted: false});
-    ////console.log("testName", (testName as any), (bioMarker as any).data)
+  
     let ocrObj: any = {};
-    
-    //SORT THE OCR DATA BY Y COORDINATE- By default average of coordinates
 
     //Get the full text from Ocr data
     let fullText = ocrData[0].textAnnotations[0];
-    // ////console.log("fullText", fullText)
-    // ////console.log("ocrData[0].textAnnotations", ocrData[0].textAnnotations)
+
     //Get the working data from Ocr data
     let workingData = [... ocrData[0].textAnnotations];
     workingData.splice(0,1);  
     
-    //FUNCTION TO GET THE AVERAGE COORDINATE
+    //FUNCTION TO GET THE AVERAGE COORDINATES
     function averageCoord(boundingPoly: { vertices: any[]; }, xy: string){
         return (boundingPoly.vertices.map((item)=>item[xy]).reduce((total, currentValue)=> total+currentValue, 0)/boundingPoly.vertices.length);
     
@@ -112,7 +109,6 @@ export const ocrProccesing = async(ocrData: any) => {
 
       //Function for extracting all biomarkers from Ocr data for the test
 
-      //TODO: Set property name of the biomarker by the name from the DB and not the name in the document
       // approach 2
 
       async function extractOcrDataBioMarkerNew(propertyName: string){
@@ -403,6 +399,8 @@ export const ocrProccesing = async(ocrData: any) => {
         }
       }
       
+      console.log(matches);
+      console.log(matches.length);
 
         let bioMarkerDataArr = [];
         
@@ -423,7 +421,7 @@ export const ocrProccesing = async(ocrData: any) => {
                 withinY.sort(function(a, b) {
                   return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x'); 
               });
-              console.log(`within y for ${matches[i][0]}`,withinY);
+              // console.log(`within y for ${matches[i][0]}`,withinY);
 
               // if(mappingObj[matches[i][0].description]){
               //   bioMarkerDataObj[mappingObj[matches[i][0].description]] = innerObj;
@@ -511,18 +509,18 @@ export const ocrProccesing = async(ocrData: any) => {
     
 
     
-      extractOcrData(genderArr, "gender", 50, 10)
-      extractOcrData(labs, "lab", 150, 10)
+      // extractOcrData(genderArr, "gender", 50, 10)
+      // extractOcrData(labs, "lab", 150, 10)
       // extractOcrData(namesArr, "name", 150, 10)
-      extractOcrData(ageArr, "age", 100, 10)
-      extractOcrData(datesArr, 'date' ,100, 10);
+      // extractOcrData(ageArr, "age", 100, 10)
+      // extractOcrData(datesArr, 'date' ,100, 10);
     
-      await extractOcrDataNew("name")
-      await extractOcrDataBioMarkerNew("bioMarker")
+      await extractOcrDataNew("name");
+      // await extractOcrDataBioMarkerNew("bioMarker");
     
       // //console.log(ocrObj)
       // //console.log(ocrObj.bioMarker)
 
       //console.log('Time Elapsed:', performance.now()-time);
-      return ocrObj
+      // return ocrObj
 }

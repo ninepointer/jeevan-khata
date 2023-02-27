@@ -38,14 +38,14 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
 
   // upload the file to S3
   let dataFromS3 = {};
- s3.upload(params, (error: any, data: any) => {
-    if (error) {
-      return res.status(502).send({ error });
-    }
-    dataFromS3 = data;
-    // console.log("data", dataFromS3)
-    res.send({  dataFromS3 });
-  });
+//  s3.upload(params, (error: any, data: any) => {
+//     if (error) {
+//       return res.status(502).send({ error });
+//     }
+//     dataFromS3 = data;
+//     // console.log("data", dataFromS3)
+//     res.send({  dataFromS3 });
+//   });
   let fileType;
   let buffer;
   if(file.mimetype == 'application/pdf' ){
@@ -64,7 +64,7 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   let ocrData = await ocrProccesing(result);
   // // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
   // console.log(ocrData, (dataFromS3 as any).Location);
-  // await saveOcrData(ocrData, (dataFromS3 as any).Location)
+  // await saveOcrData(ocrData, (req as any).user, (dataFromS3 as any).Location)
   // return ocrData;
 });
 

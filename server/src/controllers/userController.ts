@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
+import multer from 'multer';
+import sharp from 'sharp'; 
 import User from '../models/User';
 import {createCustomError} from '../errors/customError';
 import {signToken} from '../utils/authUtil';
@@ -6,6 +8,8 @@ import { promisify } from 'util';
 import jwt from 'jsonwebtoken';
 import user from '../models/User';
 import CatchAsync from '../middlewares/CatchAsync'
+
+
 
 interface User{
     firstName: string,
@@ -20,6 +24,20 @@ interface User{
     role: string,
     address: string
 }
+
+const filterObj = <T extends object>(obj: T, ...allowedFields: (keyof T| string)[]): Partial<T> => {
+    const newObj: Partial<T> = {};
+    Object.keys(obj).forEach((el) => {
+      if (allowedFields.includes(el as keyof T) && 
+      (obj[el as keyof T] !== null && 
+        obj[el as keyof T] !== undefined && 
+        obj[el as keyof T] !== '')) { 
+            newObj[el as keyof T] = obj[el as keyof T];}
+    });
+    return newObj;
+  };
+  
+  
 
 export const createUser =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, address }: User = req.body;
@@ -99,6 +117,55 @@ export const deleteUser = CatchAsync(async (req:Request, res: Response, next:Nex
         const userDetail = await User.updateOne(filter, update);
         console.log("this is userdetail", userDetail);
         res.status(201).json({massage : "data delete succesfully"});
+    } catch (e){
+        res.status(500).json({error:"Failed to delete data"});
+    }    
+    
+});
+
+export const getUser = CatchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = (req as any).user._id;
+
+    const user = await User.findOne({_id: id, isDeleted: false}).select('-__v -password')
+    .populate({path : "role", select: "roleName"});
+
+    if(!user) return next(createCustomError('No such user found.', 404));
+    
+    res.status(200).json({status:"Success", data: user});
+
+});
+
+export const editMe = CatchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = (req as any).user._id;
+    const{firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, address }: User = req.body;
+    const user = await User.findOne({_id: id, isDeleted: false}).select('-__v -password -role');
+
+    if(!user) return next(createCustomError('No such user found.', 404));
+
+    const filteredBody = filterObj(req.body, 'firstName', 'lastName', 'email', 'mobile', 'profilePhoto', 'city', 'state', 'dateOfBirth', 'lastModifiedBy', 'address', 'gender');
+    
+    filteredBody.lastModifiedBy = id;
+    if (req.file) filteredBody.profilePhoto = req.file.filename;
+
+    
+    const updatedUser = await User.findByIdAndUpdate(id, filteredBody, {
+        new: true,
+        runValidators: true
+      }).select('-__v -password -role');
+    res.status(200).json({status: "Success", data:updatedUser});
+
+});
+
+export const deleteMe = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const id = (req as any).user._id;
+
+    const filter = { _id: id };
+    const update = { $set: { isDeleted: true } };
+
+    try{
+        const userDetail = await User.updateOne(filter, update);
+        console.log("this is userdetail", userDetail);
+        res.status(201).json({message : "data deleted succesfully"});
     } catch (e){
         res.status(500).json({error:"Failed to delete data"});
     }    

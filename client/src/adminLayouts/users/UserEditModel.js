@@ -157,7 +157,7 @@ async function onSave() {
     console.log(formstate)
     const {firstName, lastName, email, mobile, gender, dateOfBirth, city, state, aadhaarCardNumber, role, address} = formstate;
 
-    const res = await fetch(`${baseUrl}api/v1/users/update/${id}`, {
+    const res = await fetch(`${baseUrl}api/v1/users/${id}`, {
         method: "PUT",
         headers: {
             "Accept": "application/json",
@@ -188,8 +188,8 @@ async function onSave() {
 
 async function Ondelete(){
   console.log(editData)
-  const res = await fetch(`${baseUrl}api/v1/users/delete/${id}`, {
-      method: "PATCH",
+  const res = await fetch(`${baseUrl}api/v1/users/${id}`, {
+      method: "DELETE",
   });
 
 
