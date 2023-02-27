@@ -22,7 +22,8 @@ exports.createBioMarker = (0, CatchAsync_1.default)((req, res, next) => __awaite
     if (yield BioMarker_1.default.findOne({ name: name, isDeleted: false }))
         return next((0, customError_1.createCustomError)('Bio Marker already exists. Edit the existing one.', 403));
     //Check if any of the aliases exist
-    if (alias) {
+    if (alias && (alias.length > 0 && (alias.length != 1 || alias[0] != ''))) {
+        console.log('alias', alias);
         if (yield BioMarker_1.default.findOne({ alias: { $in: [...alias, name] } }))
             return next((0, customError_1.createCustomError)('Bio Marker already exists. Edit the existing one.', 403));
     }

@@ -36,6 +36,8 @@ const upload = (0, multer_1.default)({
 const uploadInLocal = (0, multer_1.default)({ dest: "uploads/" });
 console.log("upload", upload, uploadInLocal);
 router.route('/').post(upload.single('file'), authController_1.protect, uploadController_1.getUploads);
+router.route('/test').get(uploadController_1.uploadTest);
+router.route('/deskewTest/').get(uploadController_1.deskewTest);
 // router.route('/update/:id').put(editLabTest); , uploadInLocal.single('file')
 // router.route('/delete/:id').patch(deleteLabTest);
 exports.default = router;

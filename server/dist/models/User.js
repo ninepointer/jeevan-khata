@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const uuid_1 = require("uuid");
+const crypto_1 = __importDefault(require("crypto"));
 const userSchema = new mongoose_1.default.Schema({
     firstName: {
         type: String,
@@ -49,12 +50,13 @@ const userSchema = new mongoose_1.default.Schema({
     },
     email: {
         type: String,
-        required: true
+        // required : true
     },
     mobile: {
         type: String,
-        required: true
+        // required : true
     },
+    authId: String,
     gender: {
         type: String,
         // required : true
@@ -100,6 +102,7 @@ const userSchema = new mongoose_1.default.Schema({
         default: Date.now(),
         // required : true
     },
+    profilePhoto: String,
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
@@ -124,6 +127,11 @@ const userSchema = new mongoose_1.default.Schema({
         // default: false,
         // required : true
     },
+    referralCode: String,
+    referredBy: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
+    },
     jeevanKhataId: {
         type: String,
         // required : true
@@ -132,6 +140,18 @@ const userSchema = new mongoose_1.default.Schema({
         type: String,
         // required : true
     },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    documents: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'uploadedData' }],
+    familyTree: [{
+            relation: {
+                type: String,
+            },
+            profile: {
+                type: mongoose_1.default.Schema.Types.ObjectId,
+                ref: 'User',
+            }
+        }],
 });
 //check password
 userSchema.methods.correctPassword = function (candidatePassword, userPassword) {
@@ -156,6 +176,10 @@ userSchema.pre('save', function (next) {
     ;
     this.lastModifiedOn = Date.now();
     this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+userSchema.pre('findOneAndUpdate', function (next) {
+    this.set({ lastModifiedOn: Date.now() });
     next();
 });
 //Hashing user password  
@@ -204,6 +228,16 @@ userSchema.pre('save', function (next) {
 //     // .catch(err => next(err));
 //     next();
 // });
+userSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto_1.default.randomBytes(32).toString('hex');
+    this.passwordResetToken = crypto_1.default
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+    // console.log({ resetToken }, this.passwordResetToken);
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+    return resetToken;
+};
 const user = mongoose_1.default.model("User", userSchema);
 exports.default = user;
 // TODO : role not updating in role, modifiedby createdby not updating,

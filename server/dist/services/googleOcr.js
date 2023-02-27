@@ -32,7 +32,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.detectTextFromUrl = exports.detectText = void 0;
 const vision = __importStar(require("@google-cloud/vision"));
+// import { getJsonDataFromGCS } from './googleStorage';
 // const CONFIG= {
 //     credentials: {
 //         private_key: JSON.parse(process.env.GCV_PRIVATE_KEY!),
@@ -67,4 +69,61 @@ const detectText = (filePath, fileType) => __awaiter(void 0, void 0, void 0, fun
         console.log(err);
     }
 });
-exports.default = detectText;
+exports.detectText = detectText;
+const detectTextFromUrl = (filePath, fileType) => __awaiter(void 0, void 0, void 0, function* () {
+    let result;
+    try {
+        result = yield client.textDetection(filePath);
+        console.log(result.length);
+        return result;
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports.detectTextFromUrl = detectTextFromUrl;
+// export const detectDocumentText = async(fileName: any, fileType: string) => {
+//    // Imports the Google Cloud client libraries
+// // Creates a client
+// const client = new vision.v1.ImageAnnotatorClient(CONFIGX);
+// /**
+//  * TODO(developer): Uncomment the following lines before running the sample.
+//  */
+// // Bucket where the file resides
+// const bucketName = 'jk-test-docs';
+// // Path to PDF file within bucket
+// // The folder to store the results
+// const outputPrefix = 'results';
+// const gcsSourceUri = `gs://${bucketName}/${fileName}`;
+// const gcsDestinationUri = `gs://${bucketName}/${outputPrefix}/`;
+// const inputConfig = {
+//   // Supported mime_types are: 'application/pdf' and 'image/tiff'
+//   mimeType: 'application/pdf',
+//   gcsSource: {
+//     uri: gcsSourceUri,
+//   },
+// };
+// const outputConfig = {
+//   gcsDestination: {
+//     uri: gcsDestinationUri,
+//   },
+// };
+// const features = [{type: 'DOCUMENT_TEXT_DETECTION'}];
+// const request = {
+//   requests: [
+//     {
+//       inputConfig: inputConfig,
+//       features: features,
+//       outputConfig: outputConfig,
+//     },
+//   ],
+// };
+// const [operation]:any = await client.asyncBatchAnnotateFiles(request as any);
+// const [filesResponse] = await operation.promise();
+// const destinationUri =
+//   filesResponse.responses[0].outputConfig.gcsDestination.uri;
+// console.log('Json saved to: ' + destinationUri);
+// // const data = await getJsonDataFromGCS(fileName, bucketName);
+// return data;
+// }
+// export default {detectText, detectTextFromUrl};
