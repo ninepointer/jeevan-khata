@@ -1,6 +1,6 @@
 import express, {Router} from 'express';
 import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid, phoneLogin, forgotPassword, resetPassword, externalLogin, googleLogin} from '../controllers/authController';
-import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe} from '../controllers/userController';
+import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe, uploadToS3, resizePhoto, uploadMulter} from '../controllers/userController';
 
 const router:Router = express.Router();
 
@@ -17,6 +17,7 @@ router.route('/phoneLogin').post(phoneLogin);
 router.route('/loginExternal').post(externalLogin);
 router.route('/googleLogin').post(googleLogin);
 
+router.route('/uploadPhoto').patch(protect, uploadMulter, resizePhoto, uploadToS3, editMe);
 
 router.route('/logindetail').get(protect, getUserDetailAfterRefresh);
 

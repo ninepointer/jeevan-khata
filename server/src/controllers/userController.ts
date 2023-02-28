@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import sharp from 'sharp'; 
+import AWS from "aws-sdk";
 import User from '../models/User';
 import {createCustomError} from '../errors/customError';
 import {signToken} from '../utils/authUtil';
@@ -8,6 +9,7 @@ import { promisify } from 'util';
 import jwt from 'jsonwebtoken';
 import user from '../models/User';
 import CatchAsync from '../middlewares/CatchAsync'
+import { Callback } from 'mongoose';
 
 
 
@@ -35,6 +37,71 @@ const filterObj = <T extends object>(obj: T, ...allowedFields: (keyof T| string)
             newObj[el as keyof T] = obj[el as keyof T];}
     });
     return newObj;
+  };
+  
+const storage = multer.memoryStorage();
+const fileFilter = (req: Request, file: Express.Multer.File, cb:any) => {
+if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+} else {
+    cb(new Error("Invalid file type"), false);
+}
+}
+const upload = multer({ storage, fileFilter }).single("profilePhoto");
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
+
+export const uploadMulter = upload;
+
+export const resizePhoto = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.file) {
+      // no file uploaded, skip to next middleware
+      console.log('no file');
+      next();
+      return;
+    }
+    sharp(req.file.buffer).resize({ width: 300, height: 300 }).toBuffer()
+    .then((resizedImageBuffer) => {
+      req.file!.buffer = resizedImageBuffer;
+      next();
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({ message: "Error resizing photo" });
+    });
+}; 
+
+export const uploadToS3 = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.file) {
+      // no file uploaded, skip to next middleware
+      next();
+      return;
+    }
+  
+    // create S3 upload parameters
+    const key = `users/${(req as any).user.firstName + (req as any).user.lastName + (req as any).user.jeevanKhataId }/photos/profilePhotos/${(Date.now()) + req.file.originalname}`;
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: key,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+      ACL: 'public-read',
+    };
+  
+    // upload image to S3 bucket
+    
+    s3.upload((params as any)).promise()
+      .then((s3Data) => {
+        console.log('file uploaded');
+        (req as any).profilePhotoUrl = s3Data.Location;
+        next();
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send({ message: "Error uploading photo to S3" });
+      });
   };
   
   
@@ -145,7 +212,7 @@ export const editMe = CatchAsync(async (req: Request, res: Response, next: NextF
     const filteredBody = filterObj(req.body, 'firstName', 'lastName', 'email', 'mobile', 'profilePhoto', 'city', 'state', 'dateOfBirth', 'lastModifiedBy', 'address', 'gender');
     
     filteredBody.lastModifiedBy = id;
-    if (req.file) filteredBody.profilePhoto = req.file.filename;
+    if (req.file) filteredBody.profilePhoto = (req as any).profilePhotoUrl;
 
     
     const updatedUser = await User.findByIdAndUpdate(id, filteredBody, {

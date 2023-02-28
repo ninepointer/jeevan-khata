@@ -12,7 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = void 0;
+exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
+const multer_1 = __importDefault(require("multer"));
+const sharp_1 = __importDefault(require("sharp"));
+const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const User_1 = __importDefault(require("../models/User"));
 const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
@@ -28,6 +31,67 @@ const filterObj = (obj, ...allowedFields) => {
     });
     return newObj;
 };
+const storage = multer_1.default.memoryStorage();
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+        cb(null, true);
+    }
+    else {
+        cb(new Error("Invalid file type"), false);
+    }
+};
+const upload = (0, multer_1.default)({ storage, fileFilter }).single("profilePhoto");
+const s3 = new aws_sdk_1.default.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
+exports.uploadMulter = upload;
+const resizePhoto = (req, res, next) => {
+    if (!req.file) {
+        // no file uploaded, skip to next middleware
+        console.log('no file');
+        next();
+        return;
+    }
+    (0, sharp_1.default)(req.file.buffer).resize({ width: 300, height: 300 }).toBuffer()
+        .then((resizedImageBuffer) => {
+        req.file.buffer = resizedImageBuffer;
+        next();
+    })
+        .catch((err) => {
+        console.error(err);
+        res.status(500).send({ message: "Error resizing photo" });
+    });
+};
+exports.resizePhoto = resizePhoto;
+const uploadToS3 = (req, res, next) => {
+    if (!req.file) {
+        // no file uploaded, skip to next middleware
+        next();
+        return;
+    }
+    // create S3 upload parameters
+    const key = `users/${req.user.firstName + req.user.lastName + req.user.jeevanKhataId}/photos/profilePhotos/${(Date.now()) + req.file.originalname}`;
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: key,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+        ACL: 'public-read',
+    };
+    // upload image to S3 bucket
+    s3.upload(params).promise()
+        .then((s3Data) => {
+        console.log('file uploaded');
+        req.profilePhotoUrl = s3Data.Location;
+        next();
+    })
+        .catch((err) => {
+        console.error(err);
+        res.status(500).send({ message: "Error uploading photo to S3" });
+    });
+};
+exports.uploadToS3 = uploadToS3;
 exports.createUser = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { firstName, lastName, gender, dateOfBirth, email, password, mobile, city, state, address } = req.body;
     console.log("User :", req.user);
@@ -114,7 +178,7 @@ exports.editMe = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0,
     const filteredBody = filterObj(req.body, 'firstName', 'lastName', 'email', 'mobile', 'profilePhoto', 'city', 'state', 'dateOfBirth', 'lastModifiedBy', 'address', 'gender');
     filteredBody.lastModifiedBy = id;
     if (req.file)
-        filteredBody.profilePhoto = req.file.filename;
+        filteredBody.profilePhoto = req.profilePhotoUrl;
     const updatedUser = yield User_1.default.findByIdAndUpdate(id, filteredBody, {
         new: true,
         runValidators: true
