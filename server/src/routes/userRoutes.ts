@@ -1,6 +1,8 @@
 import express, {Router} from 'express';
-import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid, phoneLogin, forgotPassword, resetPassword, externalLogin, googleLogin} from '../controllers/authController';
-import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe, uploadToS3, resizePhoto, uploadMulter} from '../controllers/userController';
+import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid, phoneLogin, 
+    forgotPassword, resetPassword, externalLogin, googleLogin} from '../controllers/authController';
+import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe,
+     uploadToS3, resizePhoto, uploadMulter, createFamilyMember} from '../controllers/userController';
 
 const router:Router = express.Router();
 
@@ -11,7 +13,6 @@ router.route('/me').get(protect, getUser).patch(protect, editMe).delete(protect,
 router.route('/login').post(login);
 router.route('/logout').get(logout);
 router.route('/signup').post(signup);
-router.route('/:id').put(editUser).delete(deleteUser);
 router.route('/isTokenValid').get(isTokenValid);
 router.route('/phoneLogin').post(phoneLogin);
 router.route('/loginExternal').post(externalLogin);
@@ -20,7 +21,8 @@ router.route('/googleLogin').post(googleLogin);
 router.route('/uploadPhoto').patch(protect, uploadMulter, resizePhoto, uploadToS3, editMe);
 
 router.route('/logindetail').get(protect, getUserDetailAfterRefresh);
-
+router.route('/familyTree').post(createFamilyMember);
+router.route('/:id').put(editUser).delete(deleteUser);
 
 export default router;
 

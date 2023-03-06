@@ -177,21 +177,24 @@ export const googleLogin = async (req: Request, res:Response, next: NextFunction
 export const signup = async (req: Request, res:Response, next: NextFunction) =>{
 
     const {email, password, passwordConfirm, mobile, firstName, lastName }: UserCred = req.body;
+    
+    if(await User.findOne({email})) return next(createCustomError('User already exists. Please log in.', 400));
 
     const newUser = await User.create({
         email,
         password,
         firstName,
-        lastName
+        lastName,
+        mobile,
+        isOnBoarded: true
     });
+
 
     const token = signToken(String(newUser._id));
     res.status(200).json({
         status: 'success',
         token,
-        data: {
-        user: newUser,
-        },
+        data:newUser,
     });
         
 }

@@ -12,13 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
+exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
 const multer_1 = __importDefault(require("multer"));
 const sharp_1 = __importDefault(require("sharp"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const User_1 = __importDefault(require("../models/User"));
 const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
+const userHelper_1 = require("../helpers/userHelper");
 const filterObj = (obj, ...allowedFields) => {
     const newObj = {};
     Object.keys(obj).forEach((el) => {
@@ -179,6 +180,8 @@ exports.editMe = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0,
     filteredBody.lastModifiedBy = id;
     if (req.file)
         filteredBody.profilePhoto = req.profilePhotoUrl;
+    if (!user.isOnBoarded)
+        filteredBody.isOnBoarded = true;
     const updatedUser = yield User_1.default.findByIdAndUpdate(id, filteredBody, {
         new: true,
         runValidators: true
@@ -197,4 +200,38 @@ exports.deleteMe = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 
     catch (e) {
         res.status(500).json({ error: "Failed to delete data" });
     }
+}));
+exports.createFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { mobile, relation } = req.body;
+    // console.log("User :",(req as any).user)
+    let loggedInUser = req.user;
+    //Check for required fields 
+    if (!(mobile))
+        return next((0, customError_1.createCustomError)('Mobile Number is required.', 401));
+    let familyMember = {};
+    //Check if user exists
+    const existingUser = yield User_1.default.findOne({ isDeleted: false, mobile });
+    if (existingUser) {
+        let existingUserId = existingUser._id;
+        familyMember = { relation, profile: existingUserId };
+        let { reciprocalRelation, reciprocalGender } = (0, userHelper_1.getReciprocalRelation)(relation, loggedInUser === null || loggedInUser === void 0 ? void 0 : loggedInUser.gender);
+        let reciprocalFamilymember = { reciprocalRelation, profile: loggedInUser._id };
+        loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
+        existingUser.familyTree = [...existingUser.familyTree, reciprocalFamilymember];
+        yield loggedInUser.save({ validateBeforeSave: false });
+        yield existingUser.save({ validateBeforeSave: false });
+        return res.status(200).json({ status: 'success', message: 'Added family Member successfully', data: loggedInUser });
+    }
+    const newUser = yield User_1.default.create({ mobile });
+    if (!newUser)
+        return next((0, customError_1.createCustomError)('Couldn\'t create user', 400));
+    familyMember = { relation, profile: newUser._id };
+    let { reciprocalRelation, reciprocalGender } = (0, userHelper_1.getReciprocalRelation)(relation, loggedInUser === null || loggedInUser === void 0 ? void 0 : loggedInUser.gender);
+    let reciprocalFamilymember = { reciprocalRelation, profile: loggedInUser._id };
+    loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
+    newUser.familyTree = [...newUser.familyTree, reciprocalFamilymember];
+    newUser.gender = reciprocalGender;
+    yield newUser.save();
+    yield loggedInUser.save();
+    res.status(200).json({ status: "success", message: 'Added family Member successfully', data: loggedInUser });
 }));

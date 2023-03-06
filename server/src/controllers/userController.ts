@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken';
 import user from '../models/User';
 import CatchAsync from '../middlewares/CatchAsync'
 import { Callback } from 'mongoose';
+import {getReciprocalRelation} from '../helpers/userHelper';
 
 
 
@@ -213,6 +214,7 @@ export const editMe = CatchAsync(async (req: Request, res: Response, next: NextF
     
     filteredBody.lastModifiedBy = id;
     if (req.file) filteredBody.profilePhoto = (req as any).profilePhotoUrl;
+    if(!user.isOnBoarded)filteredBody.isOnBoarded = true;
 
     
     const updatedUser = await User.findByIdAndUpdate(id, filteredBody, {
@@ -236,5 +238,43 @@ export const deleteMe = CatchAsync(async (req:Request, res: Response, next:NextF
     } catch (e){
         res.status(500).json({error:"Failed to delete data"});
     }    
+    
+});
+
+export const createFamilyMember =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const{mobile, relation} = req.body;
+    // console.log("User :",(req as any).user)
+    let loggedInUser = (req as any).user;
+    //Check for required fields 
+    if(!(mobile))return next(createCustomError('Mobile Number is required.', 401));
+    let familyMember ={};
+    //Check if user exists
+    const existingUser = await User.findOne({isDeleted: false, mobile});
+    if(existingUser){
+        let existingUserId =existingUser._id; 
+        familyMember = {relation, profile: existingUserId};
+        let {reciprocalRelation, reciprocalGender} = getReciprocalRelation(relation, loggedInUser?.gender);
+        let reciprocalFamilymember = {reciprocalRelation, profile: loggedInUser._id}
+        loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
+        existingUser.familyTree = [...existingUser.familyTree, reciprocalFamilymember];
+        await loggedInUser.save({validateBeforeSave:false});
+        await existingUser.save({validateBeforeSave:false});
+        return res.status(200).json({status:'success', message:'Added family Member successfully', data:loggedInUser});
+    }
+    const newUser = await User.create({mobile});
+    if(!newUser) return next(createCustomError('Couldn\'t create user', 400));
+
+    familyMember = {relation, profile: newUser._id};
+    let {reciprocalRelation, reciprocalGender} = getReciprocalRelation(relation, loggedInUser?.gender);
+    let reciprocalFamilymember = {reciprocalRelation, profile: loggedInUser._id};
+
+    loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
+    newUser.familyTree = [...newUser.familyTree, reciprocalFamilymember];
+    newUser.gender = reciprocalGender;
+
+    await newUser.save();
+    await loggedInUser.save();
+
+    res.status(200).json({status: "success", message: 'Added family Member successfully', data:loggedInUser});
     
 });

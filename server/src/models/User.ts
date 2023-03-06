@@ -105,6 +105,10 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
         type: String,
         // required : true
     },
+    isOnBoarded: {
+        type: Boolean,
+        default: false,
+    },
     passwordResetToken: String,
     passwordResetExpires: Date,
     documents: [{type:Schema.Types.ObjectId, ref: 'uploadedData'}],

@@ -14,11 +14,12 @@ router.route('/me').get(authController_1.protect, userController_1.getUser).patc
 router.route('/login').post(authController_1.login);
 router.route('/logout').get(authController_1.logout);
 router.route('/signup').post(authController_1.signup);
-router.route('/:id').put(userController_1.editUser).delete(userController_1.deleteUser);
 router.route('/isTokenValid').get(authController_1.isTokenValid);
 router.route('/phoneLogin').post(authController_1.phoneLogin);
 router.route('/loginExternal').post(authController_1.externalLogin);
 router.route('/googleLogin').post(authController_1.googleLogin);
 router.route('/uploadPhoto').patch(authController_1.protect, userController_1.uploadMulter, userController_1.resizePhoto, userController_1.uploadToS3, userController_1.editMe);
 router.route('/logindetail').get(authController_1.protect, authController_1.getUserDetailAfterRefresh);
+router.route('/familyTree').post(userController_1.createFamilyMember);
+router.route('/:id').put(userController_1.editUser).delete(userController_1.deleteUser);
 exports.default = router;
