@@ -242,7 +242,7 @@ export const deleteMe = CatchAsync(async (req:Request, res: Response, next:NextF
 });
 
 export const createFamilyMember =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    const{mobile, relation} = req.body;
+    const{mobile, relation, gender, email, firstName, lastName, dateOfBirth} = req.body;
     // console.log("User :",(req as any).user)
     let loggedInUser = (req as any).user;
     //Check for required fields 
@@ -261,7 +261,7 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
         await existingUser.save({validateBeforeSave:false});
         return res.status(200).json({status:'success', message:'Added family Member successfully', data:loggedInUser});
     }
-    const newUser = await User.create({mobile});
+    const newUser = await User.create({mobile, relation, gender, email, firstName, lastName, dateOfBirth});
     if(!newUser) return next(createCustomError('Couldn\'t create user', 400));
 
     familyMember = {relation, profile: newUser._id};
@@ -270,7 +270,7 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
 
     loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
     newUser.familyTree = [...newUser.familyTree, reciprocalFamilymember];
-    newUser.gender = reciprocalGender;
+    if(!gender) newUser.gender = reciprocalGender;
 
     await newUser.save();
     await loggedInUser.save();
@@ -278,3 +278,24 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
     res.status(200).json({status: "success", message: 'Added family Member successfully', data:loggedInUser});
     
 });
+
+//Get family members
+
+
+//Get family member documents
+
+//Only allow access to creator and authenticated user id.
+
+//canNotWrite: ['Shanu\'s objectid', 'Vimla\'s objectid']; 
+
+//Patch family members
+
+
+//Delete family members
+
+//Upload for family
+
+//if family member's object id is not in cannotWrite, allow else error permissions not given.
+
+
+
