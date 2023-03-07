@@ -3,6 +3,7 @@ import multer from 'multer';
 import sharp from 'sharp'; 
 import AWS from "aws-sdk";
 import User from '../models/User';
+import UploadedData from "../models/uploadedDataSchema";
 import {createCustomError} from '../errors/customError';
 import {signToken} from '../utils/authUtil';
 import { promisify } from 'util';
@@ -242,8 +243,8 @@ export const deleteMe = CatchAsync(async (req:Request, res: Response, next:NextF
 });
 
 export const createFamilyMember =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
-    const{mobile, relation, gender, email, firstName, lastName, dateOfBirth} = req.body;
-    // console.log("User :",(req as any).user)
+    const{mobile, relation, gender, email, firstName, lastName, dateOfBirth, createdBy} = req.body;
+    console.log("User :",(req as any).user)
     let loggedInUser = (req as any).user;
     //Check for required fields 
     if(!(mobile))return next(createCustomError('Mobile Number is required.', 401));
@@ -257,8 +258,10 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
         let reciprocalFamilymember = {reciprocalRelation, profile: loggedInUser._id}
         loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
         existingUser.familyTree = [...existingUser.familyTree, reciprocalFamilymember];
+
         await loggedInUser.save({validateBeforeSave:false});
         await existingUser.save({validateBeforeSave:false});
+        
         return res.status(200).json({status:'success', message:'Added family Member successfully', data:loggedInUser});
     }
     const newUser = await User.create({mobile, relation, gender, email, firstName, lastName, dateOfBirth});
@@ -271,6 +274,7 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
     loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
     newUser.familyTree = [...newUser.familyTree, reciprocalFamilymember];
     if(!gender) newUser.gender = reciprocalGender;
+    if(!createdBy) newUser.createdBy = loggedInUser._id;
 
     await newUser.save();
     await loggedInUser.save();
@@ -279,10 +283,48 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
     
 });
 
-//Get family members
+//Get family members  
+export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    let loggedInUser = (req as any).user;
+    let familyTree = loggedInUser.familyTree
+    console.log("familyTree", familyTree)
+    let allFamilyDataArr = [];
+    for(let i = 0; i <  familyTree.length; i++){
+        let pipeline = [{ $match: { _id: familyTree[i].profile} },
 
+        { $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
+        ]
+
+        let familyMemberData = await User.aggregate(pipeline);
+        console.log("familyMemberData", familyMemberData)
+        allFamilyDataArr.push(familyMemberData);
+        console.log("allFamilyDataArr", allFamilyDataArr)
+    }
+
+    res.status(200).json({status: "success", message: 'Getting family Member successfully', data:allFamilyDataArr});
+    
+});
 
 //Get family member documents
+
+export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    let {id} = req.params;
+    const particulerUser = await User.findOne({isDeleted: false, _id: id});
+
+    let loggedInUser = (req as any).user;
+    console.log("loggedInUser", loggedInUser)
+    let allFamilyDataArr = [];
+    for(let i = 0; i <  (particulerUser as any).documents.length; i++){
+        let pipeline = [{ $match: { _id: (particulerUser as any).documents[i]} }
+        ]
+
+        let familyMemberData = await UploadedData.aggregate(pipeline);
+        allFamilyDataArr.push(familyMemberData);
+    }
+
+    res.status(200).json({status: "success", message: 'Getting family Member Documents successfully', data:allFamilyDataArr});
+    
+});
 
 //Only allow access to creator and authenticated user id.
 

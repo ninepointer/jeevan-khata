@@ -516,11 +516,11 @@ export const ocrProccesing = async(ocrData: any) => {
       // extractOcrData(datesArr, 'date' ,100, 10);
     
       await extractOcrDataNew("name");
-      // await extractOcrDataBioMarkerNew("bioMarker");
+      await extractOcrDataBioMarkerNew("bioMarker");
     
       // //console.log(ocrObj)
       // //console.log(ocrObj.bioMarker)
 
       //console.log('Time Elapsed:', performance.now()-time);
-      // return ocrObj
+      return ocrObj
 }

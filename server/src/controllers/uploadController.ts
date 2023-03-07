@@ -63,8 +63,8 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   let result = await detectText(buffer, fileType);
   let ocrData = await ocrProccesing(result);
   // // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
-  // console.log(ocrData, (dataFromS3 as any).Location);
-  // await saveOcrData(ocrData, (req as any).user, (dataFromS3 as any).Location)
+  console.log("this is ocr data", ocrData, (dataFromS3 as any).Location, result);
+  await saveOcrData(ocrData, (req as any).user, (dataFromS3 as any).Location)
   // return ocrData;
 });
 

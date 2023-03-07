@@ -48,8 +48,10 @@ const FileUploader = ({Render}) => {
           'Content-Type': 'multipart/form-data'
         }
       });
+      console.log("if file uploaded before", data);
+
       alert('File uploaded successfully');
-      console.log(data);
+      console.log("if file uploaded", data);
     } catch (error) {
       console.log(error);
       alert('File upload failed');

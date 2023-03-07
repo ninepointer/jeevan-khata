@@ -212,36 +212,43 @@ export const logout = async (req: Request, res:Response, next: NextFunction) =>{
 
 export const protect = async (req: Request, res:Response, next: NextFunction): Promise<void> => {
 
-    let token: string;
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        token = req.headers.authorization.split(' ')[1];
-    }
-    // console.log((req ))
-    if (req.cookies) {
-        if(req.cookies.jwt) token = req.cookies.jwt;
-    }
+    try{
 
-    if (!token!) return next(createCustomError('You are not logged in. Please log in to continue.',401));
+        let token: string;
+        if (
+            req.headers.authorization &&
+            req.headers.authorization.startsWith('Bearer')
+        ) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+        // console.log((req ))
+        if (req.cookies) {
+            if(req.cookies.jwt) token = req.cookies.jwt;
+        }
     
-    const decoded = await promisifiedVerify(token, process.env.JWT_SECRET!);
+        if (!token!) return next(createCustomError('You are not logged in. Please log in to continue.',401));
+        
+        const decoded = await promisifiedVerify(token, process.env.JWT_SECRET!);
+    
+        // console.log(decoded);
+    
+        const freshUser = await User.findById(decoded._id);
+    
+        if(!freshUser){
+            return next(createCustomError('User no longer exixts.', 401));
+        }
+    
+        if(freshUser.changedPasswordAfter(decoded.iat)){
+            return next(createCustomError('Password was changed. Log in again.', 401));
+        }
+        (req as any).user = freshUser;
+        (req as any).token = token;
+        next();
+    
 
-    // console.log(decoded);
-
-    const freshUser = await User.findById(decoded._id);
-
-    if(!freshUser){
-        return next(createCustomError('User no longer exixts.', 401));
+    } catch(e){
+        throw new Error();
     }
-
-    if(freshUser.changedPasswordAfter(decoded.iat)){
-        return next(createCustomError('Password was changed. Log in again.', 401));
-    }
-    (req as any).user = freshUser;
-    (req as any).token = token;
-    next();
 }
 
 export const getUserDetailAfterRefresh = async (req: Request, res:Response, next: NextFunction) => {
@@ -279,7 +286,7 @@ export const isTokenValid = async(req: Request, res: Response, next: NextFunctio
     }
 }
 
-export const forgotPassword  = CatchAsync(async(req: Request, res: Response, next: NextFunction) => {
+export const forgotPassword: any  = CatchAsync(async(req: Request, res: Response, next: NextFunction) => {
     // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -313,7 +320,7 @@ export const forgotPassword  = CatchAsync(async(req: Request, res: Response, nex
   }
 });
 
-export const resetPassword  = CatchAsync(async(req: Request, res: Response, next: NextFunction) => {
+export const resetPassword: any  = CatchAsync(async(req: Request, res: Response, next: NextFunction) => {
     // 1) Get user based on the token
   const hashedToken = crypto
     .createHash('sha256')

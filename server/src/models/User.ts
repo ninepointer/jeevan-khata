@@ -71,7 +71,7 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
     createdBy:{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required : false
+        required : true
     },
     lastModifiedOn:{
         type: Date,
