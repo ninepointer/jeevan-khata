@@ -18,9 +18,9 @@ const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
 const User_1 = __importDefault(require("../models/User"));
 const saveOcrData = (ocrData, userReq, link) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("in save data func", ocrData);
-    const { name, age, gender, testName, lab, bioMarker } = ocrData;
-    console.log("bioMarker", bioMarker);
+    // console.log("in save data func", ocrData)
+    const { name, age, gender, testName, lab, bioMarker, date } = ocrData;
+    // console.log("bioMarker", bioMarker);
     //check if role exisits
     // if(await UploadedData.findOne({roleName})) return next(createCustomError('Role already exists. Please edit the existing role.', 401));
     const doc = yield uploadedDataSchema_1.default.create({
@@ -30,7 +30,8 @@ const saveOcrData = (ocrData, userReq, link) => __awaiter(void 0, void 0, void 0
         testName: testName,
         lab: lab,
         bioMarker: bioMarker,
-        link: link
+        link: link,
+        date: date
     });
     const user = yield User_1.default.findById(userReq._id);
     user.documents = [...user.documents, doc._id];

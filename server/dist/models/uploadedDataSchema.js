@@ -94,7 +94,10 @@ const uploadedDataSchema = new mongoose_1.default.Schema({
     bioMarker: [{
             type: Object,
             // required: true
-        }]
+        }],
+    date: {
+        type: String,
+    }
 });
 uploadedDataSchema.pre('save', function (next) {
     if (!this.uid) {

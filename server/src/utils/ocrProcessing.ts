@@ -552,10 +552,10 @@ export const ocrProccesing = async(ocrData: any) => {
     
 
     
-      // extractOcrData(genderArr, "gender", 50, 10)
-      extractOcrData(labs, "lab", 150, 10)
+      extractOcrData(genderArr, "gender", 50, 10)
+      // extractOcrData(labs, "lab", 150, 10)
       // extractOcrData(namesArr, "name", 150, 10)
-      // extractOcrData(ageArr, "age", 100, 10)
+      extractOcrData(ageArr, "age", 100, 10)
       // extractOcrData(datesArr, 'date' ,100, 10);
     
       await extractOcrDataNew("name", namesArr);

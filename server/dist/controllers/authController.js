@@ -191,30 +191,35 @@ const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.logout = logout;
 const protect = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    let token;
-    if (req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
+    try {
+        let token;
+        if (req.headers.authorization &&
+            req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+        // console.log((req ))
+        if (req.cookies) {
+            if (req.cookies.jwt)
+                token = req.cookies.jwt;
+        }
+        if (!token)
+            return next((0, customError_1.createCustomError)('You are not logged in. Please log in to continue.', 401));
+        const decoded = yield (0, authUtil_1.promisifiedVerify)(token, process.env.JWT_SECRET);
+        // console.log(decoded);
+        const freshUser = yield User_1.default.findById(decoded._id);
+        if (!freshUser) {
+            return next((0, customError_1.createCustomError)('User no longer exixts.', 401));
+        }
+        if (freshUser.changedPasswordAfter(decoded.iat)) {
+            return next((0, customError_1.createCustomError)('Password was changed. Log in again.', 401));
+        }
+        req.user = freshUser;
+        req.token = token;
+        next();
     }
-    // console.log((req ))
-    if (req.cookies) {
-        if (req.cookies.jwt)
-            token = req.cookies.jwt;
+    catch (e) {
+        throw new Error();
     }
-    if (!token)
-        return next((0, customError_1.createCustomError)('You are not logged in. Please log in to continue.', 401));
-    const decoded = yield (0, authUtil_1.promisifiedVerify)(token, process.env.JWT_SECRET);
-    // console.log(decoded);
-    const freshUser = yield User_1.default.findById(decoded._id);
-    if (!freshUser) {
-        return next((0, customError_1.createCustomError)('User no longer exixts.', 401));
-    }
-    if (freshUser.changedPasswordAfter(decoded.iat)) {
-        return next((0, customError_1.createCustomError)('Password was changed. Log in again.', 401));
-    }
-    req.user = freshUser;
-    req.token = token;
-    next();
 });
 exports.protect = protect;
 const getUserDetailAfterRefresh = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

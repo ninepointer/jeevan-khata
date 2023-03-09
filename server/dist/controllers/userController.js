@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
+exports.getFamilyMemberDocuments = exports.getFamilyMember = exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
 const multer_1 = __importDefault(require("multer"));
 const sharp_1 = __importDefault(require("sharp"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const User_1 = __importDefault(require("../models/User"));
+const uploadedDataSchema_1 = __importDefault(require("../models/uploadedDataSchema"));
 const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
 const userHelper_1 = require("../helpers/userHelper");
@@ -202,8 +203,8 @@ exports.deleteMe = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 
     }
 }));
 exports.createFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { mobile, relation } = req.body;
-    // console.log("User :",(req as any).user)
+    const { mobile, relation, gender, email, firstName, lastName, dateOfBirth, createdBy } = req.body;
+    console.log("User :", req.user);
     let loggedInUser = req.user;
     //Check for required fields 
     if (!(mobile))
@@ -222,7 +223,7 @@ exports.createFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awa
         yield existingUser.save({ validateBeforeSave: false });
         return res.status(200).json({ status: 'success', message: 'Added family Member successfully', data: loggedInUser });
     }
-    const newUser = yield User_1.default.create({ mobile });
+    const newUser = yield User_1.default.create({ mobile, relation, gender, email, firstName, lastName, dateOfBirth });
     if (!newUser)
         return next((0, customError_1.createCustomError)('Couldn\'t create user', 400));
     familyMember = { relation, profile: newUser._id };
@@ -230,8 +231,49 @@ exports.createFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awa
     let reciprocalFamilymember = { reciprocalRelation, profile: loggedInUser._id };
     loggedInUser.familyTree = [...loggedInUser.familyTree, familyMember];
     newUser.familyTree = [...newUser.familyTree, reciprocalFamilymember];
-    newUser.gender = reciprocalGender;
+    if (!gender)
+        newUser.gender = reciprocalGender;
+    if (!createdBy)
+        newUser.createdBy = loggedInUser._id;
     yield newUser.save();
     yield loggedInUser.save();
     res.status(200).json({ status: "success", message: 'Added family Member successfully', data: loggedInUser });
 }));
+//Get family members  
+exports.getFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let loggedInUser = req.user;
+    let familyTree = loggedInUser.familyTree;
+    // console.log("familyTree", familyTree)
+    let allFamilyDataArr = [];
+    for (let i = 0; i < familyTree.length; i++) {
+        let pipeline = [{ $match: { _id: familyTree[i].profile } },
+            { $project: { _id: 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1 } }
+        ];
+        let familyMemberData = yield User_1.default.aggregate(pipeline);
+        // console.log("familyMemberData", familyMemberData)
+        allFamilyDataArr.push(familyMemberData);
+        // console.log("allFamilyDataArr", allFamilyDataArr)
+    }
+    res.status(200).json({ status: "success", message: 'Getting family Member successfully', data: allFamilyDataArr });
+}));
+//Get family member documents
+exports.getFamilyMemberDocuments = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let { id } = req.params;
+    const particulerUser = yield User_1.default.findOne({ isDeleted: false, _id: id });
+    let loggedInUser = req.user;
+    // console.log("loggedInUser", loggedInUser)
+    let allFamilyDataArr = [];
+    for (let i = 0; i < particulerUser.documents.length; i++) {
+        let pipeline = [{ $match: { _id: particulerUser.documents[i] } }
+        ];
+        let familyMemberData = yield uploadedDataSchema_1.default.aggregate(pipeline);
+        allFamilyDataArr.push(familyMemberData);
+    }
+    res.status(200).json({ status: "success", message: 'Getting family Member Documents successfully', data: allFamilyDataArr });
+}));
+//Only allow access to creator and authenticated user id.
+//canNotWrite: ['Shanu\'s objectid', 'Vimla\'s objectid']; 
+//Patch family members
+//Delete family members
+//Upload for family
+//if family member's object id is not in cannotWrite, allow else error permissions not given.

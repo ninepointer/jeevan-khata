@@ -17,6 +17,7 @@ const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const googleOcr_1 = require("../services/googleOcr");
 const ocrProcessing_1 = require("../utils/ocrProcessing");
 const imageUtil_1 = require("../utils/imageUtil");
+const ocrDataController_1 = require("../controllers/ocrDataController");
 // CatchAsync
 const s3 = new aws_sdk_1.default.S3();
 exports.getUploads = ((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,8 +64,8 @@ exports.getUploads = ((req, res, next) => __awaiter(void 0, void 0, void 0, func
     let result = yield (0, googleOcr_1.detectText)(buffer, fileType);
     let ocrData = yield (0, ocrProcessing_1.ocrProccesing)(result);
     // // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
-    // console.log(ocrData, (dataFromS3 as any).Location);
-    // await saveOcrData(ocrData, (req as any).user, (dataFromS3 as any).Location)
+    // console.log("this is ocr data", ocrData, (dataFromS3 as any).Location, result);
+    yield (0, ocrDataController_1.saveOcrData)(ocrData, req.user, dataFromS3.Location);
     // return ocrData;
 }));
 const uploadTest = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
