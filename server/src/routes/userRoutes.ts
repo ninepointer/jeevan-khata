@@ -2,7 +2,7 @@ import express, {Router} from 'express';
 import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid, phoneLogin, 
     forgotPassword, resetPassword, externalLogin, googleLogin} from '../controllers/authController';
 import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe,
-     uploadToS3, resizePhoto, uploadMulter, createFamilyMember, getFamilyMember, getFamilyMemberDocuments} from '../controllers/userController';
+     uploadToS3, resizePhoto, uploadMulter, createFamilyMember, getFamilyMember, getFamilyMembers, getFamilyMemberDocuments} from '../controllers/userController';
 
 const router:Router = express.Router();
 
@@ -22,10 +22,10 @@ router.route('/uploadPhoto').patch(protect, uploadMulter, resizePhoto, uploadToS
 
 router.route('/logindetail').get(protect, getUserDetailAfterRefresh);
 
-router.route('/familyMember').get(protect, getFamilyMember);
-router.route('/familyMemberDocuments/:id').get(protect, getFamilyMemberDocuments);
+router.route('/familyMember/:id').get(protect, getFamilyMembers);
+router.route('/documents/:id').get(protect, getFamilyMemberDocuments);
 
-router.route('/familyTree').post(protect, createFamilyMember);
+router.route('/familyTree').post(protect, createFamilyMember).get(protect, getFamilyMembers);
 router.route('/:id').put(editUser).delete(deleteUser);
 
 export default router;

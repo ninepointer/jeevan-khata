@@ -284,15 +284,38 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
 });
 
 //Get family members  
-export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+export const getFamilyMembers =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     let loggedInUser = (req as any).user;
     let familyTree = loggedInUser.familyTree
-    // console.log("familyTree", familyTree)
+    console.log("familyTree", familyTree)
     let allFamilyDataArr = [];
     for(let i = 0; i <  familyTree.length; i++){
         let pipeline = [{ $match: { _id: familyTree[i].profile} },
 
-        { $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
+        //{ $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
+        ]
+
+        let familyMemberData = await User.aggregate(pipeline);
+        console.log("familyMemberData", familyMemberData)
+        allFamilyDataArr.push(familyMemberData);
+        // console.log("allFamilyDataArr", allFamilyDataArr)
+    }
+
+    res.status(200).json({status: "success", message: 'Getting family Member successfully', data:allFamilyDataArr});
+    
+});
+
+//Get family member
+export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    let loggedInUser = (req as any).user;
+    const {id} = req.params;
+    let familyTree = loggedInUser.familyTree
+    // console.log("familyTree", familyTree)
+    let allFamilyDataArr = [];
+    for(let i = 0; i <  familyTree.length; i++){
+        let pipeline = [{ $match: { _id: id} },
+
+        //{ $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
         ]
 
         let familyMemberData = await User.aggregate(pipeline);
