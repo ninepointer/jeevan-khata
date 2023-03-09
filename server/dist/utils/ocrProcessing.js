@@ -428,10 +428,10 @@ const ocrProccesing = (ocrData) => __awaiter(void 0, void 0, void 0, function* (
     const ageArr = ['age'];
     let genderArr = ['gender', 'sex'];
     let datesArr = ['date of report', 'date', 'reporting date', 'report date', 'reported'];
-    extractOcrData(genderArr, "gender", 50, 10);
+    // extractOcrData(genderArr, "gender", 50, 10)
     // extractOcrData(labs, "lab", 150, 10)
     // extractOcrData(namesArr, "name", 150, 10)
-    extractOcrData(ageArr, "age", 100, 10);
+    // extractOcrData(ageArr, "age", 100, 10)
     // extractOcrData(datesArr, 'date' ,100, 10);
     yield extractOcrDataNew("name", namesArr);
     yield extractOcrDataNew("date", datesArr);

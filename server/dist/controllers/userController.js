@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFamilyMemberDocuments = exports.getFamilyMember = exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
+exports.getFamilyMemberDocuments = exports.getFamilyMember = exports.getFamilyMembers = exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
 const multer_1 = __importDefault(require("multer"));
 const sharp_1 = __importDefault(require("sharp"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
@@ -240,14 +240,32 @@ exports.createFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awa
     res.status(200).json({ status: "success", message: 'Added family Member successfully', data: loggedInUser });
 }));
 //Get family members  
+exports.getFamilyMembers = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let loggedInUser = req.user;
+    let familyTree = loggedInUser.familyTree;
+    console.log("familyTree", familyTree);
+    let allFamilyDataArr = [];
+    for (let i = 0; i < familyTree.length; i++) {
+        let pipeline = [{ $match: { _id: familyTree[i].profile } },
+            //{ $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
+        ];
+        let familyMemberData = yield User_1.default.aggregate(pipeline);
+        console.log("familyMemberData", familyMemberData);
+        allFamilyDataArr.push(familyMemberData);
+        // console.log("allFamilyDataArr", allFamilyDataArr)
+    }
+    res.status(200).json({ status: "success", message: 'Getting family Member successfully', data: allFamilyDataArr });
+}));
+//Get family member
 exports.getFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let loggedInUser = req.user;
+    const { id } = req.params;
     let familyTree = loggedInUser.familyTree;
     // console.log("familyTree", familyTree)
     let allFamilyDataArr = [];
     for (let i = 0; i < familyTree.length; i++) {
-        let pipeline = [{ $match: { _id: familyTree[i].profile } },
-            { $project: { _id: 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1 } }
+        let pipeline = [{ $match: { _id: id } },
+            //{ $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
         ];
         let familyMemberData = yield User_1.default.aggregate(pipeline);
         // console.log("familyMemberData", familyMemberData)
