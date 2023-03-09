@@ -22,10 +22,12 @@ router.route('/uploadPhoto').patch(protect, uploadMulter, resizePhoto, uploadToS
 
 router.route('/logindetail').get(protect, getUserDetailAfterRefresh);
 
-router.route('/familyMember/:id').get(protect, getFamilyMembers);
-router.route('/documents/:id').get(protect, getFamilyMemberDocuments);
-
 router.route('/familyTree').post(protect, createFamilyMember).get(protect, getFamilyMembers);
+
+router.route('/familyTree/documents/:id').get(protect, getFamilyMemberDocuments);
+
+router.route('/familyTree/:id').get(protect, getFamilyMember);
+
 router.route('/:id').put(editUser).delete(deleteUser);
 
 export default router;
