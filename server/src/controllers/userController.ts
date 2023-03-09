@@ -287,7 +287,7 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
 export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     let loggedInUser = (req as any).user;
     let familyTree = loggedInUser.familyTree
-    console.log("familyTree", familyTree)
+    // console.log("familyTree", familyTree)
     let allFamilyDataArr = [];
     for(let i = 0; i <  familyTree.length; i++){
         let pipeline = [{ $match: { _id: familyTree[i].profile} },
@@ -296,9 +296,9 @@ export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next
         ]
 
         let familyMemberData = await User.aggregate(pipeline);
-        console.log("familyMemberData", familyMemberData)
+        // console.log("familyMemberData", familyMemberData)
         allFamilyDataArr.push(familyMemberData);
-        console.log("allFamilyDataArr", allFamilyDataArr)
+        // console.log("allFamilyDataArr", allFamilyDataArr)
     }
 
     res.status(200).json({status: "success", message: 'Getting family Member successfully', data:allFamilyDataArr});
@@ -312,7 +312,7 @@ export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Respo
     const particulerUser = await User.findOne({isDeleted: false, _id: id});
 
     let loggedInUser = (req as any).user;
-    console.log("loggedInUser", loggedInUser)
+    // console.log("loggedInUser", loggedInUser)
     let allFamilyDataArr = [];
     for(let i = 0; i <  (particulerUser as any).documents.length; i++){
         let pipeline = [{ $match: { _id: (particulerUser as any).documents[i]} }

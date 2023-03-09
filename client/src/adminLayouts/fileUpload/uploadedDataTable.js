@@ -80,6 +80,12 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
         </MDTypography>
       );
 
+    ocrDataObj.date = (
+      <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+        {elem.date}
+      </MDTypography>
+    );
+
 
     ocrDataObj.details = (
         <MDButton variant="Contained" color="info" fontWeight="medium">

@@ -70,7 +70,10 @@ const uploadedDataSchema = new mongoose.Schema({
     bioMarker: [{
         type: Object,
         // required: true
-    }] as unknown as Array<BioMarkerData>
+    }] as unknown as Array<BioMarkerData>,
+    date:{
+        type: String,
+    }
 
 })
 
