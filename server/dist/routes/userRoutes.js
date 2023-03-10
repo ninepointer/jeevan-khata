@@ -25,3 +25,4 @@ router.route('/familyTree/documents/:id').get(authController_1.protect, userCont
 router.route('/familyTree/:id').get(authController_1.protect, userController_1.getFamilyMember);
 router.route('/:id').put(userController_1.editUser).delete(userController_1.deleteUser);
 exports.default = router;
+//63cb64119ca217db92a03e01

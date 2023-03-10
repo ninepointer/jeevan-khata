@@ -106,7 +106,7 @@ const userSchema = new mongoose_1.default.Schema({
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        // required : true
     },
     lastModifiedOn: {
         type: Date,
@@ -182,6 +182,15 @@ userSchema.pre('save', function (next) {
     this.passwordChangedAt = Date.now() - 1000;
     next();
 });
+userSchema.pre('save', function (next) {
+    console.log("in the presave", this._id);
+    if (!this.createdBy) {
+        this.createdBy = this._id;
+        return next();
+    }
+    ;
+    next();
+});
 userSchema.pre('findOneAndUpdate', function (next) {
     this.set({ lastModifiedOn: Date.now() });
     next();
@@ -208,30 +217,6 @@ userSchema.pre('save', function (next) {
         next();
     });
 });
-//Updating the createdBy field   
-// userSchema.pre('save', async function( next){
-//     if(!this.createdBy){
-//         this.createdBy = this._id;
-//     }
-//     if(!this.lastModifiedBy){
-//       this.lastModifiedBy = this._id;
-//     }
-//     (this as any).lastModifiedOn = Date.now();
-//     next();  
-//   });
-// userSchema.post('save', async function(doc, next){
-//     if(!doc.createdBy){
-//         doc.createdBy = doc._id;
-//     }
-//     if(!doc.lastModifiedBy){
-//         doc.lastModifiedBy = doc._id;
-//     }
-//     doc.lastModifiedOn = Date.now();
-//     // doc.save()
-//     // .then(() => )
-//     // .catch(err => next(err));
-//     next();
-// });
 userSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto_1.default.randomBytes(32).toString('hex');
     this.passwordResetToken = crypto_1.default

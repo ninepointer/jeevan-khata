@@ -62,7 +62,7 @@ const phoneLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         res.status(201).json({
             status: 'success',
             token,
-            isNew: true,
+            isNew: true || !user.isOnBoarded,
             data: user,
         });
     }
@@ -76,7 +76,7 @@ const phoneLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         res.status(200).json({
             status: 'success',
             token,
-            isNew: false,
+            isNew: false || !user.isOnBoarded,
             data: user,
         });
     }
@@ -138,7 +138,7 @@ const googleLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         res.status(201).json({
             status: 'success',
             token,
-            isNew: true,
+            isNew: true || !user.isOnBoarded,
             data: user,
         });
     }
@@ -157,7 +157,7 @@ const googleLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         res.status(200).json({
             status: 'success',
             token,
-            isNew: false,
+            isNew: false || !user.isOnBoarded,
             data: user,
         });
     }

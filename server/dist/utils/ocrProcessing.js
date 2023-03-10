@@ -366,8 +366,8 @@ const ocrProccesing = (ocrData) => __awaiter(void 0, void 0, void 0, function* (
                     let yavg = averageCoord(matches[i][0].boundingPoly, 'y');
                     let xavg = averageCoord(matches[i][0].boundingPoly, 'x');
                     let withinY = sortedData.filter(obj => 
-                    // Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 
-                    Math.abs(averageCoord(obj.boundingPoly, 'y') - yavg) <= 10 && averageCoord(obj.boundingPoly, 'x') >= xavg && obj.description !== ":" && obj.description.toLowerCase() !== "mr." && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms.");
+                    // Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 obj.description.toLowerCase() !== "mr." &&
+                    Math.abs(averageCoord(obj.boundingPoly, 'y') - yavg) <= 10 && averageCoord(obj.boundingPoly, 'x') >= xavg && obj.description !== ":" && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms.");
                     withinY.sort(function (a, b) {
                         return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x');
                     });
@@ -379,8 +379,8 @@ const ocrProccesing = (ocrData) => __awaiter(void 0, void 0, void 0, function* (
                         ////console.log('coord.length', coord.length, 'elem', withinY[j].description);
                         if (coord.length > 0) {
                             if (withinY[j].boundingPoly.vertices[0].x - coord[1].x <= 8) {
-                                console.log(`${temp}` + `${withinY[j].description}`);
-                                temp += ` ${withinY[j].description}`;
+                                console.log(`${temp}` + ` ${withinY[j].description}`);
+                                temp += ` ${withinY[j].description}`; // temp = mr.prateek pawan
                                 coord = withinY[j].boundingPoly.vertices;
                             }
                             else {
@@ -394,7 +394,7 @@ const ocrProccesing = (ocrData) => __awaiter(void 0, void 0, void 0, function* (
                                     // elemNum++;
                                 }
                                 else {
-                                    temp = ` ${withinY[j].description}`;
+                                    temp = ` ${withinY[j].description}`; // temp = mr.prateek
                                     console.log(`this is temp in else: ${temp}`);
                                     ocrObj[propertyName] = temp.trim();
                                     coord = withinY[j].boundingPoly.vertices;
@@ -405,11 +405,16 @@ const ocrProccesing = (ocrData) => __awaiter(void 0, void 0, void 0, function* (
                         else {
                             ////console.log(`setting temp ${withinY[j].description}`);
                             // //console.log(`checking for ${lineOrder[elemNum]}`);
-                            temp = withinY[j].description;
+                            temp = withinY[j].description; // temp = name
                             coord = withinY[j].boundingPoly.vertices;
                         }
                     }
-                    // //console.log(`${lineOrder[elemNum]}: ${temp}`);
+                    console.log("temp.substring(0,3).toLowerCase()", temp.substring(0, 3).toLowerCase());
+                    if (temp.substring(0, 4).toLowerCase().includes("mr.")) {
+                        temp = temp.slice(4, temp.length);
+                    }
+                    console.log(`temp on end loop ${temp}`);
+                    ocrObj[propertyName] = temp.trim();
                     temp = '';
                     coord = [];
                 }
@@ -424,7 +429,7 @@ const ocrProccesing = (ocrData) => __awaiter(void 0, void 0, void 0, function* (
     let resultArr = ['result', 'observation'];
     let bioMarkersArr = ['Hemoglobin', "RBC", "HCT", "MCV", "MCH", "MCHC", "RDW-CV", "RDW-SD", "WBC", "NEU", "LYM", "MON", "EOS", "BAS", "LYM", "GRA", "PLT", "ESR"];
     let labs = ['labs', 'labrotories', 'hospital', 'diagnostics', 'lab'];
-    const namesArr = ['name', 'pt.name', 'pt. name', 'patient name', 'patient'];
+    const namesArr = ['patient', 'name', 'pt.name', 'pt. name', 'patient name'];
     const ageArr = ['age'];
     let genderArr = ['gender', 'sex'];
     let datesArr = ['date of report', 'date', 'reporting date', 'report date', 'reported'];
@@ -434,9 +439,9 @@ const ocrProccesing = (ocrData) => __awaiter(void 0, void 0, void 0, function* (
     // extractOcrData(ageArr, "age", 100, 10)
     // extractOcrData(datesArr, 'date' ,100, 10);
     yield extractOcrDataNew("name", namesArr);
-    yield extractOcrDataNew("date", datesArr);
-    yield extractHospitalName("lab", labs);
-    yield extractOcrDataBioMarkerNew("bioMarker");
+    // await extractOcrDataNew("date", datesArr);
+    // await extractHospitalName("lab", labs);
+    // await extractOcrDataBioMarkerNew("bioMarker");
     console.log(ocrObj);
     // //console.log(ocrObj.bioMarker)
     //console.log('Time Elapsed:', performance.now()-time);
