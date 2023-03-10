@@ -264,7 +264,7 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
         
         return res.status(200).json({status:'success', message:'Added family Member successfully', data:loggedInUser});
     }
-    const newUser = await User.create({mobile, relation, gender, email, firstName, lastName, dateOfBirth});
+    const newUser = await User.create({mobile, relation, gender, email, firstName, lastName, dateOfBirth, createdBy: loggedInUser._id});
     if(!newUser) return next(createCustomError('Couldn\'t create user', 400));
 
     familyMember = {relation, profile: newUser._id};
@@ -276,6 +276,7 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
     if(!gender) newUser.gender = reciprocalGender;
     if(!createdBy) newUser.createdBy = loggedInUser._id;
 
+    console.log("newUser", newUser, loggedInUser._id)
     await newUser.save();
     await loggedInUser.save();
 
@@ -287,18 +288,53 @@ export const createFamilyMember =CatchAsync(async (req:Request, res: Response, n
 export const getFamilyMembers =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     let loggedInUser = (req as any).user;
     let familyTree = loggedInUser.familyTree
-    console.log("familyTree", familyTree)
+    // console.log("familyTree", familyTree, loggedInUser)
     let allFamilyDataArr = [];
+    let getRelation ;
     for(let i = 0; i <  familyTree.length; i++){
+        let outerObj = {};
+        if(familyTree[i].profile == familyTree[i].profile){
+            getRelation = familyTree[i].relation;
+        }
+
         let pipeline = [{ $match: { _id: familyTree[i].profile} },
 
-        //{ $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
+        { $project: {_id : 1, firstName: 1, lastName: 1, documents: 1, profilePhoto: 1} }
         ]
 
-        let familyMemberData = await User.aggregate(pipeline);
-        console.log("familyMemberData", familyMemberData)
-        allFamilyDataArr.push(familyMemberData);
-        // console.log("allFamilyDataArr", allFamilyDataArr)
+        let familyMemberData: any = await User.aggregate(pipeline);
+        let familyMember: any = await User.findById(familyTree[i].profile)
+                                    .populate("documents", "createdOn");
+
+        let document = familyMember?.documents;
+        if(document){
+            document.sort((a: any,b: any)=>{
+                if(a.createdOn > b.createdOn){
+                    return -1
+                }
+                if(a.createdOn < b.createdOn){
+                    return 1
+                }
+                return 1
+            })
+        }
+        // console.log("documents", familyMember, familyTree[i].profile, document)
+
+        let totalDocument;
+        let lastUpload;
+        if(document){
+            totalDocument = familyMemberData[0]?.documents?.length;
+            lastUpload = document[0]?.createdOn;
+            delete familyMemberData[0]?.documents;
+        }
+
+
+        (outerObj as any).data = familyMemberData[0];
+        (outerObj as any).user_relation = getRelation;
+        (outerObj as any).no_of_documents = totalDocument;
+        (outerObj as any).lastUploaded = lastUpload;
+        if(familyMemberData.length !== 0)
+        allFamilyDataArr.push(outerObj);
     }
 
     res.status(200).json({status: "success", message: 'Getting family Member successfully', data:allFamilyDataArr});
@@ -310,18 +346,51 @@ export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next
     let loggedInUser = (req as any).user;
     const {id} = req.params;
     let familyTree = loggedInUser.familyTree
-    // console.log("familyTree", familyTree)
-    let allFamilyDataArr = [];
+    let getRelation ;
     for(let i = 0; i <  familyTree.length; i++){
-        let pipeline = [{ $match: { _id: id} },
+        if(familyTree[i].profile == id){
+            getRelation = familyTree[i].relation;
+        }
+    }
+    let allFamilyDataArr = [];
+    try{
 
-        //{ $project: {_id : 0, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1} }
-        ]
+        let outerObj = {};
+    
+        let familyMemberData: any = await User.findOne({ _id: id}).select({_id : 1, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1, profilePhoto: 1});
+        let getDocument: any = await User.findOne({ _id: id}).select({documents: 1});
 
-        let familyMemberData = await User.aggregate(pipeline);
-        // console.log("familyMemberData", familyMemberData)
-        allFamilyDataArr.push(familyMemberData);
-        // console.log("allFamilyDataArr", allFamilyDataArr)
+        console.log("familyMemberData", familyMemberData);
+        let totalDocument = getDocument?.documents?.length;
+        let lastUpload ;
+        for(let j = 0; j < getDocument?.documents?.length; j++){
+
+            let another_pipeline = [{ $match: { _id: getDocument?.documents[j]} },
+            
+            { $project: {createdOn: 1} },
+            // {$sort : {createdOn : -1}},
+            ]
+    
+            let uploadedData = await UploadedData.aggregate(another_pipeline);
+            console.log("uploadedData", uploadedData)
+            lastUpload = uploadedData[0].createdOn
+            if(lastUpload) break;
+        }
+
+        // delete getDocument.documents;
+
+        // console.log("getDocument", getDocument.documents);
+        (outerObj as any).data = familyMemberData;
+        (outerObj as any).user_relation = getRelation;
+        (outerObj as any).no_of_documents = totalDocument;
+        (outerObj as any).lastUploaded = lastUpload;
+        // delete (outerObj as any).data.documents;
+
+        allFamilyDataArr.push(outerObj);
+    
+
+    } catch (e){
+        console.log("error", e)
     }
 
     res.status(200).json({status: "success", message: 'Getting family Member successfully', data:allFamilyDataArr});
@@ -337,15 +406,49 @@ export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Respo
     let loggedInUser = (req as any).user;
     // console.log("loggedInUser", loggedInUser)
     let allFamilyDataArr = [];
-    for(let i = 0; i <  (particulerUser as any).documents.length; i++){
-        let pipeline = [{ $match: { _id: (particulerUser as any).documents[i]} }
+    for(let i = 0; i <  (particulerUser as any)?.documents?.length; i++){
+        let pipeline = [{ $match: { _id: (particulerUser as any)?.documents[i]} },
+        { $project: {_id : 1, name: 1, age: 1, gender: 1, lab: 1, createdOn: 1, bioMarker: 1} }
         ]
 
         let familyMemberData = await UploadedData.aggregate(pipeline);
-        allFamilyDataArr.push(familyMemberData);
+        allFamilyDataArr.push(familyMemberData[0]);
     }
 
-    res.status(200).json({status: "success", message: 'Getting family Member Documents successfully', data:allFamilyDataArr});
+    // res.status(200).json({status: "success", message: 'Getting family Member Documents successfully', data:allFamilyDataArr});
+
+    const dummyData: any = [
+        {
+            _id: "6406e79209f45809eac328fa",
+            name: "Prateek Pawan",
+            age: "30",
+            gender: "male",
+            lab: "Tata 1mg",
+            date: "2023-03-09",
+            bioMarker: [
+                {
+                    Haemoglobin: {
+                        result: "14.741.8",
+                        unit: "%",
+                        range: "40-50",
+                        comments: "Normal"
+                    }
+                },
+                {
+                    RBC: {
+                      result: "4.67",
+                      unit: "fLmillion",
+                      range: "83-101",
+                      comments: "High"
+                    }
+                },
+            ]
+        }
+
+        
+    ]
+    res.status(200).json({status: "success", message: 'Getting family Member Documents successfully', data:dummyData});
+
     
 });
 

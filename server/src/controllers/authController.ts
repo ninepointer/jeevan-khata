@@ -66,7 +66,7 @@ export const phoneLogin = async (req: Request, res:Response, next: NextFunction)
     res.status(201).json({
         status: 'success',
         token,
-        isNew: true,
+        isNew: true || !user.isOnBoarded,
         data: user,
     });
     }else{
@@ -80,7 +80,7 @@ export const phoneLogin = async (req: Request, res:Response, next: NextFunction)
         res.status(200).json({
             status: 'success',
             token,
-            isNew: false,
+            isNew: false || !user.isOnBoarded,
             data: user,
         });
     }
@@ -146,7 +146,7 @@ export const googleLogin = async (req: Request, res:Response, next: NextFunction
     res.status(201).json({
         status: 'success',
         token,
-        isNew: true,
+        isNew: true || !user.isOnBoarded,
         data: user,
     });
     }else{
@@ -167,7 +167,7 @@ export const googleLogin = async (req: Request, res:Response, next: NextFunction
         res.status(200).json({
             status: 'success',
             token,
-            isNew: false,
+            isNew: false || !user.isOnBoarded,
             data: user,
         });
     }
@@ -208,7 +208,6 @@ export const logout = async (req: Request, res:Response, next: NextFunction) =>{
 
         
 }
-
 
 export const protect = async (req: Request, res:Response, next: NextFunction): Promise<void> => {
 

@@ -547,7 +547,7 @@ export const ocrProccesing = async(ocrData: any) => {
 
 
     
-    
+      
       let rangesArr = ['range'];
       let unitsArr = ['units']
       let resultArr = ['result', 'observation'];
