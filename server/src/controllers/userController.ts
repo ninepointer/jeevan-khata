@@ -649,8 +649,6 @@ export const bioMarkerGraph =CatchAsync(async (req:Request, res: Response, next:
                 },
             ]
         }
-
-        
     ]
 
     res.status(200).json({status: "success", message: 'Getting family Member successfully', data:dummyObj});

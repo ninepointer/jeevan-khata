@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getReminders = exports.addReminder = exports.getFamilyMemberDocuments = exports.getFamilyMember = exports.getFamilyMembers = exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
+exports.bioMarkerGraph = exports.getVitals = exports.addVitals = exports.getReminders = exports.addReminder = exports.getAllFamilyMemberDocuments = exports.getFamilyMemberDocuments = exports.getFamilyMember = exports.getFamilyMembers = exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
 const multer_1 = __importDefault(require("multer"));
 const sharp_1 = __importDefault(require("sharp"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
@@ -290,7 +290,7 @@ exports.getFamilyMembers = (0, CatchAsync_1.default)((req, res, next) => __await
 }));
 //Get family member
 exports.getFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e, _f;
+    var _e;
     let loggedInUser = req.user;
     const { id } = req.params;
     let familyTree = loggedInUser.familyTree;
@@ -304,28 +304,31 @@ exports.getFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awaite
     try {
         let outerObj = {};
         let familyMemberData = yield User_1.default.findOne({ _id: id }).select({ _id: 1, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1, profilePhoto: 1 });
-        let getDocument = yield User_1.default.findOne({ _id: id }).select({ documents: 1 });
         console.log("familyMemberData", familyMemberData);
-        let totalDocument = (_e = getDocument === null || getDocument === void 0 ? void 0 : getDocument.documents) === null || _e === void 0 ? void 0 : _e.length;
+        let totalDocument;
         let lastUpload;
-        for (let j = 0; j < ((_f = getDocument === null || getDocument === void 0 ? void 0 : getDocument.documents) === null || _f === void 0 ? void 0 : _f.length); j++) {
-            let another_pipeline = [{ $match: { _id: getDocument === null || getDocument === void 0 ? void 0 : getDocument.documents[j] } },
-                { $project: { createdOn: 1 } },
-                // {$sort : {createdOn : -1}},
-            ];
-            let uploadedData = yield uploadedDataSchema_1.default.aggregate(another_pipeline);
-            console.log("uploadedData", uploadedData);
-            lastUpload = uploadedData[0].createdOn;
-            if (lastUpload)
-                break;
+        let familyMember = yield User_1.default.findById(id)
+            .populate("documents", "createdOn");
+        let document = familyMember === null || familyMember === void 0 ? void 0 : familyMember.documents;
+        if (document) {
+            totalDocument = document.length;
+            document.sort((a, b) => {
+                if (a.createdOn > b.createdOn) {
+                    return -1;
+                }
+                if (a.createdOn < b.createdOn) {
+                    return 1;
+                }
+                return 1;
+            });
         }
-        // delete getDocument.documents;
-        // console.log("getDocument", getDocument.documents);
+        if (document) {
+            lastUpload = (_e = document[0]) === null || _e === void 0 ? void 0 : _e.createdOn;
+        }
         outerObj.data = familyMemberData;
         outerObj.user_relation = getRelation;
         outerObj.no_of_documents = totalDocument;
         outerObj.lastUploaded = lastUpload;
-        // delete (outerObj as any).data.documents;
         allFamilyDataArr.push(outerObj);
     }
     catch (e) {
@@ -335,13 +338,13 @@ exports.getFamilyMember = (0, CatchAsync_1.default)((req, res, next) => __awaite
 }));
 //Get family member documents
 exports.getFamilyMemberDocuments = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g;
+    var _f;
     let { id } = req.params;
     const particulerUser = yield User_1.default.findOne({ isDeleted: false, _id: id });
     let loggedInUser = req.user;
     // console.log("loggedInUser", loggedInUser)
     let allFamilyDataArr = [];
-    for (let i = 0; i < ((_g = particulerUser === null || particulerUser === void 0 ? void 0 : particulerUser.documents) === null || _g === void 0 ? void 0 : _g.length); i++) {
+    for (let i = 0; i < ((_f = particulerUser === null || particulerUser === void 0 ? void 0 : particulerUser.documents) === null || _f === void 0 ? void 0 : _f.length); i++) {
         let pipeline = [{ $match: { _id: particulerUser === null || particulerUser === void 0 ? void 0 : particulerUser.documents[i] } },
             { $project: { _id: 1, name: 1, age: 1, gender: 1, lab: 1, createdOn: 1, bioMarker: 1 } }];
         let familyMemberData = yield uploadedDataSchema_1.default.aggregate(pipeline);
@@ -356,6 +359,7 @@ exports.getFamilyMemberDocuments = (0, CatchAsync_1.default)((req, res, next) =>
             gender: "male",
             lab: "Tata 1mg",
             date: "2023-03-09",
+            document_image: "https://i.pinimg.com/originals/dc/3f/1b/dc3f1b80aecfff20f0c68be78a461119.jpg",
             bioMarker: [
                 {
                     Haemoglobin: {
@@ -378,16 +382,163 @@ exports.getFamilyMemberDocuments = (0, CatchAsync_1.default)((req, res, next) =>
     ];
     res.status(200).json({ status: "success", message: 'Getting family Member Documents successfully', data: dummyData });
 }));
+// Get all family member document
+exports.getAllFamilyMemberDocuments = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let loggedInUser = req.user;
+    let familyTree = loggedInUser.familyTree;
+    console.log("loggedInUser", loggedInUser);
+    let allFamilyDataArr = [];
+    for (let i = 0; i < familyTree.length; i++) {
+        let outerObj = {};
+        let pipeline = [{ $match: { _id: familyTree[i].profile } },
+            { $project: { _id: 1, firstName: 1, lastName: 1, documents: 1, profilePhoto: 1 } }
+        ];
+        //let familyMemberData: any = await User.aggregate(pipeline);
+        let familyMember = yield User_1.default.findById(familyTree[i].profile)
+            .populate("documents");
+        let document = familyMember === null || familyMember === void 0 ? void 0 : familyMember.documents;
+        console.log("documents", document);
+        for (let j = 0; j < (document === null || document === void 0 ? void 0 : document.length); j++) {
+            let pipeline = [{ $match: { _id: document[j]._id } },
+                { $project: { _id: 1, name: 1, age: 1, gender: 1, lab: 1, createdOn: 1, link: 1 } }];
+            let familyMembersDocuments = yield uploadedDataSchema_1.default.aggregate(pipeline);
+            outerObj.data = familyMembersDocuments[0];
+            outerObj.abnormilies = 3;
+            console.log(outerObj);
+            allFamilyDataArr.push(outerObj);
+        }
+    }
+    let dummyObj = [
+        {
+            data: {
+                name: "Prateek Pawan",
+                lab: "Tata 1mg",
+                report_date: "2023-10-12",
+            },
+            anomalies: 2,
+            profile_image: "https://statinfer.com/wp-content/uploads/dummy-user.png"
+        },
+        {
+            data: {
+                name: "Prateek Pawan",
+                lab: "Tata 1mg",
+                report_date: "2023-10-11",
+            },
+            anomalies: 3,
+            profile_image: "https://statinfer.com/wp-content/uploads/dummy-user.png"
+        },
+        {
+            data: {
+                name: "Prateek Pawan",
+                lab: "Tata 1mg",
+                report_date: "2023-10-10",
+            },
+            anomalies: 4,
+            profile_image: "https://statinfer.com/wp-content/uploads/dummy-user.png"
+        }
+    ];
+    res.status(200).json({ status: "success", message: 'Getting family Member successfully', data: dummyObj });
+}));
 exports.addReminder = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    const { reminderType, title, description, reminderCategory, repeatInterval, createdOn } = req.body;
-    user.reminders = [...user.reminders, { title, description, reminderCategory, reminderType, repeatInterval, createdOn }];
+    const { reminderType, title, description, reminderCategory, repeatInterval, createdOn, reminderTime, reminderDate } = req.body;
+    user.reminders = [...user.reminders, { title, description, reminderCategory, reminderType, repeatInterval, createdOn,
+            reminderDate, reminderTime }];
     yield user.save();
     res.status(200).json({ status: 'success', message: 'Reminder added successfully', data: user.reminders });
 }));
 exports.getReminders = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     res.status(200).json({ status: 'success', data: user.reminders });
+}));
+// vitals
+exports.addVitals = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const { vitalType, date, unit, value, createdOn } = req.body;
+    user.vitals = [...user.vitals, { vitalType, date, unit, value, createdOn }];
+    yield user.save();
+    res.status(200).json({ status: 'success', message: 'Vitals added successfully', data: user.vitals });
+}));
+exports.getVitals = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    res.status(200).json({ status: 'success', data: user.vitals });
+}));
+// BioMarker graph
+exports.bioMarkerGraph = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let loggedInUser = req.user;
+    // let familyTree = loggedInUser.familyTree
+    console.log("loggedInUser", loggedInUser);
+    let allFamilyDataArr = [];
+    let familyMember = yield User_1.default.findById(loggedInUser._id)
+        .populate({
+        path: "documents",
+        select: "createdOn bioMarker"
+    });
+    let document = familyMember === null || familyMember === void 0 ? void 0 : familyMember.documents;
+    console.log("documents", document);
+    const dummyObj = [
+        {
+            _id: "6406e79209f45809eac328fa",
+            cretatedOn: "2023-03-09",
+            bioMarker: [
+                {
+                    Haemoglobin: {
+                        result: "14.741",
+                        unit: "%",
+                        range: "10-20"
+                    }
+                },
+                {
+                    RBC: {
+                        result: "94.67",
+                        unit: "fLmillion",
+                        range: "83-101"
+                    }
+                },
+            ]
+        },
+        {
+            _id: "6406e79209f45809eac328fa",
+            cretatedOn: "2023-03-10",
+            bioMarker: [
+                {
+                    Haemoglobin: {
+                        result: "16.741",
+                        unit: "%",
+                        range: "10-20"
+                    }
+                },
+                {
+                    RBC: {
+                        result: "97.67",
+                        unit: "fLmillion",
+                        range: "83-101"
+                    }
+                },
+            ]
+        },
+        {
+            _id: "6406e79209f45809eac328fa",
+            cretatedOn: "2023-03-11",
+            bioMarker: [
+                {
+                    Haemoglobin: {
+                        result: "18.741",
+                        unit: "%",
+                        range: "10-20"
+                    }
+                },
+                {
+                    RBC: {
+                        result: "96.67",
+                        unit: "fLmillion",
+                        range: "83-101"
+                    }
+                },
+            ]
+        }
+    ];
+    res.status(200).json({ status: "success", message: 'Getting family Member successfully', data: dummyObj });
 }));
 //Only allow access to creator and authenticated user id.
 //canNotWrite: ['Shanu\'s objectid', 'Vimla\'s objectid']; 

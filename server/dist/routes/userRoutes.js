@@ -21,9 +21,12 @@ router.route('/googleLogin').post(authController_1.googleLogin);
 router.route('/uploadPhoto').patch(authController_1.protect, userController_1.uploadMulter, userController_1.resizePhoto, userController_1.uploadToS3, userController_1.editMe);
 router.route('/logindetail').get(authController_1.protect, authController_1.getUserDetailAfterRefresh);
 router.route('/familyTree').post(authController_1.protect, userController_1.createFamilyMember).get(authController_1.protect, userController_1.getFamilyMembers);
+router.route('/familyTree/allDocuments').get(authController_1.protect, userController_1.getAllFamilyMemberDocuments);
 router.route('/familyTree/documents/:id').get(authController_1.protect, userController_1.getFamilyMemberDocuments);
 router.route('/familyTree/:id').get(authController_1.protect, userController_1.getFamilyMember);
 router.route('/reminders').get(authController_1.protect, userController_1.getReminders).post(authController_1.protect, userController_1.addReminder);
+router.route('/vitals').get(authController_1.protect, userController_1.getVitals).post(authController_1.protect, userController_1.addVitals);
+router.route('/biomarkerGraph').get(authController_1.protect, userController_1.bioMarkerGraph);
 router.route('/:id').put(userController_1.editUser).delete(userController_1.deleteUser);
 exports.default = router;
 //63cb64119ca217db92a03e01

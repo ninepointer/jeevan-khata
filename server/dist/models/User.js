@@ -169,11 +169,26 @@ const userSchema = new mongoose_1.default.Schema({
                 type: Date,
                 default: Date.now()
             },
+            reminderCategory: String,
             reminderDate: Date,
             reminderTime: Date,
             repeatInterval: {
                 type: String,
-            }
+            },
+            lastModifiedOn: Date,
+        }
+    ],
+    vitals: [
+        {
+            vitalsId: { type: String, default: (0, uuid_1.v4)() },
+            vitalType: String,
+            value: String,
+            date: String,
+            createdOn: {
+                type: Date,
+                default: Date.now()
+            },
+            unit: String,
         }
     ]
 });
