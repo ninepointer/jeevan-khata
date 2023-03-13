@@ -23,6 +23,7 @@ router.route('/logindetail').get(authController_1.protect, authController_1.getU
 router.route('/familyTree').post(authController_1.protect, userController_1.createFamilyMember).get(authController_1.protect, userController_1.getFamilyMembers);
 router.route('/familyTree/documents/:id').get(authController_1.protect, userController_1.getFamilyMemberDocuments);
 router.route('/familyTree/:id').get(authController_1.protect, userController_1.getFamilyMember);
+router.route('/reminders').get(authController_1.protect, userController_1.getReminders).post(authController_1.protect, userController_1.addReminder);
 router.route('/:id').put(userController_1.editUser).delete(userController_1.deleteUser);
 exports.default = router;
 //63cb64119ca217db92a03e01

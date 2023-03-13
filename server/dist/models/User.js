@@ -156,6 +156,26 @@ const userSchema = new mongoose_1.default.Schema({
                 ref: 'User',
             }
         }],
+    reminders: [
+        {
+            reminderId: { type: String, default: (0, uuid_1.v4)() },
+            title: String,
+            description: String,
+            reminderType: {
+                type: String,
+                enum: ['recurring', 'one-time']
+            },
+            createdOn: {
+                type: Date,
+                default: Date.now()
+            },
+            reminderDate: Date,
+            reminderTime: Date,
+            repeatInterval: {
+                type: String,
+            }
+        }
+    ]
 });
 //check password
 userSchema.methods.correctPassword = function (candidatePassword, userPassword) {

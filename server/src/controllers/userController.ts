@@ -399,7 +399,7 @@ export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next
 
 //Get family member documents
 
-export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+export const getFamilyMemberDocuments = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     let {id} = req.params;
     const particulerUser = await User.findOne({isDeleted: false, _id: id});
 
@@ -450,6 +450,28 @@ export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Respo
     res.status(200).json({status: "success", message: 'Getting family Member Documents successfully', data:dummyData});
 
     
+});
+
+
+
+export const addReminder = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const user = (req as any).user;
+
+    const{reminderType, title, description, reminderCategory, repeatInterval, createdOn, reminderTime, reminderDate} = req.body;
+
+    user.reminders = [...user.reminders, {title, description, reminderCategory, reminderType, repeatInterval, createdOn, 
+        reminderDate, reminderTime}];
+    
+    await user.save();
+
+    res.status(200).json({status: 'success', message: 'Reminder added successfully', data: user.reminders});
+
+});
+
+export const getReminders = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const user = (req as any).user;
+
+    res.status(200).json({status: 'success', data: user.reminders});
 });
 
 //Only allow access to creator and authenticated user id.
