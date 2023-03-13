@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFamilyMemberDocuments = exports.getFamilyMember = exports.getFamilyMembers = exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
+exports.getReminders = exports.addReminder = exports.getFamilyMemberDocuments = exports.getFamilyMember = exports.getFamilyMembers = exports.createFamilyMember = exports.deleteMe = exports.editMe = exports.getUser = exports.deleteUser = exports.editUser = exports.getUsers = exports.createUser = exports.uploadToS3 = exports.resizePhoto = exports.uploadMulter = void 0;
 const multer_1 = __importDefault(require("multer"));
 const sharp_1 = __importDefault(require("sharp"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
@@ -377,6 +377,17 @@ exports.getFamilyMemberDocuments = (0, CatchAsync_1.default)((req, res, next) =>
         }
     ];
     res.status(200).json({ status: "success", message: 'Getting family Member Documents successfully', data: dummyData });
+}));
+exports.addReminder = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const { reminderType, title, description, reminderCategory, repeatInterval, createdOn } = req.body;
+    user.reminders = [...user.reminders, { title, description, reminderCategory, reminderType, repeatInterval, createdOn }];
+    yield user.save();
+    res.status(200).json({ status: 'success', message: 'Reminder added successfully', data: user.reminders });
+}));
+exports.getReminders = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    res.status(200).json({ status: 'success', data: user.reminders });
 }));
 //Only allow access to creator and authenticated user id.
 //canNotWrite: ['Shanu\'s objectid', 'Vimla\'s objectid']; 

@@ -121,6 +121,41 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
           ref: 'User',
         }
       }],
+      reminders:[
+        {
+            reminderId: {type: String, default: uuidv4()},
+            title: String,
+            description: String,
+            reminderType:{
+                type: String,
+                enum:['recurring', 'one-time']
+            },
+            createdOn: {
+                type: Date,
+                default: Date.now()
+            },
+            reminderCategory: String,
+            reminderDate: Date,
+            reminderTime: Date,
+            repeatInterval: {
+                type: String,
+            },
+            lastModifiedOn: Date,
+        }
+      ],
+      vitals:[
+        {
+            vitalsId: {type: String, default: uuidv4()},
+            vitalType: String,
+            value: String,
+            date: String,
+            createdOn: {
+                type: Date,
+                default: Date.now()
+            },
+            unit: String,
+        }
+      ]
 });
 
 //check password

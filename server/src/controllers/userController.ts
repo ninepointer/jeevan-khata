@@ -401,7 +401,7 @@ export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next
 
 //Get family member documents
 
-export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+export const getFamilyMemberDocuments = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
     let {id} = req.params;
     const particulerUser = await User.findOne({isDeleted: false, _id: id});
 
@@ -524,7 +524,137 @@ export const getAllFamilyMemberDocuments =CatchAsync(async (req:Request, res: Re
 
     res.status(200).json({status: "success", message: 'Getting family Member successfully', data:dummyObj});
 
+});
+
+
+export const addReminder = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const user = (req as any).user;
+
+    const{reminderType, title, description, reminderCategory, repeatInterval, createdOn, reminderTime, reminderDate} = req.body;
+
+    user.reminders = [...user.reminders, {title, description, reminderCategory, reminderType, repeatInterval, createdOn, 
+        reminderDate, reminderTime}];
     
+    await user.save();
+
+    res.status(200).json({status: 'success', message: 'Reminder added successfully', data: user.reminders});
+
+});
+
+export const getReminders = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const user = (req as any).user;
+
+    res.status(200).json({status: 'success', data: user.reminders});
+});
+
+
+// vitals
+
+export const addVitals = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const user = (req as any).user;
+
+    const{vitalType, date, unit, value, createdOn} = req.body;
+
+    user.vitals = [...user.vitals, {vitalType, date, unit, value, createdOn}];
+    
+    await user.save();
+
+    res.status(200).json({status: 'success', message: 'Vitals added successfully', data: user.vitals});
+
+});
+
+export const getVitals = CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+    const user = (req as any).user;
+
+    res.status(200).json({status: 'success', data: user.vitals});
+});
+
+// BioMarker graph
+
+export const bioMarkerGraph =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+
+    let loggedInUser = (req as any).user;
+    // let familyTree = loggedInUser.familyTree
+    console.log("loggedInUser", loggedInUser)
+    let allFamilyDataArr = [];
+
+    let familyMember: any = await User.findById(loggedInUser._id)
+    .populate({
+        path: "documents",
+        select: "createdOn bioMarker"
+      });
+
+    let document = familyMember?.documents;
+
+    console.log("documents",document)
+
+    const dummyObj: any = [
+        {
+            _id: "6406e79209f45809eac328fa",
+            cretatedOn: "2023-03-09",
+            bioMarker: [
+                {
+                    Haemoglobin: {
+                        result: "14.741",
+                        unit: "%",
+                        range: "10-20"
+                    }
+                },
+                {
+                    RBC: {
+                      result: "4.67",
+                      unit: "fLmillion",
+                      range: "83-101"
+                    }
+                },
+            ]
+        },
+        {
+            _id: "6406e79209f45809eac328fa",
+            cretatedOn: "2023-03-10",
+            bioMarker: [
+                {
+                    Haemoglobin: {
+                        result: "16.741",
+                        unit: "%",
+                        range: "10-20"
+                    }
+                },
+                {
+                    RBC: {
+                      result: "7.67",
+                      unit: "fLmillion",
+                      range: "83-101"
+                    }
+                },
+            ]
+        },
+        {
+            _id: "6406e79209f45809eac328fa",
+            cretatedOn: "2023-03-11",
+            bioMarker: [
+                {
+                    Haemoglobin: {
+                        result: "18.741",
+                        unit: "%",
+                        range: "10-20"
+                    }
+                },
+                {
+                    RBC: {
+                      result: "6.67",
+                      unit: "fLmillion",
+                      range: "83-101"
+                    }
+                },
+            ]
+        }
+
+        
+    ]
+
+    res.status(200).json({status: "success", message: 'Getting family Member successfully', data:dummyObj});
+
 });
 
 //Only allow access to creator and authenticated user id.

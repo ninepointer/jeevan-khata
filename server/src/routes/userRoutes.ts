@@ -3,7 +3,8 @@ import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid,
     forgotPassword, resetPassword, externalLogin, googleLogin} from '../controllers/authController';
 import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe,
      uploadToS3, resizePhoto, uploadMulter, createFamilyMember, getFamilyMember, 
-     getFamilyMembers, getFamilyMemberDocuments, getAllFamilyMemberDocuments} from '../controllers/userController';
+     getFamilyMembers, getFamilyMemberDocuments, getAllFamilyMemberDocuments, getReminders, 
+     addReminder, getVitals, addVitals, bioMarkerGraph} from '../controllers/userController';
 
 const router:Router = express.Router();
 
@@ -30,6 +31,13 @@ router.route('/familyTree/allDocuments').get(protect, getAllFamilyMemberDocument
 router.route('/familyTree/documents/:id').get(protect, getFamilyMemberDocuments);
 
 router.route('/familyTree/:id').get(protect, getFamilyMember);
+
+router.route('/reminders').get(protect, getReminders).post(protect, addReminder);
+
+router.route('/vitals').get(protect, getVitals).post(protect, addVitals);
+
+router.route('/biomarkerGraph').get(protect, bioMarkerGraph);
+
 
 router.route('/:id').put(editUser).delete(deleteUser);
 
