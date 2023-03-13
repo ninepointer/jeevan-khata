@@ -602,7 +602,7 @@ export const bioMarkerGraph =CatchAsync(async (req:Request, res: Response, next:
                 },
                 {
                     RBC: {
-                      result: "4.67",
+                      result: "94.67",
                       unit: "fLmillion",
                       range: "83-101"
                     }
@@ -622,7 +622,7 @@ export const bioMarkerGraph =CatchAsync(async (req:Request, res: Response, next:
                 },
                 {
                     RBC: {
-                      result: "7.67",
+                      result: "97.67",
                       unit: "fLmillion",
                       range: "83-101"
                     }
@@ -642,7 +642,7 @@ export const bioMarkerGraph =CatchAsync(async (req:Request, res: Response, next:
                 },
                 {
                     RBC: {
-                      result: "6.67",
+                      result: "96.67",
                       unit: "fLmillion",
                       range: "83-101"
                     }
