@@ -2,7 +2,8 @@ import express, {Router} from 'express';
 import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid, phoneLogin, 
     forgotPassword, resetPassword, externalLogin, googleLogin} from '../controllers/authController';
 import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe,
-     uploadToS3, resizePhoto, uploadMulter, createFamilyMember, getFamilyMember, getFamilyMembers, getFamilyMemberDocuments} from '../controllers/userController';
+     uploadToS3, resizePhoto, uploadMulter, createFamilyMember, getFamilyMember, 
+     getFamilyMembers, getFamilyMemberDocuments, getAllFamilyMemberDocuments} from '../controllers/userController';
 
 const router:Router = express.Router();
 
@@ -24,6 +25,8 @@ router.route('/logindetail').get(protect, getUserDetailAfterRefresh);
 
 router.route('/familyTree').post(protect, createFamilyMember).get(protect, getFamilyMembers);
 
+
+router.route('/familyTree/allDocuments').get(protect, getAllFamilyMemberDocuments);
 router.route('/familyTree/documents/:id').get(protect, getFamilyMemberDocuments);
 
 router.route('/familyTree/:id').get(protect, getFamilyMember);

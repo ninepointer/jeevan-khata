@@ -358,37 +358,39 @@ export const getFamilyMember =CatchAsync(async (req:Request, res: Response, next
         let outerObj = {};
     
         let familyMemberData: any = await User.findOne({ _id: id}).select({_id : 1, firstName: 1, lastName: 1, email: 1, mobile: 1, gender: 1, dateOfBirth: 1, profilePhoto: 1});
-        let getDocument: any = await User.findOne({ _id: id}).select({documents: 1});
 
         console.log("familyMemberData", familyMemberData);
-        let totalDocument = getDocument?.documents?.length;
+        let totalDocument 
         let lastUpload ;
-        for(let j = 0; j < getDocument?.documents?.length; j++){
 
-            let another_pipeline = [{ $match: { _id: getDocument?.documents[j]} },
-            
-            { $project: {createdOn: 1} },
-            // {$sort : {createdOn : -1}},
-            ]
-    
-            let uploadedData = await UploadedData.aggregate(another_pipeline);
-            console.log("uploadedData", uploadedData)
-            lastUpload = uploadedData[0].createdOn
-            if(lastUpload) break;
+        let familyMember: any = await User.findById(id)
+        .populate("documents", "createdOn");
+
+        let document = familyMember?.documents;
+        if(document){
+            totalDocument = document.length;
+            document.sort((a: any,b: any)=>{
+            if(a.createdOn > b.createdOn){
+                return -1
+            }
+            if(a.createdOn < b.createdOn){
+                return 1
+            }
+                return 1
+            })
         }
 
-        // delete getDocument.documents;
+        if(document){
+            lastUpload = document[0]?.createdOn;
+        }
 
-        // console.log("getDocument", getDocument.documents);
         (outerObj as any).data = familyMemberData;
         (outerObj as any).user_relation = getRelation;
         (outerObj as any).no_of_documents = totalDocument;
         (outerObj as any).lastUploaded = lastUpload;
-        // delete (outerObj as any).data.documents;
 
         allFamilyDataArr.push(outerObj);
     
-
     } catch (e){
         console.log("error", e)
     }
@@ -425,6 +427,7 @@ export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Respo
             gender: "male",
             lab: "Tata 1mg",
             date: "2023-03-09",
+            document_image: "https://i.pinimg.com/originals/dc/3f/1b/dc3f1b80aecfff20f0c68be78a461119.jpg",
             bioMarker: [
                 {
                     Haemoglobin: {
@@ -448,6 +451,78 @@ export const getFamilyMemberDocuments =CatchAsync(async (req:Request, res: Respo
         
     ]
     res.status(200).json({status: "success", message: 'Getting family Member Documents successfully', data:dummyData});
+
+    
+});
+
+// Get all family member document
+
+export const getAllFamilyMemberDocuments =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+
+    let loggedInUser = (req as any).user;
+    let familyTree = loggedInUser.familyTree
+    console.log("loggedInUser", loggedInUser)
+    let allFamilyDataArr = [];
+    for(let i = 0; i <  familyTree.length; i++){
+        let outerObj = {}
+
+        let pipeline = [{ $match: { _id: familyTree[i].profile} },
+
+        { $project: {_id : 1, firstName: 1, lastName: 1, documents: 1, profilePhoto: 1} }
+        ]
+
+        //let familyMemberData: any = await User.aggregate(pipeline);
+        let familyMember: any = await User.findById(familyTree[i].profile)
+                                    .populate("documents");
+
+        let document = familyMember?.documents;
+
+        console.log("documents",document)
+        for(let j = 0; j <  (document as any)?.length; j++){
+            let pipeline = [{ $match: { _id: (document as any)[j]._id} },
+            { $project: {_id : 1, name: 1, age: 1, gender: 1, lab: 1, createdOn: 1, link: 1} }
+            ]
+    
+            let familyMembersDocuments = await UploadedData.aggregate(pipeline);
+            (outerObj as any).data = familyMembersDocuments[0];
+            (outerObj as any).abnormilies = 3
+            console.log(outerObj)
+            allFamilyDataArr.push(outerObj);
+        }
+
+    }
+
+    let dummyObj = [
+        {
+            data:{
+                name: "Prateek Pawan",
+                lab: "Tata 1mg",
+                report_date: "2023-10-12",
+            },
+            anomalies: 2,
+            profile_image: "https://statinfer.com/wp-content/uploads/dummy-user.png"
+        },
+        {
+            data:{
+                name: "Prateek Pawan",
+                lab: "Tata 1mg",
+                report_date: "2023-10-11",
+            },
+            anomalies: 3,
+            profile_image: "https://statinfer.com/wp-content/uploads/dummy-user.png"
+        },
+        {
+            data:{
+                name: "Prateek Pawan",
+                lab: "Tata 1mg",
+                report_date: "2023-10-10",
+            },
+            anomalies: 4,
+            profile_image: "https://statinfer.com/wp-content/uploads/dummy-user.png"
+        }
+    ]
+
+    res.status(200).json({status: "success", message: 'Getting family Member successfully', data:dummyObj});
 
     
 });
