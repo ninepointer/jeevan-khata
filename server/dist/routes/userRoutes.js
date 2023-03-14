@@ -26,7 +26,10 @@ router.route('/familyTree/documents/:id').get(authController_1.protect, userCont
 router.route('/familyTree/:id').get(authController_1.protect, userController_1.getFamilyMember);
 router.route('/reminders').get(authController_1.protect, userController_1.getReminders).post(authController_1.protect, userController_1.addReminder);
 router.route('/vitals').get(authController_1.protect, userController_1.getVitals).post(authController_1.protect, userController_1.addVitals);
-router.route('/biomarkerGraph').get(authController_1.protect, userController_1.bioMarkerGraph);
+// router.route('/biomarkerGraph').get(protect, bioMarkerGraph);
+router.route('/graph/allBiomarkers').get(authController_1.protect, userController_1.allBioMarkers);
+router.route('/graph/mostRecent').get(authController_1.protect, userController_1.mostRecentGraph, userController_1.bioMarkerGraph);
+router.route('/graph/biomarker/:biomarker').get(authController_1.protect, userController_1.bioMarkerGraph);
 router.route('/:id').put(userController_1.editUser).delete(userController_1.deleteUser);
 exports.default = router;
 //63cb64119ca217db92a03e01
