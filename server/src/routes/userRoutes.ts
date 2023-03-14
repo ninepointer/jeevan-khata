@@ -4,7 +4,7 @@ import {login, signup, protect, logout, getUserDetailAfterRefresh, isTokenValid,
 import {createUser, getUsers, editUser, deleteUser, getUser, editMe, deleteMe,
      uploadToS3, resizePhoto, uploadMulter, createFamilyMember, getFamilyMember, 
      getFamilyMembers, getFamilyMemberDocuments, getAllFamilyMemberDocuments, getReminders, 
-     addReminder, getVitals, addVitals, bioMarkerGraph} from '../controllers/userController';
+     addReminder, getVitals, addVitals, bioMarkerGraph, allBioMarkers, mostRecentGraph} from '../controllers/userController';
 
 const router:Router = express.Router();
 
@@ -36,8 +36,12 @@ router.route('/reminders').get(protect, getReminders).post(protect, addReminder)
 
 router.route('/vitals').get(protect, getVitals).post(protect, addVitals);
 
-router.route('/biomarkerGraph').get(protect, bioMarkerGraph);
+// router.route('/biomarkerGraph').get(protect, bioMarkerGraph);
 
+router.route('/graph/allBiomarkers').get(protect, allBioMarkers);
+router.route('/graph/mostRecent').get(protect, mostRecentGraph, bioMarkerGraph);
+
+router.route('/graph/biomarker/:biomarker').get(protect, bioMarkerGraph);
 
 router.route('/:id').put(editUser).delete(deleteUser);
 

@@ -573,10 +573,48 @@ export const getVitals = CatchAsync(async (req:Request, res: Response, next:Next
 
 export const bioMarkerGraph =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
 
+    const {biomarker} = req.params;
     let loggedInUser = (req as any).user;
     // let familyTree = loggedInUser.familyTree
     console.log("loggedInUser", loggedInUser)
     let allFamilyDataArr = [];
+
+    let familyMember: any = await User.findById(loggedInUser._id)
+    .populate({
+        path: "documents",
+        select: "createdOn bioMarker.Haemoglobin"
+      });
+
+    let document = familyMember?.documents;
+
+    console.log("documents",document)
+
+    const dummyObj: any = [
+        {
+            x: "2023-03-09",
+            y: 14.741
+        },
+        {
+            x: "2023-03-10",
+            y: 16.741
+        },
+        {
+            x: "2023-03-11",
+            y: 18.741
+        }
+        
+    ]
+
+    res.status(200).json({status: "success", message: 'Getting cordinate successfully', data:dummyObj});
+
+});
+
+export const allBioMarkers =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+
+    let loggedInUser = (req as any).user;
+    // let familyTree = loggedInUser.familyTree
+    console.log("loggedInUser", loggedInUser)
+    let allBioMarkerArr = [];
 
     let familyMember: any = await User.findById(loggedInUser._id)
     .populate({
@@ -588,70 +626,69 @@ export const bioMarkerGraph =CatchAsync(async (req:Request, res: Response, next:
 
     console.log("documents",document)
 
-    const dummyObj: any = [
-        {
-            _id: "6406e79209f45809eac328fa",
-            cretatedOn: "2023-03-09",
-            bioMarker: [
-                {
-                    Haemoglobin: {
-                        result: "14.741",
-                        unit: "%",
-                        range: "10-20"
-                    }
-                },
-                {
-                    RBC: {
-                      result: "94.67",
-                      unit: "fLmillion",
-                      range: "83-101"
-                    }
-                },
-            ]
-        },
-        {
-            _id: "6406e79209f45809eac328fa",
-            cretatedOn: "2023-03-10",
-            bioMarker: [
-                {
-                    Haemoglobin: {
-                        result: "16.741",
-                        unit: "%",
-                        range: "10-20"
-                    }
-                },
-                {
-                    RBC: {
-                      result: "97.67",
-                      unit: "fLmillion",
-                      range: "83-101"
-                    }
-                },
-            ]
-        },
-        {
-            _id: "6406e79209f45809eac328fa",
-            cretatedOn: "2023-03-11",
-            bioMarker: [
-                {
-                    Haemoglobin: {
-                        result: "18.741",
-                        unit: "%",
-                        range: "10-20"
-                    }
-                },
-                {
-                    RBC: {
-                      result: "96.67",
-                      unit: "fLmillion",
-                      range: "83-101"
-                    }
-                },
-            ]
+    for (let i = 0; i < document.length; i++) {
+        let biomarkers = document[i].bioMarker;
+        for (let j = 0; j < biomarkers.length; j++) {
+            let biomarkerKey = Object.keys(biomarkers[j])[0];
+            allBioMarkerArr.push(biomarkerKey);
         }
-    ]
+    }
 
-    res.status(200).json({status: "success", message: 'Getting family Member successfully', data:dummyObj});
+    let uniqueArr = [...new Set(allBioMarkerArr)];
+
+    res.status(200).json({status: "success", message: 'Getting family Member successfully', data:uniqueArr});
+
+});
+
+export const mostRecentGraph =CatchAsync(async (req:Request, res: Response, next:NextFunction) => {
+
+    let loggedInUser = (req as any).user;
+    // let familyTree = loggedInUser.familyTree
+    console.log("loggedInUser", loggedInUser)
+    let allBioMarkerArr = [];
+
+    let familyMember: any = await User.findById(loggedInUser._id)
+    .populate({
+        path: "documents",
+        select: "createdOn bioMarker"
+      });
+
+    let document = familyMember?.documents;
+
+    console.log("documents",document)
+
+    document.sort((a: any,b: any)=>{
+        if(a.createdOn > b.createdOn){
+            return -1
+        }
+        if(a.createdOn < b.createdOn){
+            return 1;
+        }
+        return 1
+    })
+    
+    // req.params.biomarker = document[0].bioMarker[0];
+
+    req.params.biomarker = "Heamogloblin";
+    // let dummyObj = [
+    //     "Haemoglobin",
+    //     "RBC",
+    //     "Mean Corpuscular Volume",
+    //     "Mean Corpuscular Hemoglobin",
+    //     "Hematocrit",
+    //     "Mean Platelet Volume",
+    //     "Neutrophils",
+    //     "Hemoglobin",
+    //     "White Blood Cell count",
+    //     "Platelet count",
+    //     "Red Cell Distribution Width",
+    //     "PLATELETS"
+    // ]
+
+    // res.status(200).json({status: "success", message: 'Getting most recent biomarker successfully', data:document[0].bioMarker});
+    // res.status(200).json({status: "success", message: 'Getting most recent biomarker successfully', data: dummyObj});
+
+    next();
 
 });
 
