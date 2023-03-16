@@ -40,18 +40,18 @@ const DetailTable = ({setView, bioData, id}) => {
       );
     ocrDataObj.range = (
       <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-        {elem[key].range}
+        {elem[key]?.range}
       </MDTypography>
     );
     ocrDataObj.result = (
         <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-          {elem[key].result}
+          {elem[key]?.result}
         </MDTypography>
       );
 
     ocrDataObj.unit = (
       <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-        {elem[key].unit}
+        {elem[key]?.unit}
       </MDTypography>
     );
 
