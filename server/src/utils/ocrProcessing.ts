@@ -23,6 +23,8 @@ export const ocrProccesing = async(ocrData: any) => {
   //Get the full text from Ocr data
   let fullText = ocrData[0].textAnnotations[0];
 
+  // console.log("fulltext", fullText)
+
   //Get the working data from Ocr data
   let workingData = [... ocrData[0].textAnnotations];
   workingData.splice(0,1);  
@@ -186,6 +188,95 @@ export const ocrProccesing = async(ocrData: any) => {
     })
     bioMarkerDataAdminArr = [...new Set(bioMarkerDataAdminArr)]
 
+    //function for finding elements in the same line        
+    function findElementsInSameLine(searchStrings: string[]): any[] {
+      let result: any[] = [];
+
+      for (const string of searchStrings) {
+          for (const data of sortedData) {
+              if (data.description.toLowerCase() === string) {
+                  let lineData: any[] = [];
+                  const y = averageCoord(data.boundingPoly, 'y');
+                  for (const d of sortedData) {
+                      if (Math.abs(averageCoord(d.boundingPoly, 'y') - y) <= 10) {
+                          lineData.push(d);
+                      }
+                  }
+                  result = lineData.sort((a, b) => a.boundingPoly.vertices[0].x - b.boundingPoly.vertices[0].x);
+              }
+          }
+      }
+
+      return result;
+    }
+
+    //Finding the results, units, range line
+    const searchStrings: string[] = ['result', 'observation', 'observed'];
+    const result = findElementsInSameLine(searchStrings);
+
+    //console.log('result', result);
+
+    let rangeVals: string[] = ['range', 'ref', 'interval', 'biological', 'value', 'reference', 'normal values'];
+
+    //function for checking if the matched line contains other expected elements
+    function hasMatch(objectsArray: any[], searchStrings: string[]): boolean {
+      for (const data of objectsArray) {
+        if (searchStrings.includes(data.description.toLowerCase())) {
+          return true;
+        }
+      }
+      return false;
+    }
+    //Double checking if we're in the right line
+    if (hasMatch(result, rangeVals)) //console.log('Right line');
+
+    rangeVals = ['range', 'ref', 'interval', 'reference', 'biological', 'normal values'];
+    const resultVals: string[] = ['result', 'observation', 'value', 'observed'];
+    let unitVals: string[] = ['units', 'unit'];
+
+    const findMatchedIndex = (arr: any[], searchArr: string[]): number[] => {
+      const matchedIndex: number[] = [];
+      for (let i = 0; i < arr.length; i++) {
+        if (searchArr.includes(arr[i].description.toLowerCase())) {
+          matchedIndex.push(i);
+        }
+      }
+      return matchedIndex;
+    };
+
+    const rangeMatches = findMatchedIndex(result, rangeVals);
+    const resultMatches = findMatchedIndex(result, resultVals);
+    const unitMatches = findMatchedIndex(result, unitVals);
+
+    //console.log("Range matches:", rangeMatches.join());
+    //console.log("Result matches:", resultMatches.join());
+    //console.log("Unit matches:", unitMatches.join());
+
+    interface Order {
+      range?: any;
+      result?: any;
+      unit?: any;
+    }
+
+    const orderObj: Order = {} ;
+    if(rangeMatches.length > 0){
+      orderObj.range = parseInt(rangeMatches.join(), 10)
+    }
+    if(resultMatches.length > 0){
+      orderObj.result = parseInt(resultMatches.join(), 10)
+    }
+    if(unitMatches.length > 0){
+      orderObj.unit = parseInt(unitMatches.join(), 10)
+    }
+
+    //console.log(orderObj);
+    const sortedObj = Object.entries(orderObj).sort((a, b) => a[1] - b[1]).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    //console.log(sortedObj);
+    let lineOrder = Object.keys(sortedObj);
+    console.log("lineOrder", lineOrder);
+    //Here we have the order in which the results, units, range appear in our document 
+
+
     //Matching all the ocuurences of BioMarkers in Ocr Document 
     let matches = [];
   
@@ -219,23 +310,27 @@ export const ocrProccesing = async(ocrData: any) => {
           return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x')
         })
 
+        console.log("withinY", withinY)
           
         let temp = '';
         let coord = [];
-        let elemNum =0; 
-        let isFirst = true;    
+        let elemNum = 0; 
+        let isFirst = true;
+        let finalObj: any = {};
+        let objForLineOrder: any = {};
 
         // combine all words with small space
         for(let j = 0; j<withinY.length; j++){
           if(coord.length>0){
-            if(withinY[j].boundingPoly.vertices[0].x - coord[1].x <= 8){
+            if(withinY[j].boundingPoly.vertices[0].x - coord[1].x <= 17){
               temp += withinY[j].description;
               coord = withinY[j].boundingPoly.vertices;
             }
             else{
               if(!isFirst){
+                objForLineOrder[lineOrder[elemNum]] = temp;
                 innerObj.push(temp);
-                // console.log(`${lineOrder[elemNum]}: ${temp}`);
+                console.log(`${lineOrder[elemNum]}: ${temp}`);
                 temp = withinY[j].description;
                 coord = withinY[j].boundingPoly.vertices;
                 elemNum++;
@@ -250,21 +345,35 @@ export const ocrProccesing = async(ocrData: any) => {
             coord = withinY[j].boundingPoly.vertices;
           }
         }
+        objForLineOrder[lineOrder[elemNum]] = temp;
+        console.log(`${lineOrder[elemNum]}: ${temp}`);
         innerObj.push(temp);
 
         if(mappingObj[matches[i][0].description]){
           console.log("inner obj from mapping obj", innerObj)
-          let finalObj = getDataFromWithinY(innerObj);
+          finalObj = getDataFromWithinY(innerObj);
+          for(let elem of unitVals){
+            if(objForLineOrder.hasOwnProperty(elem)){
+              finalObj[elem] = objForLineOrder[elem];
+              break;
+            }
+          }
           bioMarkerDataObj[mappingObj[matches[i][0].description]] = finalObj;
         } else{
           console.log("inner obj from mapping obj else condition", innerObj)
-          let finalObj = getDataFromWithinY(innerObj);
+          finalObj = getDataFromWithinY(innerObj);
+          for(let elem of unitVals){
+            if(objForLineOrder.hasOwnProperty(elem)){
+              finalObj[elem] = objForLineOrder[elem];
+              break;
+            }
+          }
           bioMarkerDataObj[matches[i][0].description] = finalObj;
         }
 
         bioMarkerDataArr.push(bioMarkerDataObj);
       }
-    }  
+    }
     console.log("bioMarkerDataArr", bioMarkerDataArr)
     ocrObj[propertyName] = bioMarkerDataArr;
   }
@@ -376,3 +485,6 @@ export const ocrProccesing = async(ocrData: any) => {
   console.log(ocrObj.bioMarker)
   return ocrObj
 }
+
+
+//TODO : in matched value currently matching on 0th index only, check till exact value not match.
