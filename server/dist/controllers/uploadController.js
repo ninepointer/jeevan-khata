@@ -18,6 +18,7 @@ const googleOcr_1 = require("../services/googleOcr");
 const ocrProcessing_1 = require("../utils/ocrProcessing");
 const imageUtil_1 = require("../utils/imageUtil");
 const ocrDataController_1 = require("../controllers/ocrDataController");
+const pdf_parse_1 = __importDefault(require("pdf-parse"));
 // CatchAsync
 const s3 = new aws_sdk_1.default.S3();
 exports.getUploads = ((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,8 +53,15 @@ exports.getUploads = ((req, res, next) => __awaiter(void 0, void 0, void 0, func
     if (file.mimetype == 'application/pdf') {
         fileType = 'pdf/tiff';
         console.log('pdf');
+        const pdf = yield (0, pdf_parse_1.default)(file.buffer);
+        const numPages = pdf.numpages;
+        if (numPages > 1) {
+            buffer = yield (0, imageUtil_1.convertMultiPdfToImageBuffer)(file.buffer);
+        }
+        else {
+            buffer = yield (0, imageUtil_1.convertPdfToImageBuffer)(file.buffer);
+        }
         // url = await uploadToGCS(file.buffer)
-        buffer = yield (0, imageUtil_1.convertMultiPdfToImageBuffer)(file.buffer);
         console.log(buffer);
     }
     else {
@@ -65,7 +73,7 @@ exports.getUploads = ((req, res, next) => __awaiter(void 0, void 0, void 0, func
     let ocrData = yield (0, ocrProcessing_1.ocrProccesing)(result);
     // // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
     // console.log("this is ocr data", ocrData, (dataFromS3 as any).Location, result);
-    yield (0, ocrDataController_1.saveOcrData)(ocrData, req.user, dataFromS3.Location);
+    yield (0, ocrDataController_1.saveOcrData)(ocrData, req.user, dataFromS3.Location, res);
     // return ocrData;
 }));
 const uploadTest = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

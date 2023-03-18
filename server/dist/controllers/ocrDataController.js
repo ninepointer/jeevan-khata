@@ -17,7 +17,7 @@ const uploadedDataSchema_1 = __importDefault(require("../models/uploadedDataSche
 const customError_1 = require("../errors/customError");
 const CatchAsync_1 = __importDefault(require("../middlewares/CatchAsync"));
 const User_1 = __importDefault(require("../models/User"));
-const saveOcrData = (ocrData, userReq, link) => __awaiter(void 0, void 0, void 0, function* () {
+const saveOcrData = (ocrData, userReq, link, res) => __awaiter(void 0, void 0, void 0, function* () {
     // console.log("in save data func", ocrData)
     const { name, age, gender, testName, lab, bioMarker, date } = ocrData;
     // console.log("bioMarker", bioMarker);
@@ -37,7 +37,7 @@ const saveOcrData = (ocrData, userReq, link) => __awaiter(void 0, void 0, void 0
     user.documents = [...user.documents, doc._id];
     yield user.save({ validateBeforeSave: false });
     console.log("this is ocr", doc);
-    // res.status(201).json({status: 'Success', message: 'Role created', data: ocr});
+    res.status(201).json({ status: 'Success', message: 'data saved successfully', data: doc });
 });
 exports.saveOcrData = saveOcrData;
 exports.getOCRData = (0, CatchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

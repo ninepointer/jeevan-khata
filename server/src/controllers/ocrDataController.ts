@@ -17,7 +17,7 @@ interface UploadInterface{
     bioMarker: MyArray,
     date: string
 }
-export const saveOcrData = async(ocrData: any, userReq: any, link: any)=>{
+export const saveOcrData = async(ocrData: any, userReq: any, link: any, res: Response)=>{
     // console.log("in save data func", ocrData)
     const{name, age, gender, testName, lab, bioMarker, date } = ocrData;
     // console.log("bioMarker", bioMarker);
@@ -39,7 +39,7 @@ export const saveOcrData = async(ocrData: any, userReq: any, link: any)=>{
     user!.documents = [...user!.documents, doc._id];
     await user!.save({validateBeforeSave: false});
     console.log("this is ocr", doc);
-    // res.status(201).json({status: 'Success', message: 'Role created', data: ocr});
+    res.status(201).json({status: 'Success', message: 'data saved successfully', data: doc});
 };
 
 export const getOCRData = CatchAsync(async(req:Request, res:Response, next: NextFunction)=>{
