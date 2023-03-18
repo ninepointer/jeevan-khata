@@ -237,71 +237,71 @@ export async function convertPdfToImageBuffer(pdfBuffer: Buffer) {
   }
   
 
-export async function deskewImage(inputImagePath: string, outputImagePath: string) {
-  console.log('inside');
-  const image = await Jimp.read(inputImagePath);
-  const width = image.bitmap.width;
-  const height = image.bitmap.height;
-  const threshold = 128;
+  export async function deskewImage(inputImagePath: string, outputImagePath: string) {
+    console.log('inside');
+    const image = await Jimp.read(inputImagePath);
+    const width = image.bitmap.width;
+    const height = image.bitmap.height;
+    const threshold = 128;
 
-  let skewAngle = 0;
-  let sliceWidth = Math.floor(width * 0.1);
-  let sliceHeight = Math.floor(height * 0.1);
+    let skewAngle = 0;
+    let sliceWidth = Math.floor(width * 0.1);
+    let sliceHeight = Math.floor(height * 0.1);
 
-  for (let i = 0; i < 10; i++) {
-    const slice = image.clone().crop(i * sliceWidth, 0, sliceWidth, height);
-    let histogram = new Array(height).fill(0);
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < sliceWidth; x++) {
-        const color = Jimp.intToRGBA(slice.getPixelColor(x, y));
-        if (color.r < threshold && color.g < threshold && color.b < threshold) {
-          histogram[y]++;
+    for (let i = 0; i < 10; i++) {
+      const slice = image.clone().crop(i * sliceWidth, 0, sliceWidth, height);
+      let histogram = new Array(height).fill(0);
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < sliceWidth; x++) {
+          const color = Jimp.intToRGBA(slice.getPixelColor(x, y));
+          if (color.r < threshold && color.g < threshold && color.b < threshold) {
+            histogram[y]++;
+          }
         }
       }
-    }
 
-    let min = 0;
-    let max = height - 1;
-    let found = false;
+      let min = 0;
+      let max = height - 1;
+      let found = false;
 
-    for (let j = 0; j < height / 2; j++) {
-      if (histogram[j] > threshold && histogram[height - j - 1] > threshold) {
-        min = j;
-        found = true;
-        break;
+      for (let j = 0; j < height / 2; j++) {
+        if (histogram[j] > threshold && histogram[height - j - 1] > threshold) {
+          min = j;
+          found = true;
+          break;
+        }
       }
-    }
 
-    if (!found) {
-      console.log('not found bro');
-      continue;
-    }
-
-    found = false;
-
-    for (let j = height / 2; j < height; j++) {
-      if (histogram[j] > threshold && histogram[height - j - 1] > threshold) {
-        max = j;
-        found = true;
-        console.log('breaking');
-        break;
+      if (!found) {
+        console.log('not found bro');
+        continue;
       }
+
+      found = false;
+
+      for (let j = height / 2; j < height; j++) {
+        if (histogram[j] > threshold && histogram[height - j - 1] > threshold) {
+          max = j;
+          found = true;
+          console.log('breaking');
+          break;
+        }
+      }
+
+      if (!found) {
+        console.log('not found');
+        continue;
+      }
+
+      const sliceAngle = Math.atan2(2 * (max - min), height) / 2;
+      skewAngle += sliceAngle;
     }
 
-    if (!found) {
-      console.log('not found');
-      continue;
+    if (skewAngle === 0) {
+      console.log('no skew angle');
+      return;
     }
 
-    const sliceAngle = Math.atan2(2 * (max - min), height) / 2;
-    skewAngle += sliceAngle;
+    image.rotate(-skewAngle, false);
+    image.write(outputImagePath);
   }
-
-  if (skewAngle === 0) {
-    console.log('no skew angle');
-    return;
-  }
-
-  image.rotate(-skewAngle, false);
-  image.write(outputImagePath);
-}

@@ -2,17 +2,20 @@ import { NextFunction } from "express";
 // import CatchAsync from "../middlewares/CatchAsync";
 import TestName from "../models/LabTest"
 import BioMarker from "../models/BioMarker";
-import { Data } from "aws-sdk/clients/firehose";
+// import { Data } from "aws-sdk/clients/firehose";
 // import tempOcrData from "./tempOcrData"
 
 
+
+
 export const ocrProccesing = async(ocrData: any) => {
+
 
   //CONFIRMING THE RESPONSE FROM GOOGLE OCR HAS SOME DATA
   if(!ocrData.length) return;
 
   //FIND ALL THE TESTS FROM DB
-  const testName = await TestName.find({isDeleted: false});
+  const testName = await TestName.find({isDeleted: false, status: "Active"});
 
   //FIND ALL BIO MARKERS
   //TODO: FOR @Vijay; We only need the biomarkers after the test name matches. 
@@ -23,7 +26,7 @@ export const ocrProccesing = async(ocrData: any) => {
   //Get the full text from Ocr data
   let fullText = ocrData[0].textAnnotations[0];
 
-  // console.log("fulltext", fullText)
+  console.log("fulltext", fullText)
 
   //Get the working data from Ocr data
   let workingData = [... ocrData[0].textAnnotations];
@@ -59,7 +62,7 @@ export const ocrProccesing = async(ocrData: any) => {
         matches.push(match);
       }
     }
-    //console.log("matches", matches);
+    console.log("matches", matches);
     for(let i = 0; i < matches.length; i++){
       
       if(matches[i][0]){
@@ -152,6 +155,7 @@ export const ocrProccesing = async(ocrData: any) => {
           testName.map((elem)=>{
 
             if(elem.testName.toLowerCase() === testNameArr[i][j].toLowerCase() || elem.testScientificName.toLowerCase() === testNameArr[i][j].toLowerCase()){
+              // console.log("elem in loop", elem)
               bioMarkerDataAdmin = elem.bioMarkers
             }
           })
@@ -159,6 +163,8 @@ export const ocrProccesing = async(ocrData: any) => {
       }
     }
 
+    // console.log("test name", testNameArr)
+    // console.log("bioMarkerDataAdmin", bioMarkerDataAdmin)
     const filter = {
       name: { $in: bioMarkerDataAdmin },
       isDeleted: false
@@ -231,8 +237,8 @@ export const ocrProccesing = async(ocrData: any) => {
     if (hasMatch(result, rangeVals)) //console.log('Right line');
 
     rangeVals = ['range', 'ref', 'interval', 'reference', 'biological', 'normal values'];
-    const resultVals: string[] = ['result', 'observation', 'value', 'observed'];
-    let unitVals: string[] = ['units', 'unit'];
+    const resultVals: string[] = ['result', 'observation', 'value', 'observed', "Value(s)"];
+    let unitVals: string[] = ['units', 'unit', "unit(s)"];
 
     const findMatchedIndex = (arr: any[], searchArr: string[]): number[] => {
       const matchedIndex: number[] = [];
@@ -250,8 +256,9 @@ export const ocrProccesing = async(ocrData: any) => {
 
     //console.log("Range matches:", rangeMatches.join());
     //console.log("Result matches:", resultMatches.join());
-    //console.log("Unit matches:", unitMatches.join());
+    console.log("Unit matches:", unitMatches.join());
 
+    
     interface Order {
       range?: any;
       result?: any;
@@ -282,6 +289,9 @@ export const ocrProccesing = async(ocrData: any) => {
   
     for(let i=0;i<bioMarkerDataAdminArr.length; i++){
       if(fullText.description.toLowerCase().includes(bioMarkerDataAdminArr[i].toLowerCase().trim())){
+
+        // console.log("1st: ", fullText.description.toLowerCase(), "2nd: ", (bioMarkerDataAdminArr[i].toLowerCase().trim()))
+        // console.log(fullText.description.toLowerCase().includes(bioMarkerDataAdminArr[i].toLowerCase().trim()))
         //Get the vertices of the match
         let match = sortedData.filter((data, index)=>{
           return data.description.toLowerCase() === bioMarkerDataAdminArr[i].toLowerCase().trim()    
@@ -289,28 +299,63 @@ export const ocrProccesing = async(ocrData: any) => {
         matches.push(match);
       }
     }
-  
-
-    let bioMarkerDataArr = [];
     
+
+    let bioMarkerDataArr: any = [];
+    
+    console.log("bioMarkerDataAdminArr", bioMarkerDataAdminArr)
+    console.log("matches", matches)
+
+    // outerLoop:
     for(let i = 0; i < matches.length; i++){
 
       let bioMarkerDataObj: any = {};
       let innerObj: any = [];
-      
-      if(matches[i][0]){
-        let yavg = averageCoord(matches[i][0].boundingPoly,'y');
-        let xavg = averageCoord(matches[i][0].boundingPoly,'x');     
-        
-        const withinY = sortedData.filter(obj =>
-          Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10
-        );
-        
-        withinY.sort((a,b)=>{
-          return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x')
-        })
+      let matchIndex = 0;
 
-        console.log("withinY", withinY)
+      if(matches[i][matchIndex]){
+
+        let withinY = [];
+        while(matchIndex < matches[i].length){
+
+          let yavg = averageCoord(matches[i][matchIndex]?.boundingPoly,'y');
+          let xavg = averageCoord(matches[i][matchIndex]?.boundingPoly,'x');     
+          
+          withinY = sortedData.filter(obj =>
+            Math.abs(averageCoord(obj?.boundingPoly,'y') - yavg) <= 10
+          );
+          
+          withinY.sort((a,b)=>{
+            return averageCoord(a?.boundingPoly, 'x') - averageCoord(b?.boundingPoly, 'x')
+          })
+
+          // console.log("withinY", withinY)
+          for(let elem of withinY){
+            console.log("withinY des: ", elem.description);
+            // console.log("withinY vertices: ",elem.boundingPoly.vertices);
+          }
+
+          let flag = false;
+          for(let k = 0; k < withinY.length; k++){
+            const regex = /^\d+\.?\d*$/;
+            if(regex.test(withinY[k].description)){
+              flag = true;
+            }
+            // console.log(regex.test("20.0")) //true
+          }
+
+          if(flag){
+            matchIndex = matches[i].length +1;
+           // break ;
+          }
+
+          matchIndex++;
+          
+
+        }
+       
+
+        // console.log("withinY", withinY)
           
         let temp = '';
         let coord = [];
@@ -346,7 +391,7 @@ export const ocrProccesing = async(ocrData: any) => {
           }
         }
         objForLineOrder[lineOrder[elemNum]] = temp;
-        console.log(`${lineOrder[elemNum]}: ${temp}`);
+        // console.log(`${lineOrder[elemNum]}: ${temp}`);
         innerObj.push(temp);
 
         if(mappingObj[matches[i][0].description]){
@@ -457,6 +502,63 @@ export const ocrProccesing = async(ocrData: any) => {
   
   }
 
+
+
+  function extractOcrData(possibleArr: string | any[], objName: string, x_coordGap: number, y_coordGap: number){
+    ////console.log("possibleArr", possibleArr)
+
+    let matches: any = [];
+    //Look for matches from possible values for field in sorted data and add to to matches 
+    for(let i = 0; i<possibleArr.length; i++){
+      if(fullText.description.toLowerCase().includes(possibleArr[i])){
+          // ////////console.log(namesArr[i], fullText.description.toLowerCase().indexOf(namesArr[i].toLowerCase());
+          //Get the vertices of the match
+           let match = sortedData.filter((item)=>{
+              return item.description.toLowerCase() === possibleArr[i].toLowerCase();    
+          });
+          ////////console.log('dat is', dat);
+          matches.push(match);
+      }
+  }
+  
+  //console.log("matches", matches);
+  
+  //If there are no matches, return from the execution of function
+  if(matches.length === 0 || Object.keys(matches[0]).length === 0){
+    return;
+  }
+  
+  let yavg = averageCoord(matches[0][0].boundingPoly,'y');
+  let xavg = averageCoord(matches[0][0].boundingPoly,'x');    
+  ////////console.log(yavg, xavg);
+  
+  //Getting the elements in the same line of the match
+  let withinY: any = sortedData.filter(obj =>
+      Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= y_coordGap && obj.description !== ":" && obj.description.toLowerCase() !== "mr." && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms."
+      );
+
+  withinY.sort(function(a: any, b: any) {
+    return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x'); 
+  });
+  console.log('withiny',withinY);
+  //Getting the elements that is in proximity to the same line item match
+  let withinXY = withinY.filter((obj: any) =>
+        (averageCoord(obj.boundingPoly,'x') - xavg) <= x_coordGap && (averageCoord(obj.boundingPoly,'x') >= xavg) 
+      );
+  
+  //Get the adjacent elements and adding it to the object property as a string    
+  let allData = withinXY.map((obj: any)=> {if(obj.description.toLowerCase()!= matches[0][0].description) return obj.description});
+  //////console.log(allData);
+  if(objName !== "lab"){
+    allData.splice(allData.indexOf(matches[0][0].description), 1);
+  }
+  ocrObj[objName] = allData.join(' ');
+  
+  // //////console.log(ocrObj);
+  
+  
+  }
+
     
       
   let rangesArr = ['range'];
@@ -471,11 +573,11 @@ export const ocrProccesing = async(ocrData: any) => {
     
 
     
-  // extractOcrData(genderArr, "gender", 50, 10)
-  // extractOcrData(labs, "lab", 150, 10)
-  // extractOcrData(namesArr, "name", 150, 10)
-  // extractOcrData(ageArr, "age", 100, 10)
-  // extractOcrData(datesArr, 'date' ,100, 10);
+  extractOcrData(genderArr, "gender", 50, 10)
+  extractOcrData(labs, "lab", 150, 10)
+  extractOcrData(namesArr, "name", 150, 10)
+  extractOcrData(ageArr, "age", 100, 10)
+  extractOcrData(datesArr, 'date' ,100, 10);
   // await extractOcrDataNew("name", namesArr);
   // await extractOcrDataNew("date", datesArr);
   // await extractHospitalName("lab", labs);

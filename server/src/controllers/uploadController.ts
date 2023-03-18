@@ -9,6 +9,8 @@ import { convertPdfToImageBuffer,imageBufferToPdfBuffer, convertMultiPdfToImageB
 import {saveOcrData} from "../controllers/ocrDataController"
 import fs from 'fs';
 import { uploadToGCS } from '../services/googleStorage';
+import PDF from 'pdf-parse';
+
 
 // CatchAsync
 const s3 = new aws.S3();
@@ -51,8 +53,17 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   if(file.mimetype == 'application/pdf' ){
     fileType = 'pdf/tiff';
     console.log('pdf');
+
+    const pdf = await PDF(file.buffer);
+    const numPages = pdf.numpages;
+  
+    if(numPages > 1){
+      buffer = await convertMultiPdfToImageBuffer(file.buffer);
+    } else{
+      buffer = await convertPdfToImageBuffer(file.buffer);
+    }
     // url = await uploadToGCS(file.buffer)
-    buffer = await convertMultiPdfToImageBuffer(file.buffer);
+    
     console.log(buffer);
   }else{
     fileType = 'image/png';

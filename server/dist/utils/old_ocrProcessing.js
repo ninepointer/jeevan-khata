@@ -1,5 +1,4 @@
-
-
+"use strict";
 //-------------------extractHospitalName old func-------------
 /*
 async function extractHospitalName(propertyName: string, Arr: any){
@@ -17,7 +16,7 @@ async function extractHospitalName(propertyName: string, Arr: any){
       // ////console.log("possibleArr in ocr", possibleArr[i], fullText.description.toLowerCase().indexOf(possibleArr[i].toLowerCase()));
       //Get the vertices of the match
       let match = sortedData.filter((data, index)=>{
-        return data.description.toLowerCase() === Arr[i].toLowerCase().trim()    
+        return data.description.toLowerCase() === Arr[i].toLowerCase().trim()
       });
       matches.push(match);
     }
@@ -31,22 +30,22 @@ async function extractHospitalName(propertyName: string, Arr: any){
       
       if(matches[i][0]){
         let yavg = averageCoord(matches[i][0].boundingPoly,'y');
-        let xavg = averageCoord(matches[i][0].boundingPoly,'x');     
+        let xavg = averageCoord(matches[i][0].boundingPoly,'x');
 
           let withinY = sortedData.filter(obj =>
-            // Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 
+            // Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10
             Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10
             );
   
             withinY.sort(function(a, b) {
-              return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x'); 
+              return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x');
           });
           console.log(`within y for ${matches[i][0]}`,withinY);
 
           
           let temp = '';
           let coord = [];
-          let isFirst = true;    
+          let isFirst = true;
           for(let j = 0; j<withinY.length; j++){
              ////console.log('coord.length', coord.length, 'elem', withinY[j].description);
              temp += ` ${withinY[j].description}`;
@@ -56,23 +55,19 @@ async function extractHospitalName(propertyName: string, Arr: any){
 
           // //console.log(`${lineOrder[elemNum]}: ${temp}`);
           temp = '';
-          coord = [];    
+          coord = [];
 
 
   }
-    }  
+    }
     
     // //console.log("bioMarkerDataArr", bioMarkerDataArr)
     // ocrObj[propertyName] = bioMarkerDataArr;
     console.log("ocrObj for diffrent properties", ocrObj)
 }
 */
-
 //-----------------------------------------------------
-
-
 //-------------------extractOcrDataBioMarkerNew old func-------------
-
 /*
       async function extractOcrDataBioMarkerNew(propertyName: string){
         
@@ -148,7 +143,7 @@ async function extractHospitalName(propertyName: string, Arr: any){
         //console.log("mappingObj", mappingObj)
 
 
-//function for finding elements in the same line        
+//function for finding elements in the same line
       function findElementsInSameLine(searchStrings: string[]): any[] {
         let result: any[] = [];
 
@@ -234,10 +229,10 @@ async function extractHospitalName(propertyName: string, Arr: any){
       //console.log(sortedObj);
       let lineOrder = Object.keys(sortedObj);
       console.log("lineOrder", lineOrder);
-      //Here we have the order in which the results, units, range appear in our document 
+      //Here we have the order in which the results, units, range appear in our document
   
       
-      //Matching all the ocuurences of BioMarkers in Ocr Document 
+      //Matching all the ocuurences of BioMarkers in Ocr Document
       let matches = [];
       
       for(let i=0;i<bioMarkerDataAdminArr.length; i++){
@@ -245,7 +240,7 @@ async function extractHospitalName(propertyName: string, Arr: any){
           // ////console.log("possibleArr in ocr", possibleArr[i], fullText.description.toLowerCase().indexOf(possibleArr[i].toLowerCase()));
           //Get the vertices of the match
           let match = sortedData.filter((data, index)=>{
-            return data.description.toLowerCase() === bioMarkerDataAdminArr[i].toLowerCase().trim()    
+            return data.description.toLowerCase() === bioMarkerDataAdminArr[i].toLowerCase().trim()
           });
           matches.push(match);
         }
@@ -261,7 +256,7 @@ async function extractHospitalName(propertyName: string, Arr: any){
           
           if(matches[i][0]){
             let yavg = averageCoord(matches[i][0].boundingPoly,'y');
-            let xavg = averageCoord(matches[i][0].boundingPoly,'x');     
+            let xavg = averageCoord(matches[i][0].boundingPoly,'x');
             
             const withinY = sortedData.filter(obj =>
               Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10
@@ -281,8 +276,8 @@ async function extractHospitalName(propertyName: string, Arr: any){
               let temp = '';
               let coord = [];
               let bioMarkersVal:any = {};
-              let elemNum =0; 
-              let isFirst = true;    
+              let elemNum =0;
+              let isFirst = true;
               for(let j = 0; j<withinY.length; j++){
               //   if (j === 0 && (withinY[1].description === '%' || withinY[1].description === '#')) {
               //     continue;
@@ -324,7 +319,7 @@ async function extractHospitalName(propertyName: string, Arr: any){
               innerObj[lineOrder[elemNum]] = temp;
               console.log(`${lineOrder[elemNum]}: ${temp}`);
               temp = '';
-              coord = [];    
+              coord = [];
 
               // ////console.log(bioMarkerDataObj.data[i][0].description, bioMarkerDataObj[data[i][0].description], )
               // if(bioMarkerDataObj.data[i][0].description.lineOrder[0]){
@@ -333,7 +328,7 @@ async function extractHospitalName(propertyName: string, Arr: any){
               
               
       }
-        }  
+        }
         
         // //console.log("bioMarkerDataArr", bioMarkerDataArr)
         ocrObj[propertyName] = bioMarkerDataArr;
@@ -341,23 +336,19 @@ async function extractHospitalName(propertyName: string, Arr: any){
       }
 */
 //-----------------------------------------------------
-
-
-
 //-------------------extractOcrData old func-------------
-
 /*
       function extractOcrData(possibleArr: string | any[], objName: string, x_coordGap: number, y_coordGap: number){
         ////console.log("possibleArr", possibleArr)
 
         matches = [];
-        //Look for matches from possible values for field in sorted data and add to to matches 
+        //Look for matches from possible values for field in sorted data and add to to matches
         for(let i = 0; i<possibleArr.length; i++){
           if(fullText.description.toLowerCase().includes(possibleArr[i])){
               // ////////console.log(namesArr[i], fullText.description.toLowerCase().indexOf(namesArr[i].toLowerCase());
               //Get the vertices of the match
                let match = sortedData.filter((item)=>{
-                  return item.description.toLowerCase() === possibleArr[i].toLowerCase();    
+                  return item.description.toLowerCase() === possibleArr[i].toLowerCase();
               });
               ////////console.log('dat is', dat);
               matches.push(match);
@@ -372,7 +363,7 @@ async function extractHospitalName(propertyName: string, Arr: any){
       }
       
       let yavg = averageCoord(matches[0][0].boundingPoly,'y');
-      let xavg = averageCoord(matches[0][0].boundingPoly,'x');    
+      let xavg = averageCoord(matches[0][0].boundingPoly,'x');
       ////////console.log(yavg, xavg);
       
       //Getting the elements in the same line of the match
@@ -381,15 +372,15 @@ async function extractHospitalName(propertyName: string, Arr: any){
           );
 
       withinY.sort(function(a: any, b: any) {
-        return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x'); 
+        return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x');
       });
       console.log('withiny',withinY);
       //Getting the elements that is in proximity to the same line item match
       let withinXY = withinY.filter((obj: any) =>
-            (averageCoord(obj.boundingPoly,'x') - xavg) <= x_coordGap && (averageCoord(obj.boundingPoly,'x') >= xavg) 
+            (averageCoord(obj.boundingPoly,'x') - xavg) <= x_coordGap && (averageCoord(obj.boundingPoly,'x') >= xavg)
           );
       
-      //Get the adjacent elements and adding it to the object property as a string    
+      //Get the adjacent elements and adding it to the object property as a string
       let allData = withinXY.map((obj: any)=> {if(obj.description.toLowerCase()!= matches[0][0].description) return obj.description});
       //////console.log(allData);
       if(objName !== "lab"){
@@ -402,6 +393,4 @@ async function extractHospitalName(propertyName: string, Arr: any){
       
       }
 */
-
 //-----------------------------------------------------
-
