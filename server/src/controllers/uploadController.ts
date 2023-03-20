@@ -16,6 +16,7 @@ import PDF from 'pdf-parse';
 const s3 = new aws.S3();
 
 export const getUploads = (async(req:Request, res:Response, next:NextFunction) => {
+  console.log("req body", req.body)
   const file = req.file;
   // console.log("file in upload", file, (req as any).user)
   if (!file) {
@@ -72,10 +73,10 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
   // console.log('buffer is', buffer);
 
   let result = await detectText(buffer, fileType);
-  let ocrData = await ocrProccesing(result);
+  let ocrData = await ocrProccesing(result, req.body, res);
   // // fs.writeFileSync('./data.json', JSON.stringify(result, null, 2) , 'utf-8');
   // console.log("this is ocr data", ocrData, (dataFromS3 as any).Location, result);
-  await saveOcrData(ocrData, (req as any).user, (dataFromS3 as any).Location, res)
+  await saveOcrData(ocrData, (req as any).user, (dataFromS3 as any).Location, res, req.body)
   // return ocrData;
 });
 
@@ -83,7 +84,7 @@ export const getUploads = (async(req:Request, res:Response, next:NextFunction) =
 
 export const uploadTest = async(req: Request, res: Response, next: NextFunction) => {
   let result = await detectText(`/Users/anshumansharma/projects/work/jeevan-khata-admi/server/src/utils/outputs/combined.png`, 'image/png');
-  let ocrData = await ocrProccesing(result);
+  let ocrData = await ocrProccesing(result, req.body, res);
 }
 export const deskewTest = async(req: Request, res: Response, next: NextFunction) => {
  deskewImage('/Users/anshumansharma/projects/work/jeevan-khata-admi/server/uploads/WhatsApp Image 2023-02-05 at 18.05.14.jpeg', '/Users/anshumansharma/projects/work/jeevan-khata-admi/server/uploads/deskew.jpeg').then(

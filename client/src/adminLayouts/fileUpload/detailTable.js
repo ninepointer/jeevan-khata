@@ -25,6 +25,8 @@ const DetailTable = ({setView, bioData, id}) => {
   const onClose = ()=>{
     setView(false)
   }
+
+  console.log("in detail table", bioData)
   bioData.map((elem, index)=>{
     let ocrDataObj = {}
     // const createdondate = new Date(elem.createdOn);

@@ -17,23 +17,39 @@ interface UploadInterface{
     bioMarker: MyArray,
     date: string
 }
-export const saveOcrData = async(ocrData: any, userReq: any, link: any, res: Response)=>{
-    // console.log("in save data func", ocrData)
-    const{name, age, gender, testName, lab, bioMarker, date } = ocrData;
+export const saveOcrData = async(ocrData: any, userReq: any, link: any, res: Response, reqBody: any)=>{
+    console.log("in save data func", ocrData)
+    const {name, age, gender, testName, lab, bioMarker, date, reportMatchToMember } = ocrData;
+    const {selectedMemberName, selectedMemberGender, selectedMemberId} = reqBody
     // console.log("bioMarker", bioMarker);
     //check if role exisits
     // if(await UploadedData.findOne({roleName})) return next(createCustomError('Role already exists. Please edit the existing role.', 401));
 
-    const doc = await UploadedData.create({
-        name: name,
-        age: age,
-        gender: gender,
-        testName: testName,
-        lab: lab,
-        bioMarker: bioMarker,
-        link: link,
-        date: date
-    });
+    let doc ;
+    if(reportMatchToMember){
+        doc = await UploadedData.create({
+            name: selectedMemberName,
+            age: age,
+            gender: selectedMemberGender,
+            testName: testName,
+            lab: lab,
+            bioMarker: bioMarker,
+            link: link,
+            date: date
+        });
+    } else{
+        doc = await UploadedData.create({
+            name: name,
+            age: age,
+            gender: gender,
+            testName: testName,
+            lab: lab,
+            bioMarker: bioMarker,
+            link: link,
+            date: date
+        });
+    }
+
 
     const user = await User.findById(userReq._id);
     user!.documents = [...user!.documents, doc._id];

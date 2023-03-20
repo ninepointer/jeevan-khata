@@ -68,17 +68,17 @@ const UploadedDataTable = ({setCreate, setView, setBioData}) => {
         </MDTypography>
       );
 
-    ocrDataObj.testName = (
-      <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-        {elem.testName}
-      </MDTypography>
-    );
+    // ocrDataObj.testName = (
+    //   <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+    //     {elem.testName}
+    //   </MDTypography>
+    // );
 
-    ocrDataObj.hospital = (
-        <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
-          {elem.lab}
-        </MDTypography>
-      );
+    // ocrDataObj.hospital = (
+    //     <MDTypography component="a" variant="caption" color="text" fontWeight="medium">
+    //       {elem.lab}
+    //     </MDTypography>
+    //   );
 
     ocrDataObj.date = (
       <MDTypography component="a" variant="caption" color="text" fontWeight="medium">

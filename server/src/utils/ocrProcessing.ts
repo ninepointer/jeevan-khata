@@ -8,9 +8,12 @@ import BioMarker from "../models/BioMarker";
 
 
 
-export const ocrProccesing = async(ocrData: any) => {
+export const ocrProccesing = async(ocrData: any, basicDetailData: any, res: any) => {
 
 
+  console.log("basicDetailData", basicDetailData);
+
+  
   //CONFIRMING THE RESPONSE FROM GOOGLE OCR HAS SOME DATA
   if(!ocrData.length) return;
 
@@ -28,6 +31,15 @@ export const ocrProccesing = async(ocrData: any) => {
 
   console.log("fulltext", fullText)
 
+  let reportMatchToMember = true;
+  console.log("check", !fullText.description.toLowerCase().includes(basicDetailData.selectedMemberName))
+  if(!fullText.description.toLowerCase().includes(basicDetailData.selectedMemberName.toLowerCase())){
+    console.log("in if")
+    reportMatchToMember = false;
+    // res.status(201).write({status: 'Success', message: 'Your report is not matching with selected member'});
+
+  }
+
   //Get the working data from Ocr data
   let workingData = [... ocrData[0].textAnnotations];
   workingData.splice(0,1);  
@@ -43,6 +55,8 @@ export const ocrProccesing = async(ocrData: any) => {
   sortedData.sort(function(a, b) {
       return averageCoord(a.boundingPoly, 'y') - averageCoord(b.boundingPoly, 'y'); 
   });
+
+
     
           
   //STRICTLY FOR MONITORING PERFORMANCE
@@ -62,20 +76,40 @@ export const ocrProccesing = async(ocrData: any) => {
         matches.push(match);
       }
     }
-    console.log("matches", matches);
+    // console.log("matches", matches);
     for(let i = 0; i < matches.length; i++){
       
       if(matches[i][0]){
         let yavg = averageCoord(matches[i][0].boundingPoly,'y');
         let xavg = averageCoord(matches[i][0].boundingPoly,'x');     
 
+        // let withinY = sortedData.filter(obj =>
+        //   Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 && averageCoord(obj.boundingPoly,'x') >= xavg  && obj.description !== ":" && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms."
+        // );
+
         let withinY = sortedData.filter(obj =>
-          Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 && averageCoord(obj.boundingPoly,'x') >= xavg  && obj.description !== ":" && obj.description.toLowerCase() !== "mrs." && obj.description.toLowerCase() !== "ms."
+          Math.abs(averageCoord(obj.boundingPoly,'y') - yavg) <= 10 && averageCoord(obj.boundingPoly,'x') >= xavg
         );
 
         withinY.sort(function(a, b) {
           return averageCoord(a.boundingPoly, 'x') - averageCoord(b.boundingPoly, 'x'); 
         });
+
+        let newArr = withinY.map((elem)=>{
+          return elem.description;
+        }).join(" ");
+
+        console.log("newArr", newArr)
+        if(propertyName === "age"){
+          console.log(extractAgeAndGender(newArr))
+          ocrObj.age = extractAgeAndGender(newArr).age;
+          return;
+        } 
+        if(propertyName === "gender"){
+          console.log(extractAgeAndGender(newArr))
+          ocrObj.gender = extractAgeAndGender(newArr).gender;  
+          return;
+        }
         //console.log(`within y for ${matches[i][0]}`,withinY);
 
         let temp = '';
@@ -119,12 +153,27 @@ export const ocrProccesing = async(ocrData: any) => {
         }
         
         if(propertyName === "date"){
-          try{
-            ocrObj[propertyName] = getDate(temp.trim())
-          } catch {
-            ocrObj[propertyName] = temp.trim();
+          console.log("temp is ", temp)
+          if(temp.includes(":")){
+            const temp1 = temp.split(/:(.+)/, 2);
+            // let temp1 = temp.split(":");
+            try{
+              console.log("newDate ", temp1[1].trim())
+              ocrObj[propertyName] = getDate(temp1[1].trim())
+            } catch {
+              ocrObj[propertyName] = temp1[1].trim();
+            }
+          } else{
+            try{
+              ocrObj[propertyName] = getDate(temp.trim())
+            } catch {
+              ocrObj[propertyName] = temp.trim();
+            }
           }
-        } else{
+
+          return;
+        } 
+        else{
           ocrObj[propertyName] = temp.trim();
         }
 
@@ -200,7 +249,9 @@ export const ocrProccesing = async(ocrData: any) => {
 
       for (const string of searchStrings) {
           for (const data of sortedData) {
-              if (data.description.toLowerCase() === string) {
+            console.log("checking: ", data.description.toLowerCase(), string.toLowerCase())
+              if (data.description.toLowerCase() === string.toLowerCase()) {
+                console.log("inside if",data.description.toLowerCase(), string.toLowerCase())
                   let lineData: any[] = [];
                   const y = averageCoord(data.boundingPoly, 'y');
                   for (const d of sortedData) {
@@ -217,12 +268,12 @@ export const ocrProccesing = async(ocrData: any) => {
     }
 
     //Finding the results, units, range line
-    const searchStrings: string[] = ['result', 'observation', 'observed'];
+    const searchStrings: string[] = ['result', 'observation', 'observed', 'value'];
     const result = findElementsInSameLine(searchStrings);
 
-    //console.log('result', result);
+    console.log('result', result);
 
-    let rangeVals: string[] = ['range', 'ref', 'interval', 'biological', 'value', 'reference', 'normal values'];
+    let rangeVals: string[] = ['range', 'ref', 'interval', 'biological', 'reference', 'normal values'];
 
     //function for checking if the matched line contains other expected elements
     function hasMatch(objectsArray: any[], searchStrings: string[]): boolean {
@@ -237,8 +288,8 @@ export const ocrProccesing = async(ocrData: any) => {
     if (hasMatch(result, rangeVals)) //console.log('Right line');
 
     rangeVals = ['range', 'ref', 'interval', 'reference', 'biological', 'normal values'];
-    const resultVals: string[] = ['result', 'observation', 'value', 'observed', "Value(s)"];
-    let unitVals: string[] = ['units', 'unit', "unit(s)"];
+    const resultVals: string[] = ['result', 'observation', 'value', 'observed', "Value"];
+    let unitVals: string[] = ['units', 'unit'];
 
     const findMatchedIndex = (arr: any[], searchArr: string[]): number[] => {
       const matchedIndex: number[] = [];
@@ -303,8 +354,8 @@ export const ocrProccesing = async(ocrData: any) => {
 
     let bioMarkerDataArr: any = [];
     
-    console.log("bioMarkerDataAdminArr", bioMarkerDataAdminArr)
-    console.log("matches", matches)
+    // console.log("bioMarkerDataAdminArr", bioMarkerDataAdminArr)
+    // console.log("matches", matches)
 
     // outerLoop:
     for(let i = 0; i < matches.length; i++){
@@ -329,10 +380,10 @@ export const ocrProccesing = async(ocrData: any) => {
             return averageCoord(a?.boundingPoly, 'x') - averageCoord(b?.boundingPoly, 'x')
           })
 
-          // console.log("withinY", withinY)
+          console.log("withinY", withinY)
           for(let elem of withinY){
             console.log("withinY des: ", elem.description);
-            // console.log("withinY vertices: ",elem.boundingPoly.vertices);
+            console.log("withinY vertices: ",elem.boundingPoly.vertices);
           }
 
           let flag = false;
@@ -375,7 +426,7 @@ export const ocrProccesing = async(ocrData: any) => {
               if(!isFirst){
                 objForLineOrder[lineOrder[elemNum]] = temp;
                 innerObj.push(temp);
-                console.log(`${lineOrder[elemNum]}: ${temp}`);
+                // console.log(`${lineOrder[elemNum]}: ${temp}`);
                 temp = withinY[j].description;
                 coord = withinY[j].boundingPoly.vertices;
                 elemNum++;
@@ -395,7 +446,7 @@ export const ocrProccesing = async(ocrData: any) => {
         innerObj.push(temp);
 
         if(mappingObj[matches[i][0].description]){
-          console.log("inner obj from mapping obj", innerObj)
+          // console.log("inner obj from mapping obj", innerObj)
           finalObj = getDataFromWithinY(innerObj);
           for(let elem of unitVals){
             if(objForLineOrder.hasOwnProperty(elem)){
@@ -405,7 +456,7 @@ export const ocrProccesing = async(ocrData: any) => {
           }
           bioMarkerDataObj[mappingObj[matches[i][0].description]] = finalObj;
         } else{
-          console.log("inner obj from mapping obj else condition", innerObj)
+          // console.log("inner obj from mapping obj else condition", innerObj)
           finalObj = getDataFromWithinY(innerObj);
           for(let elem of unitVals){
             if(objForLineOrder.hasOwnProperty(elem)){
@@ -419,9 +470,52 @@ export const ocrProccesing = async(ocrData: any) => {
         bioMarkerDataArr.push(bioMarkerDataObj);
       }
     }
-    console.log("bioMarkerDataArr", bioMarkerDataArr)
+    // console.log("bioMarkerDataArr", bioMarkerDataArr)
     ocrObj[propertyName] = bioMarkerDataArr;
   }
+
+  // function for extracting gender and male
+
+  function extractAgeAndGender(ocrText) {
+    const ageRegex = /age[-: ]*(\d+)/i;
+    const genderRegex = /(gender|sex)[-: ]*(male|female|m|f)/i;
+  
+    let ageMatch = ocrText.match(ageRegex);
+    let genderMatch = ocrText.match(genderRegex);
+  
+    let age = null;
+    let gender = null;
+  
+    if (ageMatch) {
+      age = parseInt(ageMatch[1]);
+    }
+  
+    if (genderMatch) {
+      gender = genderMatch[2].toLowerCase();
+    }
+  
+    // Look for age and gender together
+    if (!ageMatch && !genderMatch) {
+      const ageGenderRegex = /(\d+)\s*(y|years)?[-/: ]*(male|female|m|f)/i;
+      const ageGenderMatch = ocrText.match(ageGenderRegex);
+      if (ageGenderMatch) {
+        age = parseInt(ageGenderMatch[1]);
+        gender = ageGenderMatch[3].toLowerCase();
+      }
+      else {
+        // Look for gender and age together
+        const genderAgeRegex = /(male|female|m|f)[-/:\s](\d+)\s(y|years)?/i;
+        const genderAgeMatch = ocrText.match(genderAgeRegex);
+        if (genderAgeMatch) {
+          age = parseInt(genderAgeMatch[2]);
+          gender = genderAgeMatch[1].toLowerCase();
+        }
+      }
+    }
+  
+    return { age, gender };
+  }
+
 
 
   // Helper functions.
@@ -569,22 +663,24 @@ export const ocrProccesing = async(ocrData: any) => {
   const namesArr = ['patient', 'name', 'pt.name', 'pt. name', 'patient name' ];
   const ageArr = ['age'];
   let genderArr = ['gender', 'sex'];
-  let datesArr = ['date of report', 'report date','reporting date', 'reported', 'date'];
+  let datesArr = ['date of report', 'report date','reporting date', 'reported', 'date', 'Reporting'];
     
 
     
-  extractOcrData(genderArr, "gender", 50, 10)
-  extractOcrData(labs, "lab", 150, 10)
-  extractOcrData(namesArr, "name", 150, 10)
-  extractOcrData(ageArr, "age", 100, 10)
-  extractOcrData(datesArr, 'date' ,100, 10);
+  // extractOcrData(genderArr, "gender", 50, 10)
+  // extractOcrData(labs, "lab", 150, 10)
+  // extractOcrData(namesArr, "name", 150, 10)
+  // extractOcrData(ageArr, "age", 100, 10)
+  // extractOcrData(datesArr, 'date' ,100, 10);
   // await extractOcrDataNew("name", namesArr);
-  // await extractOcrDataNew("date", datesArr);
+  await extractOcrDataNew("date", datesArr);
+  await extractOcrDataNew("age", ageArr);
+  await extractOcrDataNew("gender", genderArr);
   // await extractHospitalName("lab", labs);
   // await extractOcrDataBioMarkerNew("bioMarker");
-
   await extractOcrDataBioMarkerNewWithRegex("bioMarker");
-  console.log(ocrObj.bioMarker)
+  // console.log(ocrObj.bioMarker)
+  ocrObj.reportMatchToMember = reportMatchToMember;
   return ocrObj
 }
 

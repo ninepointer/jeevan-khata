@@ -59,10 +59,10 @@ function getDate(unformattedDate){
 // console.log(getDate("08 - jan - 2022 07:23 am"))
 // console.log(getDate("08 - jan - 2022 / 07:23 am"))
 // console.log(getDate("08 - 01 - 2022 07:23:00 am")) 
-// console.log(getDate("8 jan 2023"))
+// console.log(getDate("29 - Aug - 22 07:06 PM"))
 
 // console.log(getDate("08/01/2023 11:55 pm"))
 // console.log(getDate("08/01/2023"))
 // console.log(getDate("29-Aug-22 07:06 PM"))
 // console.log(getDate("29/Aug/2022 03:52PM"))
-// console.log(getDate("2023-03-15")) // ---> not solved
+console.log(getDate("2023 - 03 - 15")) // ---> not solved

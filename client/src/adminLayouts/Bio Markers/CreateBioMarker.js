@@ -274,50 +274,6 @@ import axios from "axios"
 
       }
 
-      // if(BodyCondition === "Pregnancy"){
-      //   console.log("in if")
-      //   obj.bodycondition_month = (
-      //     <TextField
-      //       id="filled-basic"
-      //       select
-      //       label=""
-      //       defaultValue=""
-      //       //helperText="Please select the body condition"
-      //       variant="filled"
-      //       sx={{margin: 1, padding: 1, width: "150px"}}
-      //       onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
-      //     >
-      //       {bodycondition.map((option) => (
-      //         <MenuItem key={option.value} value={option.value}>
-      //           {option.label}
-      //         </MenuItem>
-      //       ))}
-      //     </TextField>
-      //     );
-      //   obj.bodycondition_week = (
-      //     <TextField
-      //       id="filled-basic"
-      //       select
-      //       label=""
-      //       defaultValue=""
-      //       //helperText="Please select the body condition"
-      //       variant="filled"
-      //       sx={{margin: 1, padding: 1, width: "150px"}}
-      //       onChange={(e)=>{bioMarkerTypeDataFirst.bodyCondition = e.target.value}}
-      //     >
-      //       {bodycondition.map((option) => (
-      //         <MenuItem key={option.value} value={option.value}>
-      //           {option.label}
-      //         </MenuItem>
-      //       ))}
-      //     </TextField>
-      //     );
-      //   columns.push({ Header: "bodycondition_month", accessor: "bodycondition_month", align: "center" })
-      //   columns.push({ Header: "bodycondition_week", accessor: "bodycondition_week", align: "center" })
-
-      // } else{
-      //   console.log("in else")
-      // }
 
     console.log(obj)
       setRow((oldState)=> [...oldState, obj])

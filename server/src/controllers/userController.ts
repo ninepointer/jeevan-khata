@@ -299,7 +299,7 @@ export const getFamilyMembers =CatchAsync(async (req:Request, res: Response, nex
 
         let pipeline = [{ $match: { _id: familyTree[i].profile} },
 
-        { $project: {_id : 1, firstName: 1, lastName: 1, documents: 1, profilePhoto: 1} }
+        { $project: {_id : 1, firstName: 1, lastName: 1, documents: 1, profilePhoto: 1, gender: 1} }
         ]
 
         let familyMemberData: any = await User.aggregate(pipeline);
