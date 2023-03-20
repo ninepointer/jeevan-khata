@@ -476,7 +476,7 @@ export const ocrProccesing = async(ocrData: any, basicDetailData: any, res: any)
 
   // function for extracting gender and male
 
-  function extractAgeAndGender(ocrText) {
+  function extractAgeAndGender(ocrText: any) {
     const ageRegex = /age[-: ]*(\d+)/i;
     const genderRegex = /(gender|sex)[-: ]*(male|female|m|f)/i;
   
